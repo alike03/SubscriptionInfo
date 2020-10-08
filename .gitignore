@@ -1,0 +1,10 @@
+
+
+alternative/
+info/
+
+### Compressed ###
+*.7z
+*.rar
+*.zip
+*.zipx
