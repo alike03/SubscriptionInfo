@@ -1,8 +1,8 @@
 {
     "manifest_version": 2,
-    "name": "Gamepass info for Steam",
+    "name": "Xbox Game Pass info on Steam",
     "description": "See on Steam Store Page if the game is currently available on Xbox Game Pass",
-    "version": "1.0.1.1",
+    "version": "1.0.2",
     "homepage_url": "https://aligueler.com/GamePass/",
     "permissions": [
         "https://aligueler.com/"
@@ -12,9 +12,9 @@
         "96": "icon@2x.png"
     },
     "content_scripts": [{
-        "matches": ["*://store.steampowered.com/app/*"],
-        "js": ["alike_gamepass.js"],
-        "css": ["alike_gamepass.css"],
+        "matches": ["*://store.steampowered.com/*"],
+        "js": ["alike_gp_script.js"],
+        "css": ["alike_gp_style.css"],
         "run_at": "document_start"
     }]    
 }
