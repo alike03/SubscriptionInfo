@@ -2,7 +2,7 @@
     "manifest_version": 2,
     "name": "Gamepass info for Steam",
     "description": "See on Steam Store Page if the game is currently available on Xbox Game Pass",
-    "version": "1.0",
+    "version": "1.0.1",
     "homepage_url": "https://aligueler.com/GamePass/",
     "permissions": [
         "https://aligueler.com/"
