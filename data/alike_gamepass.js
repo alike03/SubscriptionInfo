@@ -1,5 +1,5 @@
 log('https://aligueler.com/GamePass/');
-const version = '1-0-1';
+const version = '1-0-1-1';
 var appId = window.location.pathname.split('/')[2];
 
 transferData(0, 'v=' + version + '&id=' + appId, function(response) {
@@ -8,11 +8,11 @@ transferData(0, 'v=' + version + '&id=' + appId, function(response) {
   if(game.gamepass) {
     gameOnGamePass(game.name, game.gamepass);
     log('Data for ' + game.name + ' loaded');
-  }
-});
 
-waitForElement('.release_date .date').then(function(element) {
-  transferData(1, 'v=' + version + '&id=' + appId + '&date=' + element.textContent);
+    waitForElement('.release_date .date').then(function(element) {
+      transferData(1, 'v=' + version + '&type=info&id=' + appId + '&xid=' + game.xbox_id + '&date=' + element.textContent);
+    });
+  }
 });
 
 /*******  Functions  *******/
@@ -53,7 +53,7 @@ function gameOnGamePass(name, gamepass) {
   }
   
   var flagDiv = document.createElement('div');
-  flagDiv.setAttribute('class', 'gp_flag ds_flag');
+  flagDiv.setAttribute('class', 'gp_flag');
   flagDiv.innerText = (text.flag + ' GAMEPASS');
   
   var textDiv = document.createElement('div');
@@ -66,7 +66,7 @@ function gameOnGamePass(name, gamepass) {
   errorDiv.innerHTML = '&#9888';
   errorDiv.onclick = function () {
     if (confirm('Do you really want to report ' + name + '?')) {
-      transferData(1, 'v=' + version + '&id=' + appId + '&name=' + name + '&error=1', function(r) {
+      transferData(1, 'v=' + version + '&type=error&id=' + appId + '&name=' + name, function(r) {
         alert(name + ' was successfully is reported\nThank you');
       });
     }
