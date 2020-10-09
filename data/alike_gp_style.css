@@ -47,7 +47,7 @@
     z-index: 15;
 }
 
-.alike_gamepass.gp_leaving > * {
+.alike_gamepass.gp_leaving {
     filter: grayscale(40%);
 }
 
@@ -71,11 +71,13 @@
 
 .gp_wishlist_cont .gp_flag,
 .gp_search_cont .gp_flag {
-    position: absolute;
-    height: 16px;
     margin: 2px;
     background-position-x: 3px;
     background-color: #107c0fcc;
+}
+
+.gp_wishlist_cont .gp_flag {
+    height: 16px;
 }
 
 .gp_home_cont .gp_flag {

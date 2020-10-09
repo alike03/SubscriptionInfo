@@ -1,5 +1,5 @@
 log('https://aligueler.com/GamePass/');
-const version = '1-0-2';
+const version = '1-0-2-1';
 const path = window.location.pathname;
 var triggerLimit = false;
 
@@ -11,7 +11,8 @@ if (path.split('/')[1] === '') {
       '.home_page_content .carousel_items a[data-ds-appid],' +
       '.home_page_content .carousel_items div[data-ds-appid],' +
       '.home_page_content .store_capsule_frame a[data-ds-appid],' +
-      '.home_page_content .home_tabs_content .tab_content a[data-ds-appid]'
+      '.home_page_content .home_tabs_content .tab_content a[data-ds-appid],' +
+      '.home_page_content .marketingmessage_container a[data-ds-appid]'
     ).forEach(game => {
       if (!game.classList.contains('alike_gp')) {
         gameListHome.push(game.dataset.dsAppid);
@@ -79,9 +80,10 @@ if (path.split('/')[1] === 'search') {
 
     function filterSearchList() {
       let gameListSearch = [];
-      Array.from(document.getElementById('search_resultsRows').children).forEach(game => {
+
+      document.querySelectorAll('#search_resultsRows a[data-ds-appid]:not(.alike_gp)').forEach(game => {
         if (!game.classList.contains('alike_gp')) {
-          gameListSearch.push(game.dataset.appId);
+          gameListSearch.push(game.dataset.dsAppid);
           game.classList.add('alike_gp');
         }
       });
@@ -89,7 +91,6 @@ if (path.split('/')[1] === 'search') {
       if (gameListSearch.filter(Boolean).length > 0) {
         transferData(0, 'v1=' + version + '&id=' + gameListSearch.filter(Boolean).toString(), function(resp) {
           response = JSON.parse(resp);
-    
           response.forEach(game => { addGamePassInfo('s', game) });
         });
       }
@@ -229,8 +230,6 @@ function addGamePassInfo(t, g) {
   document.querySelectorAll(parent).forEach(element => {
     let cln = container.cloneNode(true);
     element.appendChild(cln);
-    //element.classList.remove('alike_gp');
-    console.log(g.name, element);
   });
 }
 
@@ -260,13 +259,13 @@ function waitForElement(selector) {
   });
 }
 
-function getDateString(date, str_b= null, str_a = null) {
+function getDateString(date, str_b = '', str_a = '') {
   d = new Date(date);
   if(d.setHours(0,0,0,0) == new Date().setHours(0,0,0,0)) return ' today';
   const ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(d);
   const mo = new Intl.DateTimeFormat('en', { month: 'short' }).format(d);
   const da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(d);
-  return (str_b + ' ' + da + ' ' + mo + ', ' + ye);
+  return (str_b + ' ' + da + ' ' + mo + ', ' + ye + ' ' + str_b);
 }
 
 function transferData(target, param, callback = null) {
