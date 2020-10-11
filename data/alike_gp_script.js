@@ -1,5 +1,5 @@
 log('https://aligueler.com/GamePass/');
-const version = '1-0-2-1';
+const version = '1-0-3-0';
 const path = window.location.pathname;
 var triggerLimit = false;
 
@@ -19,13 +19,8 @@ if (path.split('/')[1] === '') {
         game.classList.add('alike_gp');
       }
     });
-    if (gameListHome.filter(Boolean).length > 0) {
-      let uniq = [ ...new Set(gameListHome.filter(Boolean)) ];
-      transferData(0, 'v1=' + version + '&id=' + uniq.toString(), function(resp) {
-        response = JSON.parse(resp);
-        response.forEach(game => { addGamePassInfo('h', game) });
-      });
-    }
+
+    getGameList(gameListHome, 'h');
 
     document.addEventListener('scroll', limitHome);
     function limitHome() {
@@ -46,14 +41,8 @@ if (path.split('/')[1] === '') {
           }
         });
       });
-  
-      if (gameListHomeMore.filter(Boolean).length > 0) {
-        let uniq = [ ...new Set(gameListHomeMore.filter(Boolean)) ];
-        transferData(0, 'v1=' + version + '&id=' + uniq.toString(), function(resp) {
-          response = JSON.parse(resp);
-          response.forEach(game => { addGamePassInfo('hm', game) });
-        });
-      }
+
+      getGameList(gameListHomeMore, 'hm');
       triggerLimit = false;
     }
   })
@@ -87,13 +76,8 @@ if (path.split('/')[1] === 'search') {
           game.classList.add('alike_gp');
         }
       });
-  
-      if (gameListSearch.filter(Boolean).length > 0) {
-        transferData(0, 'v1=' + version + '&id=' + gameListSearch.filter(Boolean).toString(), function(resp) {
-          response = JSON.parse(resp);
-          response.forEach(game => { addGamePassInfo('s', game) });
-        });
-      }
+
+      getGameList(gameListSearch, 's');
       triggerLimit = false;
     }
   });
@@ -123,13 +107,7 @@ if (path.split('/')[1] === 'wishlist') {
         }
       });
   
-      if (gameListWishlist.filter(Boolean).length > 0) {
-        transferData(0, 'v1=' + version + '&id=' + gameListWishlist.filter(Boolean).toString(), function(resp) {
-          response = JSON.parse(resp);
-    
-          response.forEach(game => { addGamePassInfo('w', game) });
-        });
-      }
+      getGameList(gameListWishlist, 'w');
       triggerLimit = false;
     }
   });
@@ -137,20 +115,23 @@ if (path.split('/')[1] === 'wishlist') {
 // App store page
 if (path.split('/')[1] === 'app') {
   let appId = path.split('/')[2];
-  transferData(0, 'v=' + version + '&id=' + appId, function(response) {
-    game = JSON.parse(response)[0];
-
-    if(game.gamepass) {
-      addGamePassInfo('a', game);
-
-      waitForElement('.release_date .date').then(function(element) {
-        transferData(1, 'v=' + version + '&type=info&id=' + appId + '&xid=' + game.xbox_id + '&date=' + element.textContent);
-      });
-    }
+  getGameList([appId], 'a');
+  waitForElement('.release_date .date').then(function(element) {
+    transferData(1, 'v=' + version + '&type=info&id=' + appId + '&xid=' + game.xbox_id + '&date=' + element.textContent);
   });
 }
 
 /*******  Functions  *******/
+
+function getGameList(list, type) {
+  let uniq = [ ...new Set(list.filter(Boolean)) ];
+  if (uniq.length > 0) {
+    transferData(0, 'v=' + version + '&id=' + uniq.toString(), function(resp) {
+      response = JSON.parse(resp);
+      response.forEach(game => { addGamePassInfo(type, game) });
+    });
+  }
+}
 
 function addGamePassInfo(t, g) {
   if(g.gamepass.status == null)
@@ -221,15 +202,17 @@ function addGamePassInfo(t, g) {
     container.appendChild(errorDiv);
   }
 
-  parent = '.page_content_ctn > .block .queue_overflow_ctn';
   if (t === 's') parent = 'a.alike_gp[data-ds-appid="' + g.steam_id + '"] .search_name p';
-  if (t === 'w') parent = 'div.alike_gp[data-app-id="' + g.steam_id + '"] .stats';
-  if (t === 'h') parent = 'a.alike_gp[data-ds-appid="' + g.steam_id + '"]';
-  if (t === 'hm') parent = 'div:not(.alike_gp_read) .alike_gp[data-ds-appid="' + g.steam_id + '"]';
+  else if (t === 'w') parent = 'div.alike_gp[data-app-id="' + g.steam_id + '"] .stats';
+  else if (t === 'h') parent = 'a.alike_gp[data-ds-appid="' + g.steam_id + '"]';
+  else if (t === 'hm') parent = 'div:not(.alike_gp_read) .alike_gp[data-ds-appid="' + g.steam_id + '"]';
+  else parent = '.page_content_ctn > .block .queue_overflow_ctn';
 
-  document.querySelectorAll(parent).forEach(element => {
-    let cln = container.cloneNode(true);
-    element.appendChild(cln);
+  waitForElement(parent).then(function() {
+    document.querySelectorAll(parent).forEach(element => {
+      let cln = container.cloneNode(true);
+      element.appendChild(cln);
+    });
   });
 }
 
