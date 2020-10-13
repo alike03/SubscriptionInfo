@@ -3,6 +3,10 @@ const version = '1-0-3-0';
 const path = window.location.pathname;
 var triggerLimit = false;
 
+waitForElement('#store_nav_area .store_nav').then(function(element) {
+  addButton(element);
+});
+
 // Starting page
 if (path.split('/')[1] === '') {
   waitForElement('.home_page_content .maincap .carousel_items a[data-ds-appid]').then(function() {
@@ -122,6 +126,82 @@ if (path.split('/')[1] === 'app') {
 }
 
 /*******  Functions  *******/
+
+function addButton(element) {
+  let title = document.createElement('h1');
+  title.setAttribute('class', 'alike_gp_changes_title');
+  title.innerText = "Loading...";
+
+  let xhr_data = document.createElement('div');
+  xhr_data.setAttribute('class', 'alike_xhr_data');
+
+  let container = document.createElement('div');
+  container.setAttribute('class', 'alike_gp_changes');
+  container.appendChild(title);
+  container.appendChild(xhr_data);
+
+  let span = document.createElement('span');
+  span.setAttribute('class', 'pulldown');
+  span.innerText = "Xbox Game Pass";
+  span.appendChild(document.createElement('span'));
+  
+  let button = document.createElement('a');
+  button.setAttribute('class', 'tab');
+  button.setAttribute('id', 'alike_gp_changes_button');
+
+  button.appendChild(span);
+  button.appendChild(container);
+  button.onmouseenter = function () {
+    if (!container.classList.contains('open') && !container.classList.contains('closed')) {
+      let date = new Date(new Date().getFullYear(),new Date().getMonth() - 1, new Date().getDate());
+      date = date.toISOString().slice(0,10);
+      loadChanges(date);
+    }
+    container.classList.remove('closed');
+    container.classList.add('open');
+  };
+  button.onmouseleave = function () {
+    container.classList.remove('open');
+    container.classList.add('closed');
+  };
+  element.insertBefore(button, element.querySelector('.search_area'));
+}
+
+function loadChanges(date) {
+  document.querySelector('.alike_gp_changes_title').innerText = "Changes since " + getDateString(date);
+  transferData(2, 'v=' + version + '&date=' + date, function(resp) {
+    document.querySelector('.alike_xhr_data').innerHTML = resp;
+    waitForElement('.alike_gp_changes .arrow.left').then(function() {
+      document.querySelectorAll('.alike_gp_changes .arrow.left').forEach((left) => {
+        left.addEventListener('click', (e) => {
+          slideSelection(e, -1, e.currentTarget.nextElementSibling);
+        });
+      });
+      document.querySelectorAll('.alike_gp_changes .arrow.right').forEach((right) => {
+        right.addEventListener('click', (e) => {
+          slideSelection(e, 1, e.currentTarget.previousElementSibling);
+        });
+      });
+      function slideSelection(e, change, sib) {
+        clist = e.currentTarget.classList;
+        if (!clist.contains('disabled')) {
+          let cont = e.currentTarget.parentNode.firstChild.firstChild;
+          let pos = parseInt(cont.dataset.position) + change;
+          sib.classList.remove('disabled');
+          cont.setAttribute("data-position", pos);
+          cont.style.transform = "translateX(-" + (162 * pos) + "px)";
+          if (change === -1) {
+            if (parseInt(cont.dataset.position) <= 0)
+              clist.add('disabled');
+          } else if (change === 1) {
+            if (parseInt(cont.dataset.position) > (cont.childElementCount - 6))
+              clist.add('disabled');
+          }
+        }
+      }
+    });
+  });
+}
 
 function getGameList(list, type) {
   let uniq = [ ...new Set(list.filter(Boolean)) ];
@@ -255,6 +335,10 @@ function transferData(target, param, callback = null) {
   switch (target) {
     case 1:
       url = 'passdata.php';
+      break;
+  
+    case 2:
+      url = 'changes.php';
       break;
   
     default:

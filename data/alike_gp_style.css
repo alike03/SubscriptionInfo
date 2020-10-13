@@ -164,3 +164,167 @@
 .wishlist_row .stats > div.gp_wishlist_cont {
     grid-area: e;
 }
+
+/**********************/
+/*** Info container ***/
+/**********************/
+
+.alike_gp_changes {
+    /* background: linear-gradient( to bottom, #e3eaef 5%, #c7d5e0 95%);
+    color: #000000; */
+    background: linear-gradient( to bottom, rgb(42, 71, 94) 5%, rgb(27, 40, 56) 70%);
+    box-shadow: 0 0 12px #000000;
+    margin-top: 0;
+    height: 0;
+    opacity: 0;
+    transform-origin: top;
+    overflow: hidden;
+
+    position: absolute;
+    left: 0;
+    width: 100%;
+    cursor: default;
+}
+
+.alike_gp_changes.open {
+    animation: anim_open .3s cubic-bezier(0,1,.8,1) both;
+}
+
+.alike_gp_changes.closed {
+    animation: anim_close .3s cubic-bezier(0,1,.8,1) both;
+}
+
+.alike_gp_changes h1 {
+    /* color: #2b2b2b; */
+    font-size: 25px;
+    text-align: center;
+    margin: 15px;
+}
+
+.alike_gp_changes h3 {
+    /* color: #000000 !important; */
+    padding: 2px 55px;
+}
+
+.alike_xhr_data {
+    padding: 0 15px;
+}
+
+.alike_gp_changes .cont {
+    /* display: flex;
+    /overflow-x: auto;
+    padding: 10px 5px;
+    
+    overflow-x: hidden; */
+    position: relative;
+    padding: 10px 50px;
+}
+
+.alike_gp_changes .cont_scroll {
+    overflow: hidden;
+}
+
+.alike_gp_changes .all_games {
+    display: flex;
+    transition: all .3s cubic-bezier(0.250, 0.460, 0.450, 0.940);
+}
+
+.alike_gp_changes .game {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 150px;
+    flex-shrink: 0;
+    margin: 6px;
+    background: linear-gradient( -45deg, rgba(64,121,153,1) 5%,rgba(42,62,89,1) 95%);
+    box-shadow: 0 0 5px #000000;
+}
+
+.alike_gp_changes .no_steam {
+    position: absolute;
+    left: 0;
+    bottom: 50px;
+    background: linear-gradient( -45deg, rgba(255,0,0,.7) 5%,rgba(255,0,0,.3) 95%);
+    width: 130px;
+    text-align: center;
+}
+
+.alike_gp_changes .game:hover,
+.tab:hover .alike_gp_changes {
+    color: #ffffff;
+    text-shadow: none;
+}
+
+.alike_gp_changes .game:hover {
+    background: linear-gradient( -45deg, rgb(68, 119, 147) 5%,rgb(82, 142, 174) 95%);
+}
+
+.alike_gp_changes .game img {
+    width: 100%;
+    box-shadow: 0 0 5px #000000;
+    object-fit: cover;
+}
+
+.alike_gp_changes .game span {
+    padding: 10px;
+}
+
+.alike_gp_changes .arrow {
+    position: absolute;
+    background-color: rgba(0,0,0,0.3);
+    top: 35%;
+    width: 23px;
+    height: 36px;
+    padding: 36px 11px;
+    cursor: pointer;
+    z-index: 3;
+    bottom: 0;
+}
+
+.alike_gp_changes .arrow.disabled {
+    opacity: .3;
+    filter: grayscale(1);
+}
+
+.alike_gp_changes .arrow.left {
+    left: -46px;
+    left: 0;
+    background: linear-gradient( to right, rgba( 0, 0, 0, 0.3) 5%,rgba( 0, 0, 0, 0) 95%);
+}
+
+.alike_gp_changes .arrow.right {
+    right: -46px;
+    right: 0;
+    background: linear-gradient( to right, rgba( 0, 0, 0, 0) 5%,rgba( 0, 0, 0, 0.3) 95%);
+}
+
+.alike_gp_changes .arrow > div {
+    background-image: url(https://store.cloudflare.steamstatic.com/public/images/v6/arrows.png);
+    width: 23px;
+    height: 36px;
+}
+
+.alike_gp_changes .arrow.left > div {
+    background-position-x: 23px;
+}
+
+@keyframes anim_open {
+    0% {
+        height: 0;
+        opacity: 0;
+    }
+    100% {
+        height: auto;
+        opacity: 1;
+    }
+}
+@keyframes anim_close {
+    0% {
+        height: auto;
+        opacity: 1;
+    }
+    100% {
+        height: 0;
+        opacity: 0;
+    }
+}
