@@ -39,6 +39,10 @@
     height: 20px;
 }
 
+.gp_search_cont {
+    position: absolute;
+}
+
 .alike_gamepass {
     z-index: 5;
 }

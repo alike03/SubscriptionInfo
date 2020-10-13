@@ -1,5 +1,5 @@
 log('https://aligueler.com/GamePass/');
-const version = '1-0-3-0';
+const version = '1-0-2-3';
 const path = window.location.pathname;
 var triggerLimit = false;
 
@@ -119,7 +119,13 @@ if (path.split('/')[1] === 'wishlist') {
 // App store page
 if (path.split('/')[1] === 'app') {
   let appId = path.split('/')[2];
-  getGameList([appId], 'a');
+  
+  transferData(0, 'v=' + version + '&id=' + appId, function(resp) {
+    response = JSON.parse(resp)[0];
+    waitForElement('.page_content_ctn > .block .queue_overflow_ctn').then(function() {
+      addGamePassInfo('a', response);
+    });
+  });
   waitForElement('.release_date .date').then(function(element) {
     transferData(1, 'v=' + version + '&type=info&id=' + appId + '&xid=' + game.xbox_id + '&date=' + element.textContent);
   });
@@ -222,7 +228,7 @@ function addGamePassInfo(t, g) {
 
   let text = {
     flag: 'ON',
-    info: g.name + ' is since ' + dateSince + ' on Xbox Game Pass'
+    info: g.name + ' has been on Xbox Game Pass since  ' + dateSince
   }
 
   switch (g.gamepass.status) {
@@ -243,7 +249,7 @@ function addGamePassInfo(t, g) {
     case 'soon':
       text = {
         flag: 'SOON ON',
-        info: g.name + ' is coming ' + dateSince +' to Xbox Game Pass'
+        info: g.name + ' is coming to Xbox Game Pass on ' + dateSince
       }
       break;
   }
@@ -288,11 +294,9 @@ function addGamePassInfo(t, g) {
   else if (t === 'hm') parent = 'div:not(.alike_gp_read) .alike_gp[data-ds-appid="' + g.steam_id + '"]';
   else parent = '.page_content_ctn > .block .queue_overflow_ctn';
 
-  waitForElement(parent).then(function() {
-    document.querySelectorAll(parent).forEach(element => {
-      let cln = container.cloneNode(true);
-      element.appendChild(cln);
-    });
+  document.querySelectorAll(parent).forEach(element => {
+    let cln = container.cloneNode(true);
+    element.appendChild(cln);
   });
 }
 
