@@ -1,11 +1,5 @@
-log('https://aligueler.com/GamePass/');
-const version = '1-0-2-3';
 const path = window.location.pathname;
 var triggerLimit = false;
-
-waitForElement('#store_nav_area .store_nav').then(function(element) {
-  addButton(element);
-});
 
 // Starting page
 if (path.split('/')[1] === '') {
@@ -127,87 +121,11 @@ if (path.split('/')[1] === 'app') {
     });
   });
   waitForElement('.release_date .date').then(function(element) {
-    transferData(1, 'v=' + version + '&type=info&id=' + appId + '&xid=' + game.xbox_id + '&date=' + element.textContent);
+    transferData(1, 'v=' + version + '&type=info&id=' + appId + '&date=' + element.textContent);
   });
 }
 
 /*******  Functions  *******/
-
-function addButton(element) {
-  let title = document.createElement('h1');
-  title.setAttribute('class', 'alike_gp_changes_title');
-  title.innerText = "Loading...";
-
-  let xhr_data = document.createElement('div');
-  xhr_data.setAttribute('class', 'alike_xhr_data');
-
-  let container = document.createElement('div');
-  container.setAttribute('class', 'alike_gp_changes');
-  container.appendChild(title);
-  container.appendChild(xhr_data);
-
-  let span = document.createElement('span');
-  span.setAttribute('class', 'pulldown');
-  span.innerText = "Xbox Game Pass";
-  span.appendChild(document.createElement('span'));
-  
-  let button = document.createElement('a');
-  button.setAttribute('class', 'tab');
-  button.setAttribute('id', 'alike_gp_changes_button');
-
-  button.appendChild(span);
-  button.appendChild(container);
-  button.onmouseenter = function () {
-    if (!container.classList.contains('open') && !container.classList.contains('closed')) {
-      let date = new Date(new Date().getFullYear(),new Date().getMonth() - 1, new Date().getDate());
-      date = date.toISOString().slice(0,10);
-      loadChanges(date);
-    }
-    container.classList.remove('closed');
-    container.classList.add('open');
-  };
-  button.onmouseleave = function () {
-    container.classList.remove('open');
-    container.classList.add('closed');
-  };
-  element.insertBefore(button, element.querySelector('.search_area'));
-}
-
-function loadChanges(date) {
-  document.querySelector('.alike_gp_changes_title').innerText = "Changes since " + getDateString(date);
-  transferData(2, 'v=' + version + '&date=' + date, function(resp) {
-    document.querySelector('.alike_xhr_data').innerHTML = resp;
-    waitForElement('.alike_gp_changes .arrow.left').then(function() {
-      document.querySelectorAll('.alike_gp_changes .arrow.left').forEach((left) => {
-        left.addEventListener('click', (e) => {
-          slideSelection(e, -1, e.currentTarget.nextElementSibling);
-        });
-      });
-      document.querySelectorAll('.alike_gp_changes .arrow.right').forEach((right) => {
-        right.addEventListener('click', (e) => {
-          slideSelection(e, 1, e.currentTarget.previousElementSibling);
-        });
-      });
-      function slideSelection(e, change, sib) {
-        clist = e.currentTarget.classList;
-        if (!clist.contains('disabled')) {
-          let cont = e.currentTarget.parentNode.firstChild.firstChild;
-          let pos = parseInt(cont.dataset.position) + change;
-          sib.classList.remove('disabled');
-          cont.setAttribute("data-position", pos);
-          cont.style.transform = "translateX(-" + (162 * pos) + "px)";
-          if (change === -1) {
-            if (parseInt(cont.dataset.position) <= 0)
-              clist.add('disabled');
-          } else if (change === 1) {
-            if (parseInt(cont.dataset.position) > (cont.childElementCount - 6))
-              clist.add('disabled');
-          }
-        }
-      }
-    });
-  });
-}
 
 function getGameList(list, type) {
   let uniq = [ ...new Set(list.filter(Boolean)) ];
@@ -257,22 +175,6 @@ function addGamePassInfo(t, g) {
   let flagDiv = document.createElement('div');
   flagDiv.setAttribute('class', 'gp_flag');
   flagDiv.innerText = (text.flag + ' GAMEPASS');
-  
-  let textDiv = document.createElement('div');
-  textDiv.setAttribute('class', 'gp_text');
-  textDiv.innerText = (text.info);
-  
-  let errorDiv = document.createElement('div');
-  errorDiv.setAttribute('class', 'gp_error');
-  errorDiv.setAttribute('title', 'Report "' + g.name + '" for errors');
-  errorDiv.innerHTML = '&#9888';
-  errorDiv.onclick = function () {
-    if (confirm('Do you really want to report ' + g.name + '?')) {
-      transferData(1, 'v=' + version + '&type=error&id=' + appId + '&name=' + g.name, function(r) {
-        alert(g.name + ' was successfully is reported\nThank you');
-      });
-    }
-  };
 
   let container = document.createElement('div');
   className = 'page_content gp_app_cont';
@@ -284,88 +186,23 @@ function addGamePassInfo(t, g) {
   container.setAttribute('class', className + ' alike_gamepass gp_' + g.gamepass.status);
   container.appendChild(flagDiv);
   if (t === 'a') {
+    let textDiv = document.createElement('div');
+    textDiv.setAttribute('class', 'gp_text');
+    textDiv.innerText = (text.info);
     container.appendChild(textDiv);
-    container.appendChild(errorDiv);
   }
 
-  if (t === 's') parent = 'a.alike_gp[data-ds-appid="' + g.steam_id + '"] .search_name p';
+  if (t === 's') parent = '.alike_gp[data-ds-appid="' + g.steam_id + '"] .search_name p';
   else if (t === 'w') parent = 'div.alike_gp[data-app-id="' + g.steam_id + '"] .stats';
-  else if (t === 'h') parent = 'a.alike_gp[data-ds-appid="' + g.steam_id + '"]';
+  else if (t === 'h') parent = '.alike_gp[data-ds-appid="' + g.steam_id + '"]';
   else if (t === 'hm') parent = 'div:not(.alike_gp_read) .alike_gp[data-ds-appid="' + g.steam_id + '"]';
   else parent = '.page_content_ctn > .block .queue_overflow_ctn';
 
   document.querySelectorAll(parent).forEach(element => {
-    let cln = container.cloneNode(true);
-    element.appendChild(cln);
-  });
-}
-
-function waitForElement(selector) {
-  return new Promise(function(resolve, reject) {
-    let element = document.querySelector(selector);
-
-    if(element) {
-      resolve(element);
-      return;
+    if (!element.querySelector('.alike_gamepass')) {
+      let cln = container.cloneNode(true);
+      element.appendChild(cln);
+      console.log(element);
     }
-
-    let observer = new MutationObserver(function(mutations) {
-      mutations.forEach(function(mutation) {
-        let nodes = Array.from(mutation.addedNodes);
-        for(let node of nodes) {
-          if(node.matches && node.matches(selector)) {
-            observer.disconnect();
-            resolve(node);
-            return;
-          }
-        };
-      });
-    });
-
-    observer.observe(document.documentElement, { childList: true, subtree: true });
   });
-}
-
-function getDateString(date, str_b = '', str_a = '') {
-  d = new Date(date);
-  if(d.setHours(0,0,0,0) == new Date().setHours(0,0,0,0)) return ' today';
-  const ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(d);
-  const mo = new Intl.DateTimeFormat('en', { month: 'short' }).format(d);
-  const da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(d);
-  return (str_b + ' ' + da + ' ' + mo + ', ' + ye + ' ' + str_b);
-}
-
-function transferData(target, param, callback = null) {
-  switch (target) {
-    case 1:
-      url = 'passdata.php';
-      break;
-  
-    case 2:
-      url = 'changes.php';
-      break;
-  
-    default:
-      url = 'gamedata.php';
-      break;
-  }
-
-  let xhr = new XMLHttpRequest;
-
-  xhr.open('POST', 'https://aligueler.com/GamePass/' + url, true);
-  xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-  xhr.onreadystatechange = function() {
-    if (callback != null && this.readyState == 4 && this.status == 200) {
-      callback(xhr.responseText);
-    };
-  }
-  xhr.send(param);
-}
-
-function log(text) {
-  console.log(
-    '%c [Gamepass] %c ' + text,
-    'color:#f7f7f7; background-color:#0f780f;',
-    'color:inherit; background-color:inherit;'
-  );
 }
