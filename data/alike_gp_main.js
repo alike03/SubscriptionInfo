@@ -1,9 +1,23 @@
 
 
 log('https://aligueler.com/GamePass/');
-const version = '1-0-3';
+
+const isChrome = navigator.userAgent.match('Chrome');
+const isFirefox = navigator.userAgent.match('Firefox');
+
+const version = (isChrome ? chrome : browser).runtime.getManifest().version;
+const getURL = (name) => (isChrome ? chrome : browser).runtime.getURL(name);
+
 
 /*******  Functions  *******/
+
+function loadScript(name, id) {
+    var script = document.createElement('script');
+    script.src = getURL(name + '.js');
+    script.setAttribute('id', id);
+    script.setAttribute('async', true);
+    document.body.appendChild(script);
+}
 
 function waitForElement(selector) {
     return new Promise(function (resolve, reject) {

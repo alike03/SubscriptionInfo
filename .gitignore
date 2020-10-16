@@ -1,5 +1,6 @@
-ideas/
-info/
+_ideas/
+_info/
+_dump/
 
 ### Compressed ###
 *.7z

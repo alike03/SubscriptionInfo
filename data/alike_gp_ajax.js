@@ -42,8 +42,8 @@ waitForElement('#store_nav_area .store_nav').then(function (element) {
 });
 
 function loadChanges(date) {
-    transferData(2, 'v=' + version + '&date=' + date, function (resp) {
-        document.querySelector('.ag_changes_title').innerText = "alike03's Xbox Game Pass info on Steam v" + version.replaceAll('-', '.');
+    transferData(2, 'v=' + version.replaceAll('.', '-') + '&date=' + date, function (resp) {
+        document.querySelector('.ag_changes_title').innerText = "alike03's Xbox Game Pass info on Steam v" + version;
         document.querySelector('.alike_xhr_data').innerHTML = resp;
 
         loadTabButtons();

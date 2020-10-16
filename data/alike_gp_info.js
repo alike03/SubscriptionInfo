@@ -114,14 +114,14 @@ if (path.split('/')[1] === 'wishlist') {
 if (path.split('/')[1] === 'app') {
   let appId = path.split('/')[2];
   
-  transferData(0, 'v=' + version + '&id=' + appId, function(resp) {
+  transferData(0, 'v=' + version.replaceAll('.', '-') + '&id=' + appId, function(resp) {
     response = JSON.parse(resp)[0];
     waitForElement('.page_content_ctn > .block .queue_overflow_ctn').then(function() {
       addGamePassInfo('a', response);
     });
   });
   waitForElement('.release_date .date').then(function(element) {
-    transferData(1, 'v=' + version + '&type=info&id=' + appId + '&date=' + element.textContent);
+    transferData(1, 'v=' + version.replaceAll('.', '-') + '&type=info&id=' + appId + '&date=' + element.textContent);
   });
 }
 
@@ -130,7 +130,7 @@ if (path.split('/')[1] === 'app') {
 function getGameList(list, type) {
   let uniq = [ ...new Set(list.filter(Boolean)) ];
   if (uniq.length > 0) {
-    transferData(0, 'v=' + version + '&id=' + uniq.toString(), function(resp) {
+    transferData(0, 'v=' + version.replaceAll('.', '-') + '&id=' + uniq.toString(), function(resp) {
       response = JSON.parse(resp);
       response.forEach(game => { addGamePassInfo(type, game) });
     });
@@ -202,7 +202,6 @@ function addGamePassInfo(t, g) {
     if (!element.querySelector('.alike_gamepass')) {
       let cln = container.cloneNode(true);
       element.appendChild(cln);
-      console.log(element);
     }
   });
 }
