@@ -1,6 +1,6 @@
 # Xbox Game Pass info on Steam
 
-https://img.shields.io/amo/v/gamepass-info-for-steam?label=version&style=for-the-badge https://img.shields.io/amo/users/gamepass-info-for-steam? abel=firefox%20users&style=for-the-badge https://img.shields.io/chrome-web-store/users/jecikjbpiedagpmibmgpfgnkfpomgeok?label=chrome%20users&style=for-the-badge https://img.shields.io/amo/stars/gamepass-info-for-steam?label=firefox%20rating&style=for-the-badge
+![Current version](https://img.shields.io/amo/v/gamepass-info-for-steam?label=version&style=for-the-badge) ![Chrome users](https://img.shields.io/chrome-web-store/users/jecikjbpiedagpmibmgpfgnkfpomgeok?label=chrome%20users&style=for-the-badge) ![Firefox users](https://img.shields.io/amo/users/gamepass-info-for-steam?label=firefox%20users&style=for-the-badge) ![Firefox rating](https://img.shields.io/amo/stars/gamepass-info-for-steam?label=firefox%20rating&style=for-the-badge)
 
 Have you ever had the situation where you bought a game, only to later find out that it's already on Xbox Game Pass? It happened to me. Luckily it was only 10 bucks.
 So I thought, "What if I could see that information directly on Steam?"
