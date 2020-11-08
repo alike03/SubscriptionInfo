@@ -12,35 +12,29 @@ if (path.split('/')[1] === '') {
       '.home_page_content .home_tabs_content .tab_content a[data-ds-appid],' +
       '.home_page_content .marketingmessage_container a[data-ds-appid]'
     ).forEach(game => {
-      if (!game.classList.contains('alike_gp')) {
+      if (!game.classList.contains('alike_sub')) {
         gameListHome.push(game.dataset.dsAppid);
-        game.classList.add('alike_gp');
+        game.classList.add('alike_sub');
       }
     });
 
-    getGameList(gameListHome, 'h');
+    getGameList(gameListHome, 1);
 
-    document.addEventListener('scroll', limitHome);
-    function limitHome() {
-      if (!triggerLimit) {
-        setTimeout(moreHomeList, 700);
-        triggerLimit = true;
-      }
-    }
+    document.addEventListener('scroll', function() { limitFunction(moreHomeList) });
       
     function moreHomeList() {
       let gameListHomeMore = [];
-      document.querySelectorAll('.page_content_ctn:not(.alike_gp_read)').forEach(list => {
-        list.classList.add('alike_gp_read');
-        list.querySelectorAll('[data-ds-appid]').forEach(game => {
-          if (!game.classList.contains('alike_gp')) {
+      document.querySelectorAll('.page_content_ctn:not(.alike_sub_read)').forEach(list => {
+        list.classList.add('alike_sub_read');
+        list.querySelectorAll('[data-ds-appid]:not(.screenshot)').forEach(game => {
+          if (!game.classList.contains('alike_sub')) {
             gameListHomeMore.push(game.dataset.dsAppid);
-            game.classList.add('alike_gp');
+            game.classList.add('alike_sub');
           }
         });
       });
 
-      getGameList(gameListHomeMore, 'hm');
+      getGameList(gameListHomeMore, 2);
       triggerLimit = false;
     }
   })
@@ -49,33 +43,25 @@ if (path.split('/')[1] === '') {
 if (path.split('/')[1] === 'search') {
   waitForElement('.search_results #search_result_container #search_resultsRows').then(function() {
 
-    window.addEventListener('popstate', limitSearch);
-    document.addEventListener('scroll', limitSearch);
-    document.getElementById('advsearchform').addEventListener("submit", limitSearch);
-    document.getElementById('advsearchform').addEventListener('keyup', function(e){
-      var char = e.which || e.keyCode;
-      if (char === 13) limitSearch();
+    window.addEventListener('popstate', function() { limitFunction(filterSearchList) });
+    document.addEventListener('scroll', function() { limitFunction(filterSearchList) });
+    document.getElementById('advsearchform').addEventListener("submit", function() { limitFunction(filterSearchList) });
+    document.getElementById('advsearchform').addEventListener('keyup', function(e) {
+      if (e.key === 13) limitFunction(filterSearchList);
     })
     filterSearchList();
 
-    function limitSearch() {
-      if (!triggerLimit) {
-        triggerLimit = true;
-        setTimeout(filterSearchList, 700);
-      }
-    }
-
     function filterSearchList() {
-      let gameListSearch = [];
+      let list = [];
 
-      document.querySelectorAll('#search_resultsRows a[data-ds-appid]:not(.alike_gp)').forEach(game => {
-        if (!game.classList.contains('alike_gp')) {
-          gameListSearch.push(game.dataset.dsAppid);
-          game.classList.add('alike_gp');
+      document.querySelectorAll('#search_resultsRows a[data-ds-appid]:not(.alike_sub)').forEach(game => {
+        if (!game.classList.contains('alike_sub')) {
+          list.push(game.dataset.dsAppid);
+          game.classList.add('alike_sub');
         }
       });
 
-      getGameList(gameListSearch, 's');
+      getGameList(list, 4);
       triggerLimit = false;
     }
   });
@@ -83,29 +69,20 @@ if (path.split('/')[1] === 'search') {
 // Wishlist page
 if (path.split('/')[1] === 'wishlist') {
   waitForElement('.page_content #wishlist_ctn .wishlist_row').then(function() {
-    var triggerLimit = false;
-
-    document.getElementById('wishlist_search').addEventListener("keyup", limitWishlist);
-    document.addEventListener('scroll', limitWishlist);
+    document.getElementById('wishlist_search').addEventListener("keyup", function() { limitFunction(filterWishlistList) });
+    document.addEventListener('scroll', function() { limitFunction(filterWishlistList) });
     filterWishlistList();
 
-    function limitWishlist() {
-      if (!triggerLimit) {
-        triggerLimit = true;
-        setTimeout(filterWishlistList, 700);
-      }
-    }
-
     function filterWishlistList() {
-      let gameListWishlist = [];
+      let list = [];
       Array.from(document.getElementById('wishlist_ctn').children).forEach(game => {
-        if (!game.classList.contains('alike_gp')) {
-          gameListWishlist.push(game.dataset.appId);
-          game.classList.add('alike_gp');
+        if (!game.classList.contains('alike_sub')) {
+          list.push(game.dataset.appId);
+          game.classList.add('alike_sub');
         }
       });
   
-      getGameList(gameListWishlist, 'w');
+      getGameList(list, 5);
       triggerLimit = false;
     }
   });
@@ -117,12 +94,30 @@ if (path.split('/')[1] === 'app') {
   transferData(0, 'v=' + version.replaceAll('.', '-') + '&id=' + appId, function(resp) {
     response = JSON.parse(resp)[0];
     waitForElement('.page_content_ctn > .block .queue_overflow_ctn').then(function() {
-      addGamePassInfo('a', response);
+      addSubInfo(3, response);
     });
   });
   waitForElement('.release_date .date').then(function(element) {
     transferData(1, 'v=' + version.replaceAll('.', '-') + '&type=info&id=' + appId + '&date=' + element.textContent);
   });
+} else
+// Developer and Publisher
+if (path.split('/')[1] === 'developer' || path.split('/')[1] === 'publisher' || path.split('/')[1] === 'curator') {
+  document.addEventListener('scroll', function() { limitFunction(filterDev) });
+  filterDev();
+      
+  function filterDev() {
+    let list = [];
+    document.querySelectorAll('a[data-ds-appid]:not(.alike_sub)').forEach(game => {
+      if (!game.classList.contains('alike_sub')) {
+        list.push(game.dataset.dsAppid);
+        game.classList.add('alike_sub');
+      }
+    });
+
+    getGameList(list, 1);
+    triggerLimit = false;
+  }
 }
 
 /*******  Functions  *******/
@@ -132,74 +127,61 @@ function getGameList(list, type) {
   if (uniq.length > 0) {
     transferData(0, 'v=' + version.replaceAll('.', '-') + '&id=' + uniq.toString(), function(resp) {
       response = JSON.parse(resp);
-      response.forEach(game => { addGamePassInfo(type, game) });
+      response.forEach(game => { addSubInfo(type, game) });
     });
   }
 }
 
-function addGamePassInfo(t, g) {
-  if(g.gamepass.status == null)
-    return false;
-
-  dateSince = getDateString(g.gamepass.date.since);
-  if(g.gamepass.date.until) dateTill = getDateString(g.gamepass.date.until, 'on');
-
-  let text = {
-    flag: 'ON',
-    info: g.name + ' has been on Xbox Game Pass since  ' + dateSince
+function limitFunction(f) {
+  if (!triggerLimit) {
+    triggerLimit = true;
+    setTimeout(function() { f(); }, 700);
   }
+}
 
-  switch (g.gamepass.status) {
-    case 'left':
-      text = {
-        flag: 'LEFT',
-        info: g.name + ' left Xbox Game Pass ' + (g.gamepass.date.until ? dateTill : '' )
-      }
-      break;
-  
-    case 'leaving':
-      text = {
-        flag: 'LEAVING',
-        info: g.name + ' is leaving Xbox Game Pass ' + (g.gamepass.date.until ? dateTill : 'soon' )
-      }
-      break;
-  
-    case 'soon':
-      text = {
-        flag: 'SOON ON',
-        info: g.name + ' is coming to Xbox Game Pass on ' + dateSince
-      }
-      break;
-  }
-  
-  let flagDiv = document.createElement('div');
-  flagDiv.setAttribute('class', 'gp_flag');
-  flagDiv.innerText = (text.flag + ' GAMEPASS');
+function addSubInfo(t, g) {
+  if(typeof g === 'undefined' || Object.keys(g.subs).length < 1) return false;
 
   let container = document.createElement('div');
-  className = 'page_content gp_app_cont';
-  if (t === 's') className = 'gp_search_cont';
-  if (t === 'w') className = 'gp_wishlist_cont';
-  if (t === 'h') className = 'gp_home_cont';
-  if (t === 'hm') className = 'gp_home_cont';
+  for (const [p, sub] of Object.entries(g.subs)) {
+    let flagDiv = document.createElement('div');
+    flagDiv.setAttribute('class', 'sub_flag ' + sub.status + ' ' + p);
+    flagDiv.innerText = alike_lang.flag[sub.status](p);
+    container.appendChild(flagDiv);
 
-  container.setAttribute('class', className + ' alike_gamepass gp_' + g.gamepass.status);
-  container.appendChild(flagDiv);
-  if (t === 'a') {
-    let textDiv = document.createElement('div');
-    textDiv.setAttribute('class', 'gp_text');
-    textDiv.innerText = (text.info);
-    container.appendChild(textDiv);
+    if (t === 3) {
+      let textDiv = document.createElement('div');
+      textDiv.setAttribute('class', 'sub_text ' + sub.status + ' ' + p);
+      textDiv.innerHTML = '<span>' + alike_lang.long[sub.status](p, g.name, sub.date) + '</span>';
+      container.appendChild(textDiv);
+    }
+  };
+
+  container.setAttribute('class', 'alike_cont type-' + t);
+  switch (t) {
+    case 1://done
+      parent = '.alike_sub[data-ds-appid="' + g.sid + '"]';
+      break;
+    case 2://done
+      parent = 'div:not(.alike_sub_read) .alike_sub[data-ds-appid="' + g.sid + '"]';
+      break;
+    case 3:
+      parent = '.page_content_ctn > .block .queue_overflow_ctn';
+      break;
+    case 4://done
+      parent = '.alike_sub[data-ds-appid="' + g.sid + '"] .search_name p';
+      break;
+    case 5://done
+      parent = 'div.alike_sub[data-app-id="' + g.sid + '"]';
+      break;
+  
+    default:
+      return false;
+      break;
   }
 
-  if (t === 's') parent = '.alike_gp[data-ds-appid="' + g.steam_id + '"] .search_name p';
-  else if (t === 'w') parent = 'div.alike_gp[data-app-id="' + g.steam_id + '"] .stats';
-  else if (t === 'h') parent = '.alike_gp[data-ds-appid="' + g.steam_id + '"]';
-  else if (t === 'hm') parent = 'div:not(.alike_gp_read) .alike_gp[data-ds-appid="' + g.steam_id + '"]';
-  else parent = '.page_content_ctn > .block .queue_overflow_ctn';
-
   document.querySelectorAll(parent).forEach(element => {
-    if (!element.querySelector('.alike_gamepass')) {
+    if (!element.querySelector('.alike_cont')) {
       let cln = container.cloneNode(true);
       element.appendChild(cln);
     }

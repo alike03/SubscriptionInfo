@@ -13,8 +13,8 @@
     },
     "content_scripts": [{
         "matches": ["*://store.steampowered.com/*"],
-        "js": ["alike_gp_lang.js", "alike_gp_main.js", "alike_gp_ajax.js", "alike_gp_info.js"],
-        "css": ["alike_gp_style.css"],
+        "js": ["alike_gp_lang.min.js", "alike_gp_main.min.js", "alike_gp_ajax.min.js", "alike_gp_info.min.js"],
+        "css": ["alike_gp_style.min.css"],
         "run_at": "document_start"
     }]    
 }

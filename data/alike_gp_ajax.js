@@ -42,18 +42,39 @@ waitForElement('#store_nav_area .store_nav').then(function (element) {
 });
 
 function loadChanges(date) {
-    transferData(2, 'v=' + version.replaceAll('.', '-') + '&date=' + date, function (resp) {
-        document.querySelector('.ag_changes_title').innerText = "alike03's Xbox Game Pass info on Steam v" + version;
-        document.querySelector('.alike_xhr_data').innerHTML = resp;
+    transferData(2, "v=" + version.replaceAll(".", "-") + "&date=" + date, function(resp) {
+		response = JSON.parse(resp);
+		document.querySelector(".ag_changes_title").innerText = "alike03's Subscription Info on Steam v" + version;
 
-        loadTabButtons();
-        loadNavArrows();
-        loadOptions();
-    });
+        let buttons = document.createElement("div");
+		buttons.setAttribute("class", "ag_buttons");
+
+        let tabs = document.createElement("div");
+		tabs.setAttribute("class", "ag_tabs");
+
+		response.forEach(content => {
+            let button = document.createElement("div");
+			button.setAttribute("class", "ag_tab_button ag_button icon");
+			button.dataset.id = content.id;
+			button.innerHTML = content.button + '<span class="pulldown"></span>';
+			buttons.appendChild(button);
+
+            let tab = document.createElement("div");
+			tab.setAttribute("class", "ag_tab");
+			tab.setAttribute("id", content.id);
+			tab.innerHTML = content.content;
+			tabs.appendChild(tab);
+        });
+        let ajax_parent = document.querySelector(".alike_xhr_data");
+        ajax_parent.appendChild(buttons);
+		ajax_parent.appendChild(tabs);
+		loadTabButtons();
+		loadNavArrows();
+		loadOptions();
+    })
 }
 
 function loadOptions() {
-    document.querySelector('#ag_options .cont').innerHTML = '<h1>Coming soon</h1>';
 }
 
 function loadTabButtons() {
@@ -97,15 +118,12 @@ function loadNavArrows() {
                 let pos = parseInt(cont.dataset.position) + change;
                 sib.classList.remove('disabled');
                 cont.setAttribute("data-position", pos);
-                //cont.style.transform = "translateX(-" + (168 * pos) + "px)";
                 cont.style.transform = "translateX(-" + (100 * pos) + "%)";
                 if (change === -1) {
                     if (parseInt(cont.dataset.position) <= 0)
                         clist.add('disabled');
-                } else if (change === 1) {
-                    //if (parseInt(cont.dataset.position) > (cont.childElementCount - 6))
-                    if (parseInt(cont.dataset.position) >= Math.floor(cont.childElementCount / 5))
-                        clist.add('disabled');
+                } else if (change === 1 && parseInt(cont.dataset.position) + 1 >= cont.childElementCount / 5) {
+                    clist.add('disabled');
                 }
             }
         }

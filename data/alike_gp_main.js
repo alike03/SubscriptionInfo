@@ -3,21 +3,11 @@
 log('https://aligueler.com/GamePass/');
 
 const isChrome = navigator.userAgent.match('Chrome');
-const isFirefox = navigator.userAgent.match('Firefox');
+//const isFirefox = navigator.userAgent.match('Firefox');
 
 const version = (isChrome ? chrome : browser).runtime.getManifest().version;
-const getURL = (name) => (isChrome ? chrome : browser).runtime.getURL(name);
-
 
 /*******  Functions  *******/
-
-function loadScript(name, id) {
-    var script = document.createElement('script');
-    script.src = getURL(name + '.js');
-    script.setAttribute('id', id);
-    script.setAttribute('async', true);
-    document.body.appendChild(script);
-}
 
 function waitForElement(selector) {
     return new Promise(function (resolve, reject) {
@@ -45,15 +35,6 @@ function waitForElement(selector) {
     });
 }
 
-function getDateString(date, str_b = '', str_a = '') {
-    d = new Date(date);
-    if (d.setHours(0, 0, 0, 0) == new Date().setHours(0, 0, 0, 0)) return ' today';
-    const ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(d);
-    const mo = new Intl.DateTimeFormat('en', { month: 'short' }).format(d);
-    const da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(d);
-    return (str_b + ' ' + da + ' ' + mo + ', ' + ye + ' ' + str_b);
-}
-
 function transferData(target, param, callback = null) {
     switch (target) {
         case 1:
@@ -61,7 +42,7 @@ function transferData(target, param, callback = null) {
             break;
 
         case 2:
-            url = 'changes.php';
+            url = 'menudata.php';
             break;
 
         default:
@@ -83,7 +64,7 @@ function transferData(target, param, callback = null) {
 
 function log(text) {
     console.log(
-        '%c [Gamepass] %c ' + text,
+        '%c [alike03\'s Sub info] %c ' + text,
         'color:#f7f7f7; background-color:#0f780f;',
         'color:inherit; background-color:inherit;'
     );
