@@ -13,7 +13,7 @@ waitForElement('#store_nav_area .store_nav').then(function (element) {
 
     let span = document.createElement('span');
     span.setAttribute('class', 'pulldown');
-    span.innerText = "Xbox Game Pass";
+    span.innerText = "Subscription Info";
     span.appendChild(document.createElement('span'));
 
     let button = document.createElement('a');
