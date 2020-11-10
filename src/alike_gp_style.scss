@@ -480,3 +480,9 @@
         opacity: 0;
     }
 }
+
+// Steam fix
+
+.game_area_purchase_game_dropdown_subscription.game_area_purchase_game {
+    z-index: unset !important;
+}

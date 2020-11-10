@@ -13,7 +13,7 @@ waitForElement('#store_nav_area .store_nav').then(function (element) {
 
     let span = document.createElement('span');
     span.setAttribute('class', 'pulldown');
-    span.innerText = "Subscription Info";
+    span.innerText = "alike03's Sub Info";
     span.appendChild(document.createElement('span'));
 
     let button = document.createElement('a');
