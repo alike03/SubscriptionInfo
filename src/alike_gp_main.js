@@ -4,8 +4,25 @@ log('https://aligueler.com/GamePass/');
 
 const isChrome = navigator.userAgent.match('Chrome');
 //const isFirefox = navigator.userAgent.match('Firefox');
+const currentBrowser = (isChrome ? chrome : browser);
 
-const version = (isChrome ? chrome : browser).runtime.getManifest().version;
+const version = currentBrowser.runtime.getManifest().version;
+
+const platforms = ["gamepasspc", "gamepasscon", "ubiplus", "eaplay"];
+
+let save = {
+    options: {
+        enabled: {
+            gamepass: true,
+            gamepasspc: true,
+            gamepasscon: true,
+            ubiplus: true,
+            eaplay: true
+        }
+    }
+};
+
+loadData();
 
 /*******  Functions  *******/
 
@@ -43,15 +60,16 @@ function transferData(target, param, callback = null) {
 
         case 2:
             url = 'menudata.php';
+            param += "&ns=" + getStatusAsString(save.options.enabled, false);
             break;
 
         default:
             url = 'gamedata.php';
+            param += "&ns=" + getStatusAsString(save.options.enabled, false);
             break;
     }
 
     let xhr = new XMLHttpRequest;
-
     xhr.open('POST', 'https://aligueler.com/GamePass/ajax/' + url, true);
     xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     xhr.onreadystatechange = function () {
@@ -60,6 +78,41 @@ function transferData(target, param, callback = null) {
         };
     }
     xhr.send(param);
+}
+
+function getStatusAsString(target, status) {
+    let resp = '';
+
+    Object.keys(target).forEach(function(child) {
+        if (target[child] === status) 
+            resp += child + ",";
+    });
+
+    return resp.substring(0, resp.length - 1);
+}
+
+function saveData() {
+/*     currentBrowser.storage.local.set({"aSub_options": save}, function() {
+        log("Options saved");
+    }); */
+
+    localStorage.setItem('aSub_options', JSON.stringify(save));
+}
+
+function loadData() {
+/*     currentBrowser.storage.local.get("aSub_options", function (result) {
+        loadSavedSettings(result.aSub_options, save);
+    }); */
+
+    if (localStorage.getItem('aSub_options') !== null)
+        loadSavedSettings(JSON.parse(localStorage.getItem('aSub_options')), save);
+}
+
+function loadSavedSettings(obj, save) {
+    Object.keys(obj).forEach(function(child, key) {
+        if (obj[child] === Object(obj[child])) loadSavedSettings(obj[child], save[child]);
+        else save[child] = obj[child];
+    });
 }
 
 function log(text) {

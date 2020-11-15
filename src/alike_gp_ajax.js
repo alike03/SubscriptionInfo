@@ -72,9 +72,50 @@ function loadChanges(date) {
 		loadNavArrows();
 		loadOptions();
     })
+
+    let script = document.createElement("script");
+    script.src = "https://aligueler.com/GamePass/ajax/menudata.js";
+    script.async = true;
+    document.getElementsByTagName("head")[0].appendChild(script);
 }
 
 function loadOptions() {
+    let title = document.createElement("h2");
+    title.innerText = "Options";
+
+    let content = document.createElement("div");
+    content.setAttribute("class", "cont");
+    let inner = '<h3>' + alike_lang.options.which_subs_title + '</h3>';
+    inner = inner.concat('<span>(' + alike_lang.options.which_subs_info + ')</span><br>');
+    (platforms).forEach(p => {
+        inner = inner.concat('<br><div><input type="checkbox" class="ag_checkbox" '+ (save.options.enabled[p] ? 'checked' : '') + ' id="aSub_' + p + '" name="aSub_' + p + '" value="' + p + '">');
+        inner = inner.concat('<label for="aSub_' + p + '">&nbsp;&nbsp;' + alike_lang.options.which_sub(p) + '</label></div>');
+    });
+    content.innerHTML = inner;
+
+    let button = document.createElement("div");
+    button.setAttribute("class", "ag_tab_button ag_button icon");
+    button.dataset.id = "ag_options";
+    button.innerHTML = "Options<span class='pulldown'></span>";
+    document.querySelector(".alike_xhr_data .ag_buttons").appendChild(button);
+
+    let tab = document.createElement("div");
+    tab.setAttribute("class", "ag_tab");
+    tab.setAttribute("id", "ag_options");
+    tab.appendChild(title);
+    tab.appendChild(content);
+    document.querySelector(".alike_xhr_data .ag_tabs").appendChild(tab);
+
+    loadOptionsFunctions();
+}
+
+function loadOptionsFunctions() {
+    (platforms).forEach(p => {
+        document.querySelector('#aSub_' + p).addEventListener('click', (e) => {
+            save.options.enabled[e.originalTarget.value] = e.originalTarget.checked;
+            saveData();
+        });
+    });
 }
 
 function loadTabButtons() {

@@ -26,6 +26,13 @@ switch (navigator.language) {
                         return "EA PLAY"
                 }
             },
+            options: {
+                which_subs_title: "Which Subscriptions should be displayed",
+                which_subs_info: "Changes will be visible after page reload.",
+                which_sub: function(platform) {
+                    return "Enable " + alike_lang.platform(platform)
+                },
+            },
             flag: {
                 active: function(platform) {
                     return "ON " + alike_lang.platform(platform)
