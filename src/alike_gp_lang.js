@@ -2,8 +2,9 @@ switch (navigator.language) {
     default:
         var alike_lang = {
             i18n: "en-US",
-            formatDate: function(d) {
-                if (date = new Date(d),
+            formatDate: function(d, today = true) {
+                date = new Date(d);
+                if (today &&
                     date.setHours(0, 0, 0, 0) == (new Date).setHours(0, 0, 0, 0))
                     return "today";
                 return new Intl.DateTimeFormat(alike_lang.i18n, {
@@ -52,7 +53,7 @@ switch (navigator.language) {
                     return name + " has been on " + alike_lang.platform(platform) + " since " + alike_lang.formatDate(date.since)
                 },
                 left: function(platform, name, date) {
-                    return name + " left " + alike_lang.platform(platform) + " on " + alike_lang.formatDate(date.until)
+                    return name + " left " + alike_lang.platform(platform) + " on " + alike_lang.formatDate(date.until, false)
                 },
                 leaving: function(platform, name, date) {
                     return name + " is leaving " + alike_lang.platform(platform) + " " + (date.until ? alike_lang.formatDate(date.until) : "soon")

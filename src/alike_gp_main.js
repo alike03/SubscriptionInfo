@@ -13,7 +13,6 @@ const platforms = ["gamepasspc", "gamepasscon", "ubiplus", "eaplay"];
 let save = {
     options: {
         enabled: {
-            gamepass: true,
             gamepasspc: true,
             gamepasscon: true,
             ubiplus: true,
@@ -22,7 +21,7 @@ let save = {
     }
 };
 
-loadData();
+let saveLoaded = loadData();
 
 /*******  Functions  *******/
 
@@ -52,7 +51,9 @@ function waitForElement(selector) {
     });
 }
 
-function transferData(target, param, callback = null) {
+async function transferData(target, param, callback = null) {
+    await saveLoaded;
+    
     switch (target) {
         case 1:
             url = 'passdata.php';
@@ -69,6 +70,7 @@ function transferData(target, param, callback = null) {
             break;
     }
 
+    log(param);
     let xhr = new XMLHttpRequest;
     xhr.open('POST', 'https://aligueler.com/GamePass/ajax/' + url, true);
     xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
@@ -92,23 +94,25 @@ function getStatusAsString(target, status) {
 }
 
 function saveData() {
-/*     currentBrowser.storage.local.set({"aSub_options": save}, function() {
+    currentBrowser.storage.sync.set({"aSub_options": save}, function() {
         log("Options saved");
-    }); */
-
-    localStorage.setItem('aSub_options', JSON.stringify(save));
+    });
 }
 
 function loadData() {
-/*     currentBrowser.storage.local.get("aSub_options", function (result) {
-        loadSavedSettings(result.aSub_options, save);
-    }); */
+    return new Promise(function (resolve, reject) {
+        currentBrowser.storage.sync.get("aSub_options", function(result) {
+            if (typeof result.aSub_options === 'object')
+                loadSavedSettings(result.aSub_options, save);
 
-    if (localStorage.getItem('aSub_options') !== null)
-        loadSavedSettings(JSON.parse(localStorage.getItem('aSub_options')), save);
+            console.log(result);
+            resolve(true);
+        })
+    });
 }
 
 function loadSavedSettings(obj, save) {
+    if (typeof obj !== 'object') return false;
     Object.keys(obj).forEach(function(child, key) {
         if (obj[child] === Object(obj[child])) loadSavedSettings(obj[child], save[child]);
         else save[child] = obj[child];

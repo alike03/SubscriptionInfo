@@ -112,7 +112,7 @@ function loadOptions() {
 function loadOptionsFunctions() {
     (platforms).forEach(p => {
         document.querySelector('#aSub_' + p).addEventListener('click', (e) => {
-            save.options.enabled[e.originalTarget.value] = e.originalTarget.checked;
+            save.options.enabled[e.target.value] = e.target.checked;
             saveData();
         });
     });
