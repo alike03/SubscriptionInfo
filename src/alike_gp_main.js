@@ -94,7 +94,7 @@ function getStatusAsString(target, status) {
 }
 
 function saveData() {
-    currentBrowser.storage.sync.set({"aSub_options": save}, function() {
+    currentBrowser.storage.sync.set({"aSub_options": save}, function(e) {
         log("Options saved");
     });
 }
@@ -102,10 +102,9 @@ function saveData() {
 function loadData() {
     return new Promise(function (resolve, reject) {
         currentBrowser.storage.sync.get("aSub_options", function(result) {
-            if (typeof result.aSub_options === 'object')
+            if (typeof result === 'object' && typeof result.aSub_options !== 'undefined' && typeof result.aSub_options === 'object')
                 loadSavedSettings(result.aSub_options, save);
 
-            console.log(result);
             resolve(true);
         })
     });
