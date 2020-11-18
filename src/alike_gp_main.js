@@ -94,7 +94,7 @@ function getStatusAsString(target, status) {
 }
 
 function saveData() {
-    currentBrowser.storage.sync.set({"aSub_options": save}, function(e) {
+    currentBrowser.storage.sync.set({"aSub_options": save}, function() {
         log("Options saved");
     });
 }

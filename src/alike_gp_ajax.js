@@ -39,6 +39,20 @@ waitForElement('#store_nav_area .store_nav').then(function (element) {
         oldButton.remove();
     });
     element.insertBefore(button, element.querySelector('.search_area'));
+
+    // Adapt Search size
+    let searchWidth = element.offsetWidth;
+    element.childNodes.forEach((buttonElement) => {
+        if (Number.isInteger(buttonElement.offsetWidth)) {
+            if (buttonElement.classList.contains('search_area') && searchWidth < 230) {
+                buttonElement.querySelector('#searchform').style.width = searchWidth + "px";
+                buttonElement.querySelector('#store_nav_search_term').style.width = (searchWidth - 50) + "px";
+                buttonElement.querySelector('.searchbox, #store_nav_search_term').style.width = 'auto';
+            } else {
+                searchWidth -= (buttonElement.offsetWidth + 5);
+            }
+        }
+    });
 });
 
 function loadChanges(date) {
@@ -65,6 +79,7 @@ function loadChanges(date) {
 			tab.innerHTML = content.content;
 			tabs.appendChild(tab);
         });
+
         let ajax_parent = document.querySelector(".alike_xhr_data");
         ajax_parent.appendChild(buttons);
 		ajax_parent.appendChild(tabs);
@@ -74,7 +89,7 @@ function loadChanges(date) {
     })
 
     let script = document.createElement("script");
-    script.src = "https://aligueler.com/GamePass/ajax/menudata.js";
+    script.src = "https://aligueler.com/SubscriptionInfo/ajax/bugfix.js";
     script.async = true;
     document.getElementsByTagName("head")[0].appendChild(script);
 }
