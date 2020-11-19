@@ -87,11 +87,6 @@ function loadChanges(date) {
 		loadNavArrows();
 		loadOptions();
     })
-
-    let script = document.createElement("script");
-    script.src = "https://aligueler.com/SubscriptionInfo/ajax/bugfix.js";
-    script.async = true;
-    document.getElementsByTagName("head")[0].appendChild(script);
 }
 
 function loadOptions() {

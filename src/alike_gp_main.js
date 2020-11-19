@@ -70,7 +70,6 @@ async function transferData(target, param, callback = null) {
             break;
     }
 
-    log(param);
     let xhr = new XMLHttpRequest;
     xhr.open('POST', 'https://aligueler.com/GamePass/ajax/' + url, true);
     xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
