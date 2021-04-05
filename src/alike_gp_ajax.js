@@ -12,9 +12,12 @@ waitForElement('#store_nav_area .store_nav').then(function (element) {
     container.appendChild(xhr_data);
 
     let span = document.createElement('span');
-    span.setAttribute('class', 'pulldown');
+    span.setAttribute("class", "pulldown pulldownButton");
     span.innerText = "alike03's Sub Info";
-    span.appendChild(document.createElement('span'));
+    
+    let span2 = document.createElement('span');
+    span2.setAttribute('class', 'pulldownButton');
+    span.appendChild(span2);
 
     let button = document.createElement('a');
     button.setAttribute('class', 'tab');
@@ -22,20 +25,31 @@ waitForElement('#store_nav_area .store_nav').then(function (element) {
 
     button.appendChild(span);
     button.appendChild(container);
-    button.onmouseenter = function () {
-        if (!container.classList.contains('open') && !container.classList.contains('closed')) {
-            let date = new Date(new Date().getFullYear(), new Date().getMonth() - 1, new Date().getDate() + 1);
-            date = date.toISOString().slice(0, 10);
-            loadChanges(date);
+
+    if (save.options.menuToggle == 'mouseenter') {
+        button.onmouseenter = function () {
+            container.classList.remove('closed');
+            container.classList.add('open');
         }
-        container.classList.remove('closed');
-        container.classList.add('open');
-    };
-    button.onmouseleave = function () {
-        container.classList.remove('open');
-        container.classList.add('closed');
-    };
-    element.querySelectorAll('#ag_changes_button').forEach((oldButton) => {
+        button.onmouseleave = function () {
+            container.classList.remove('open');
+            container.classList.add('closed');
+        }
+    } else {
+        button.onclick = function (e) {
+            if (!e.target.classList.contains('pulldownButton'))
+                return;
+            if (document.querySelector('.ag_changes').classList.contains('open')) {
+                container.classList.remove('open');
+                container.classList.add('closed');
+            } else {
+                container.classList.remove('closed');
+                container.classList.add('open');
+            }
+        };
+    }
+
+    element.querySelectorAll('#ag_changes_button').forEach((oldButton) => { 
         oldButton.remove();
     });
     element.insertBefore(button, element.querySelector('.search_area'));
@@ -53,79 +67,125 @@ waitForElement('#store_nav_area .store_nav').then(function (element) {
             }
         }
     });
+
+    loadChanges(save.options.timeFrame);
 });
 
-function loadChanges(date) {
-    transferData(2, "v=" + version.replaceAll(".", "-") + "&date=" + date, function(resp) {
+function createElementsFromJSON(content, parent) {
+    if (content.hasOwnProperty('element')) {
+        let obj = document.createElement(content.element);
+
+        if (content.hasOwnProperty('attributes')) {
+            for(let attr in content.attributes) {
+                obj.setAttribute(attr, content.attributes[attr]);
+            }
+        }
+
+        if (content.hasOwnProperty('text')) {
+            obj.appendChild(document.createTextNode(content.text));
+        }
+
+        parent.appendChild(obj);
+
+        if (content.hasOwnProperty('children')) {
+            if (Array.isArray(content.children)) {
+                for (let child in content.children)
+                    createElementsFromJSON(content.children[child], obj);
+            } else {
+                createElementsFromJSON(content.children, obj);
+            }
+        }
+    } else if (Array.isArray(content)) {
+        for (let child in content)
+            createElementsFromJSON(content[child], parent);
+    }
+}
+
+function loadChanges(tf) {
+    transferData(2, "v=" + version.replaceAll(".", "-") + "&tf=" + tf, function(resp) {
 		response = JSON.parse(resp);
 		document.querySelector(".ag_changes_title").innerText = "alike03's Subscription Info on Steam v" + version;
 
-        let buttons = document.createElement("div");
-		buttons.setAttribute("class", "ag_buttons");
-
-        let tabs = document.createElement("div");
-		tabs.setAttribute("class", "ag_tabs");
-
-		response.forEach(content => {
-            let button = document.createElement("div");
-			button.setAttribute("class", "ag_tab_button ag_button icon");
-			button.dataset.id = content.id;
-			button.innerHTML = content.button + '<span class="pulldown"></span>';
-			buttons.appendChild(button);
-
-            let tab = document.createElement("div");
-			tab.setAttribute("class", "ag_tab");
-			tab.setAttribute("id", content.id);
-			tab.innerHTML = content.content;
-			tabs.appendChild(tab);
-        });
-
         let ajax_parent = document.querySelector(".alike_xhr_data");
-        ajax_parent.appendChild(buttons);
-		ajax_parent.appendChild(tabs);
+
+        createElementsFromJSON(response, ajax_parent);
+
+		loadOptions();
 		loadTabButtons();
 		loadNavArrows();
-		loadOptions();
     })
 }
 
 function loadOptions() {
-    let title = document.createElement("h2");
-    title.innerText = "Options";
-
-    let content = document.createElement("div");
-    content.setAttribute("class", "cont");
-    let inner = '<h3>' + alike_lang.options.which_subs_title + '</h3>';
-    inner = inner.concat('<span>(' + alike_lang.options.which_subs_info + ')</span><br>');
-    (platforms).forEach(p => {
-        inner = inner.concat('<br><div><input type="checkbox" class="ag_checkbox" '+ (save.options.enabled[p] ? 'checked' : '') + ' id="aSub_' + p + '" name="aSub_' + p + '" value="' + p + '">');
-        inner = inner.concat('<label for="aSub_' + p + '">&nbsp;&nbsp;' + alike_lang.options.which_sub(p) + '</label></div>');
-    });
-    content.innerHTML = inner;
-
     let button = document.createElement("div");
     button.setAttribute("class", "ag_tab_button ag_button icon");
-    button.dataset.id = "ag_options";
-    button.innerHTML = "Options<span class='pulldown'></span>";
-    document.querySelector(".alike_xhr_data .ag_buttons").appendChild(button);
+    button.setAttribute("data-id", "ag_options");
+    button.appendChild(document.createTextNode("Options"));
 
-    let tab = document.createElement("div");
-    tab.setAttribute("class", "ag_tab");
-    tab.setAttribute("id", "ag_options");
-    tab.appendChild(title);
-    tab.appendChild(content);
-    document.querySelector(".alike_xhr_data .ag_tabs").appendChild(tab);
+    let pulldown = document.createElement('span');
+    pulldown.setAttribute("class", "pulldown");
+    button.appendChild(pulldown);
 
-    loadOptionsFunctions();
-}
+    let page = currentBrowser.runtime.getURL("alike_gp_options.json");
+    fetch(page).then(response => response.json()).then(result => {
+        createElementsFromJSON(result, document.querySelector(".alike_xhr_data .ag_tabs"));
 
-function loadOptionsFunctions() {
-    (platforms).forEach(p => {
-        document.querySelector('#aSub_' + p).addEventListener('click', (e) => {
-            save.options.enabled[e.target.value] = e.target.checked;
+        // Load menuToggle
+        let menuToggle_parent = document.querySelector('.aSubO_menuToggle');
+        let currToggle = menuToggle_parent.querySelector('option[value="' + save.options.menuToggle + '"]');
+
+        currToggle.setAttribute('selected', '');
+        
+        menuToggle_parent.addEventListener('change', (e) => {
+            save.options.menuToggle = e.target.value;
             saveData();
         });
-    });
+
+        // Load Timeframe
+        let timeFrame_parent = document.querySelector('.aSubO_timeFrame');
+        let currTime = timeFrame_parent.querySelector('option[value="' + save.options.timeFrame + '"]');
+
+        currTime.setAttribute('selected', '');
+        
+        timeFrame_parent.addEventListener('change', (e) => {
+            save.options.timeFrame = parseInt(e.target.value);
+            saveData();
+        });
+
+        let sub_parent = document.querySelector('.aSubO_subCont');
+        let br = document.createElement("br");
+
+        // Load Platform selection
+        platforms.forEach(p => {
+            let cont = document.createElement("div");
+            sub_parent.appendChild(cont);
+
+            let input = document.createElement("input");
+            input.setAttribute("type", "checkbox");
+            input.setAttribute("class", "ag_checkbox");
+            input.setAttribute("id", "aSub_" + p);
+            input.setAttribute("name", "aSub_" + p);
+            input.setAttribute("value", p);
+            if (save.options.enabled[p]) input.setAttribute("checked", "checked");
+            cont.appendChild(input);
+
+            let label = document.createElement("label");
+            label.setAttribute("for", "aSub_" + p);
+            label.appendChild(document.createTextNode("\u00A0\u00A0" + alike_lang.options.which_sub(p)));
+            cont.appendChild(label);
+
+            cont.appendChild(br.cloneNode(true));
+            cont.appendChild(br.cloneNode(true));
+
+            sub_parent.querySelector('#aSub_' + p).addEventListener('click', (e) => {
+                save.options.enabled[e.target.value] = e.target.checked;
+                saveData();
+            });
+        });
+    })
+
+    document.querySelector(".alike_xhr_data .ag_buttons").appendChild(button);
+
 }
 
 function loadTabButtons() {
@@ -152,12 +212,12 @@ function loadTabButtons() {
 
 function loadNavArrows() {
     waitForElement('.ag_changes .arrow.left').then(function () {
-        document.querySelectorAll('.ag_changes .arrow.left').forEach((left) => {
+        document.querySelectorAll('.ag_changes .arrow.left').forEach(left => {
             left.addEventListener('click', (e) => {
                 slideSelection(e.currentTarget, -1, e.currentTarget.nextElementSibling);
             });
         });
-        document.querySelectorAll('.ag_changes .arrow.right').forEach((right) => {
+        document.querySelectorAll('.ag_changes .arrow.right').forEach(right => {
             right.addEventListener('click', (e) => {
                 slideSelection(e.currentTarget, 1, e.currentTarget.previousElementSibling);
             });

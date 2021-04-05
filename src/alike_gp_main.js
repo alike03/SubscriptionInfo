@@ -1,6 +1,6 @@
 
 
-log('https://aligueler.com/GamePass/');
+log('https://aligueler.com/SubscriptionInfo/');
 
 const isChrome = navigator.userAgent.match('Chrome');
 //const isFirefox = navigator.userAgent.match('Firefox');
@@ -8,7 +8,7 @@ const currentBrowser = (isChrome ? chrome : browser);
 
 const version = currentBrowser.runtime.getManifest().version;
 
-const platforms = ["gamepasspc", "gamepasscon", "ubiplus", "eaplay"];
+const platforms = ["gamepasspc", "gamepasscon", "ubiplus", "eaplay", "eaplaypro"];
 
 let save = {
     options: {
@@ -16,8 +16,11 @@ let save = {
             gamepasspc: true,
             gamepasscon: true,
             ubiplus: true,
-            eaplay: true
-        }
+            eaplay: true,
+            eaplaypro: true
+        },
+        timeFrame: 30,
+        menuToggle: 'mouseenter'
     }
 };
 
@@ -71,7 +74,7 @@ async function transferData(target, param, callback = null) {
     }
 
     let xhr = new XMLHttpRequest;
-    xhr.open('POST', 'https://aligueler.com/GamePass/ajax/' + url, true);
+    xhr.open('POST', 'https://aligueler.com/SubscriptionInfo/ajax/' + url, true);
     xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     xhr.onreadystatechange = function () {
         if (callback != null && this.readyState == 4 && this.status == 200) {

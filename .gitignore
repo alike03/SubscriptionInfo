@@ -9,3 +9,7 @@ _dump/
 *.rar
 *.zip
 *.zipx
+
+### Packing ###
+.web-extension-id
+web-ext-artifacts/

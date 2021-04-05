@@ -25,6 +25,8 @@ switch (navigator.language) {
                         return "UBISOFT+";
                     case "eaplay":
                         return "EA PLAY"
+                    case "eaplaypro":
+                        return "EA PLAY PRO"
                 }
             },
             options: {

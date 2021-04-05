@@ -8,7 +8,7 @@ Have you ever had the situation where you bought a game, only to later find out 
 So I thought, "What if I could see that information directly on Steam?"
 This addon checks the Game through the database I have created and displays if the game is currently on Xbox Game Pass PC & Console, on Ubisoft+, or on EA Play.
 
-[Changelog](https://aligueler.com/GamePass/)
+[Changelog](https://aligueler.com/SubscriptionInfo/)
 
 ## Download
 
