@@ -162,24 +162,29 @@
   background-position-x: 4px;
 }
 
-.tab:hover .ag_changes {
+#ag_changes_button {
+  display: inline-block;
+}
+#ag_changes_button:hover {
   color: #ffffff;
-  text-shadow: none;
 }
 
 .ag_changes {
   background: linear-gradient(to bottom, #2a475e 5%, #1b2838 70%);
   box-shadow: 0 0 12px black;
-  margin-top: 0;
+  position: absolute;
+  width: 940px;
   height: 0;
+  right: 0;
+  margin-top: 0;
   opacity: 0;
+  cursor: default;
+  color: #ffffff;
   transform-origin: top;
   overflow: hidden;
-  position: absolute;
-  left: 0;
-  width: 100%;
   z-index: 151;
-  cursor: default;
+  line-height: normal;
+  font-size: 13px;
 }
 .ag_changes.open {
   animation: anim_open 0.2s cubic-bezier(0, 1, 0.8, 1) forwards;
@@ -210,7 +215,7 @@
 }
 .ag_changes .ag_tab {
   display: none;
-  padding: 10px 0;
+  padding: 20px 0;
 }
 .ag_changes .ag_tab select {
   width: auto;
@@ -275,13 +280,13 @@
   overflow: hidden;
   text-align: center;
   left: 0;
-  height: 15px;
+  height: 18px;
   width: 100%;
   margin: 0;
   padding: 5px 0;
 }
 .ag_changes .game .no_steam {
-  bottom: 75px;
+  bottom: 78px;
   background: linear-gradient(135deg, rgba(255, 0, 0, 0.7) 5%, rgba(255, 0, 0, 0.3) 95%);
 }
 .ag_changes .game .date_info {
@@ -289,8 +294,11 @@
   background: linear-gradient(135deg, rgba(30, 70, 255, 0.7) 5%, rgba(30, 70, 255, 0.3) 95%);
 }
 .ag_changes .game .name {
-  margin: 10px;
-  height: 30px;
+  position: absolute;
+  bottom: 0;
+  height: 35px;
+  margin: 0 8px;
+  padding: 8px 0;
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -299,6 +307,7 @@
 .ag_changes .game .has_leave {
   bottom: 50px;
   font-size: 10px;
+  line-height: 20px;
   background: linear-gradient(135deg, rgba(30, 70, 255, 0.7) 0%, rgba(30, 70, 255, 0.3) 45%, rgba(255, 70, 30, 0.3) 55%, rgba(255, 70, 30, 0.7) 100%);
 }
 .ag_changes .arrow {

@@ -17,7 +17,7 @@
                     "class": "cont"
                 },
                 "children": {
-                    "element": "p",
+                    "element": "h3",
                     "text": "(Changes will be visible after page reload.)"
                 }
             },

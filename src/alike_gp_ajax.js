@@ -1,4 +1,4 @@
-waitForElement('#store_nav_area .store_nav').then(function (element) {
+waitForElement('#global_action_menu').then(function (element) {
     let title = document.createElement('h1');
     title.setAttribute('class', 'ag_changes_title');
     title.innerText = "Loading...";
@@ -13,14 +13,13 @@ waitForElement('#store_nav_area .store_nav').then(function (element) {
 
     let span = document.createElement('span');
     span.setAttribute("class", "pulldown pulldownButton");
-    span.innerText = "alike03's Sub Info";
+    span.innerText = "alike03's Subscription Info";
     
     let span2 = document.createElement('span');
     span2.setAttribute('class', 'pulldownButton');
     span.appendChild(span2);
 
-    let button = document.createElement('a');
-    button.setAttribute('class', 'tab');
+    let button = document.createElement('div');
     button.setAttribute('id', 'ag_changes_button');
 
     button.appendChild(span);
@@ -52,21 +51,7 @@ waitForElement('#store_nav_area .store_nav').then(function (element) {
     element.querySelectorAll('#ag_changes_button').forEach((oldButton) => { 
         oldButton.remove();
     });
-    element.insertBefore(button, element.querySelector('.search_area'));
-
-    // Adapt Search size
-    let searchWidth = element.offsetWidth;
-    element.childNodes.forEach((buttonElement) => {
-        if (Number.isInteger(buttonElement.offsetWidth)) {
-            if (buttonElement.classList.contains('search_area') && searchWidth < 230) {
-                buttonElement.querySelector('#searchform').style.width = searchWidth + "px";
-                buttonElement.querySelector('#store_nav_search_term').style.width = (searchWidth - 50) + "px";
-                buttonElement.querySelector('.searchbox, #store_nav_search_term').style.width = 'auto';
-            } else {
-                searchWidth -= (buttonElement.offsetWidth + 5);
-            }
-        }
-    });
+    element.prepend(button);
 
     loadChanges(save.options.timeFrame);
 });
