@@ -5,20 +5,32 @@ var triggerLimit = false;
 if (path.split('/')[1] === '') {
   waitForElement('.home_page_content .maincap .carousel_items a[data-ds-appid]').then(function() {
     let gameListHome = [];
+    document.querySelectorAll('.home_page_content .home_tabs_content .tab_content a[data-ds-appid]').forEach(game => {
+      if (!game.classList.contains('alike_sub')) {
+        game.classList.add('alike_sub');
+        game.dataset.subType = 6;
+        game.dataset.subId = game.dataset.dsAppid;
+
+        gameListHome.push(game.dataset.dsAppid);
+      }
+    });
+
     document.querySelectorAll(
       '.home_page_content .carousel_items a[data-ds-appid],' +
       '.home_page_content .carousel_items div[data-ds-appid],' +
       '.home_page_content .store_capsule_frame a[data-ds-appid],' +
-      '.home_page_content .home_tabs_content .tab_content a[data-ds-appid],' +
       '.home_page_content .marketingmessage_container a[data-ds-appid]'
     ).forEach(game => {
       if (!game.classList.contains('alike_sub')) {
-        gameListHome.push(game.dataset.dsAppid);
         game.classList.add('alike_sub');
+        game.dataset.subType = 1;
+        game.dataset.subId = game.dataset.dsAppid;
+
+        gameListHome.push(game.dataset.dsAppid);
       }
     });
 
-    getGameList(gameListHome, 1);
+    getGameList(gameListHome);
 
     document.addEventListener('scroll', function() { limitFunction(moreHomeList) });
       
@@ -28,13 +40,16 @@ if (path.split('/')[1] === '') {
         list.classList.add('alike_sub_read');
         list.querySelectorAll('[data-ds-appid]:not(.screenshot)').forEach(game => {
           if (!game.classList.contains('alike_sub')) {
-            gameListHomeMore.push(game.dataset.dsAppid);
             game.classList.add('alike_sub');
+            game.dataset.subType = 2;
+            game.dataset.subId = game.dataset.dsAppid;
+
+            gameListHomeMore.push(game.dataset.dsAppid);
           }
         });
       });
 
-      getGameList(gameListHomeMore, 2);
+      getGameList(gameListHomeMore);
       triggerLimit = false;
     }
   })
@@ -58,10 +73,12 @@ if (path.split('/')[1] === 'search') {
         if (!game.classList.contains('alike_sub')) {
           list.push(game.dataset.dsAppid);
           game.classList.add('alike_sub');
+          game.dataset.subType = 6;
+          game.dataset.subId = game.dataset.dsAppid;
         }
       });
 
-      getGameList(list, 4);
+      getGameList(list);
       triggerLimit = false;
     }
   });
@@ -79,10 +96,12 @@ if (path.split('/')[1] === 'wishlist') {
         if (!game.classList.contains('alike_sub')) {
           list.push(game.dataset.appId);
           game.classList.add('alike_sub');
+          game.dataset.subType = 5;
+          game.dataset.subId = game.dataset.appId;
         }
       });
   
-      getGameList(list, 5);
+      getGameList(list);
       triggerLimit = false;
     }
   });
@@ -93,8 +112,11 @@ if (path.split('/')[1] === 'app') {
   
   transferData(0, 'v=' + version.replaceAll('.', '-') + '&id=' + appId, function(resp) {
     response = JSON.parse(resp)[0];
-    waitForElement('.page_content_ctn > .block .queue_overflow_ctn').then(function() {
-      addSubInfo(3, response);
+    waitForElement('.page_content_ctn > .block .queue_overflow_ctn').then(function(game) {
+      game.classList.add('alike_sub');
+      game.dataset.subType = 3;
+      game.dataset.subId = appId;
+      addSubInfo(response);
     });
   });
   waitForElement('.release_date .date').then(function(element) {
@@ -112,22 +134,24 @@ if (path.split('/')[1] === 'developer' || path.split('/')[1] === 'publisher' || 
       if (!game.classList.contains('alike_sub')) {
         list.push(game.dataset.dsAppid);
         game.classList.add('alike_sub');
+        game.dataset.subType = 1;
+        game.dataset.subId = game.dataset.dsAppid;
       }
     });
 
-    getGameList(list, 1);
+    getGameList(list);
     triggerLimit = false;
   }
 }
 
 /*******  Functions  *******/
 
-function getGameList(list, type) {
+function getGameList(list) {
   let uniq = [ ...new Set(list.filter(Boolean)) ];
   if (uniq.length > 0) {
     transferData(0, 'v=' + version.replaceAll('.', '-') + '&id=' + uniq.toString(), function(resp) {
       response = JSON.parse(resp);
-      response.forEach(game => { addSubInfo(type, game) });
+      response.forEach(game => { addSubInfo(game) });
     });
   }
 }
@@ -139,55 +163,33 @@ function limitFunction(f) {
   }
 }
 
-function addSubInfo(t, g) {
+function addSubInfo(g) {
   if(typeof g === 'undefined' || Object.keys(g.subs).length < 1) return false;
 
-  let container = document.createElement('div');
-  for (const [p, sub] of Object.entries(g.subs)) {
-    let flagDiv = document.createElement('div');
-    flagDiv.setAttribute('class', 'sub_flag ' + sub.status + ' ' + p);
-    flagDiv.innerText = alike_lang.flag[sub.status](p);
-    container.appendChild(flagDiv);
+  document.querySelectorAll('.alike_sub[data-sub-id="' + g.sid + '"]').forEach(element => {
+    let container = document.createElement('div');
+    for (const [p, sub] of Object.entries(g.subs)) {
+      let flagDiv = document.createElement('div');
+      flagDiv.setAttribute('class', 'sub_flag ' + sub.status + ' ' + p);
+      flagDiv.innerText = alike_lang.flag[sub.status](p);
+      container.appendChild(flagDiv);
 
-    if (t === 3) {
-      let textDiv = document.createElement('div');
-      textDiv.setAttribute('class', 'sub_text ' + sub.status + ' ' + p);
-
-      let textSpan = document.createElement('span');
-      textSpan.appendChild(document.createTextNode(alike_lang.long[sub.status](p, g.name, sub.date)));
-
-      textDiv.appendChild(textSpan);
-      container.appendChild(textDiv);
-    }
-  };
-
-  container.setAttribute('class', 'alike_cont type-' + t);
-  switch (t) {
-    case 1:
-      parent = '.alike_sub[data-ds-appid="' + g.sid + '"]';
-      break;
-    case 2:
-      parent = 'div:not(.alike_sub_read) .alike_sub[data-ds-appid="' + g.sid + '"]';
-      break;
-    case 3:
-      parent = '.page_content_ctn > .block .queue_overflow_ctn';
-      break;
-    case 4:
-      parent = '.alike_sub[data-ds-appid="' + g.sid + '"] .search_name p';
-      break;
-    case 5:
-      parent = 'div.alike_sub[data-app-id="' + g.sid + '"]';
-      break;
+      if (parseInt(element.dataset.subType) === 3) {
+        let textDiv = document.createElement('div');
+        textDiv.setAttribute('class', 'sub_text ' + sub.status + ' ' + p);
   
-    default:
-      return false;
-      break;
-  }
+        let textSpan = document.createElement('span');
+        textSpan.appendChild(document.createTextNode(alike_lang.long[sub.status](p, g.name, sub.date)));
+  
+        textDiv.appendChild(textSpan);
+        container.appendChild(textDiv);
+      } else if (parseInt(element.dataset.subType) === 6) {
+        flagDiv.innerText = '';
+        flagDiv.dataset.tooltip = alike_lang.flag[sub.status](p);
+      }
+    };
 
-  document.querySelectorAll(parent).forEach(element => {
-    if (!element.querySelector('.alike_cont')) {
-      let cln = container.cloneNode(true);
-      element.appendChild(cln);
-    }
+    container.setAttribute('class', 'alike_cont type-' + element.dataset.subType);
+    element.appendChild(container);
   });
 }

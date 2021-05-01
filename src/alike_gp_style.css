@@ -6,9 +6,7 @@
   z-index: 10;
 }
 .home_content.fourwide .alike_cont.type-1, .home_content.fourwide .alike_cont.type-2 {
-  left: unset;
-  right: 0;
-  top: 20px;
+  top: 15px;
 }
 .store_main_capsule .alike_cont.type-1, .store_main_capsule .alike_cont.type-2 {
   top: 42px;
@@ -76,6 +74,22 @@
   width: 292px;
   text-align: center;
 }
+.alike_cont.type-6 {
+  position: absolute;
+  bottom: 0;
+  left: 20px;
+  display: flex;
+  z-index: 5;
+}
+.alike_cont.type-6 .sub_flag {
+  display: inline-block;
+  height: 25px;
+  width: 0;
+  margin-right: 5px;
+  background-size: 16px;
+  box-shadow: 0 -2px 6px 0 black;
+  overflow: hidden;
+}
 
 .sort_order .alike_cont.type-5 {
   left: 56px;
@@ -94,6 +108,25 @@
 }
 .compact.sort_order .alike_cont.type-5 {
   left: 44px;
+}
+
+[data-tooltip]:before {
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+[data-tooltip]:hover:before {
+  content: attr(data-tooltip);
+  position: absolute;
+  background: white;
+  color: black;
+  opacity: 1;
+  margin-left: 6px;
+  padding: 6px 6px 7px;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 2px -2px 6px 0 black;
+  border-top-right-radius: 6px;
 }
 
 .alike_cont .sub_flag,
@@ -115,7 +148,7 @@
 
 .alike_cont .soon,
 .ag_changes .ag_tab .game .soon {
-  filter: hue-rotate(45deg);
+  filter: hue-rotate(30deg);
 }
 
 .alike_cont .gamepass,
@@ -163,10 +196,30 @@
 }
 
 #ag_changes_button {
-  display: inline-block;
+  position: static;
+  padding-right: 3px;
+  padding-left: 8px;
+  margin: 0 5px;
+  font-size: 11px;
+  line-height: 20px;
+  text-align: left;
+  cursor: pointer;
+  color: #fff;
 }
 #ag_changes_button:hover {
-  color: #ffffff;
+  color: #111111;
+  background: #fff;
+  background: linear-gradient(135deg, #fff 0%, #919aa3 100%);
+}
+#ag_changes_button .pulldown {
+  display: inline-block;
+  width: 19px;
+  height: 12px;
+  padding: 0;
+  margin: 0;
+  background-image: url("https://steamstore-a.akamaihd.net/public/images/v6/btn_arrow_down_padded_white.png");
+  background-position: right 2px;
+  background-repeat: no-repeat;
 }
 
 .ag_changes {
@@ -348,6 +401,15 @@
 .ag_changes .flex-box {
   display: flex;
   transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.ag_changes .flex-box > div {
+  margin: 0 7px;
+}
+.ag_changes .flex-box > div:first-child {
+  margin-left: 0;
+}
+.ag_changes .flex-box > div:last-child {
+  margin-right: 0;
 }
 .ag_changes p {
   margin-bottom: 15px;

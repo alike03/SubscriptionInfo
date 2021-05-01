@@ -1,4 +1,4 @@
-waitForElement('#global_action_menu').then(function (element) {
+waitForElement('#store_controls #cart_status_data').then(function (element) {
     let title = document.createElement('h1');
     title.setAttribute('class', 'ag_changes_title');
     title.innerText = "Loading...";
@@ -12,15 +12,16 @@ waitForElement('#global_action_menu').then(function (element) {
     container.appendChild(xhr_data);
 
     let span = document.createElement('span');
-    span.setAttribute("class", "pulldown pulldownButton");
+    span.setAttribute('class', 'pulldownButton');
     span.innerText = "alike03's Subscription Info";
     
     let span2 = document.createElement('span');
-    span2.setAttribute('class', 'pulldownButton');
+    span2.setAttribute('class', 'pulldownButton pulldown');
     span.appendChild(span2);
 
     let button = document.createElement('div');
     button.setAttribute('id', 'ag_changes_button');
+    button.setAttribute('class', 'store_header_btn store_header_btn_gray');
 
     button.appendChild(span);
     button.appendChild(container);
@@ -36,9 +37,10 @@ waitForElement('#global_action_menu').then(function (element) {
         }
     } else {
         button.onclick = function (e) {
+            // Was preventing menu clicks
             if (!e.target.classList.contains('pulldownButton'))
                 return;
-            if (document.querySelector('.ag_changes').classList.contains('open')) {
+            if (container.classList.contains('open')) {
                 container.classList.remove('open');
                 container.classList.add('closed');
             } else {
