@@ -77,7 +77,7 @@
 .alike_cont.type-6 {
   position: absolute;
   bottom: 0;
-  left: 20px;
+  left: 9px;
   display: flex;
   z-index: 5;
 }
@@ -89,6 +89,10 @@
   background-size: 16px;
   box-shadow: 0 -2px 6px 0 black;
   overflow: hidden;
+}
+.alike_cont.type-6 .sub_flag:hover {
+  filter: none;
+  /* Bugfix filter doesn't allow hover effect for children */
 }
 
 .sort_order .alike_cont.type-5 {
@@ -110,23 +114,22 @@
   left: 44px;
 }
 
-[data-tooltip]:before {
-  opacity: 0;
-  transition: opacity 0.15s ease;
-}
-
-[data-tooltip]:hover:before {
-  content: attr(data-tooltip);
+.hover_info {
   position: absolute;
   background: white;
   color: black;
-  opacity: 1;
   margin-left: 6px;
   padding: 6px 6px 7px;
   white-space: nowrap;
   pointer-events: none;
   box-shadow: 2px -2px 6px 0 black;
   border-top-right-radius: 6px;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.sub_flag:hover > .hover_info {
+  opacity: 1;
 }
 
 .alike_cont .sub_flag,
@@ -184,7 +187,7 @@
 .alike_cont .eaplaypro,
 .ag_changes .ag_tab .game .eaplaypro {
   background-color: #ff4747;
-  background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 1000 1000" fill="white" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M499.999 1000C224.297 1000 0 775.701 0 500.001 0 224.297 224.297-.001 499.999-.001 775.698-.001 1000 224.299 1000 500.001 1000 775.7 775.699 1000 499.999 1000zm84.629-693.396H302.054l-42.874 68.901h282.249l43.199-68.901zm57.747.658L469.632 582.324H278.018l44.207-68.959H437.07l43.87-68.926H215.439l-43.861 68.926h62.896l-87.266 137.68h364.189l134.516-212.136 49.046 74.456h-44.224l-41.882 68.959h130.961l45.475 68.721h83.541L642.375 307.262z"/%3E%3C/svg%3E');
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1000 1000' fill='white' fill-rule='evenodd' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M896.824 803.809a96.956 96.956 0 015.516-.152v-.086c54.635 0 97.309 41.379 97.309 98.171 0 56.792-42.587 98.258-97.309 98.258-54.722 0-97.395-41.523-97.395-98.171 0-2.023.054-4.026.177-6.013a502.845 502.845 0 0091.702-92.007zm5.516 166.63c-36.088 0-64.815-28.755-64.815-68.697 0-39.941 28.755-68.697 64.815-68.697 36.059 0 64.786 28.756 64.786 68.697 0 39.942-28.755 68.697-64.786 68.697zM733.474 942.025V1000h-33.15v-41.935a496.377 496.377 0 0033.15-16.04z'/%3E%3Cpath d='M805.104 895.875a501.337 501.337 0 01-71.63 46.194V888.29c0-34.35 30.02-60.01 65.95-53.281v-31.57c-29.61-3.95-53.31 9.48-65.95 37.51l.088-33.238h-33.238v150.397c-54.998 24.147-115.165 38.67-178.334 41.414v-110.49h65.965c51.473 0 88.855-34.938 88.855-80.717 0-45.778-37.267-79.911-88.855-79.911H487.857v271.45C217.751 993.395 0 771.648 0 500.001 0 224.297 224.297-.001 499.999-.001 775.698-.001 1000 224.299 1000 500.001c0 114.17-38.465 219.526-103.12 303.796-50.098 2.57-88.996 40.364-91.776 92.078zm-162.053-87.56c0-29.1-21.739-49.287-55.096-49.287H521.99v100.127h65.965c32.58 0 55.096-21.336 55.096-50.84zm-.676-501.053L469.632 582.324H278.018l44.207-68.959H437.07l43.87-68.926H215.439l-43.861 68.926h62.896l-87.266 137.68h364.189l134.516-212.136 49.046 74.456h-44.224l-41.882 68.959h130.961l45.475 68.721h83.541L642.375 307.262zm-57.747-.658H302.054l-42.874 68.901h282.249l43.199-68.901z'/%3E%3C/svg%3E");
 }
 
 .alike_cont .sub_flag,
