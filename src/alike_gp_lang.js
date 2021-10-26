@@ -48,6 +48,9 @@ switch (navigator.language) {
                 },
                 soon: function(platform) {
                     return "SOON ON " + alike_lang.platform(platform)
+                },
+				missing: function(platform) {
+                    return ""
                 }
             },
             long: {
@@ -62,6 +65,9 @@ switch (navigator.language) {
                 },
                 soon: function(platform, name, date) {
                     return name + " is coming to " + alike_lang.platform(platform) + " on " + alike_lang.formatDate(date.since)
+                },
+                missing: function(platform, name, date) {
+                    return name + " is not on any subscription service"
                 }
             }
         };

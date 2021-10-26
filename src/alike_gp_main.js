@@ -1,7 +1,3 @@
-
-
-log('https://aligueler.com/SubscriptionInfo/');
-
 const isChrome = navigator.userAgent.match('Chrome');
 //const isFirefox = navigator.userAgent.match('Firefox');
 const currentBrowser = (isChrome ? chrome : browser);
@@ -25,6 +21,8 @@ let save = {
 };
 
 let saveLoaded = loadData();
+
+log('https://aligueler.com/SubscriptionInfo/');
 
 /*******  Functions  *******/
 
@@ -122,7 +120,7 @@ function loadSavedSettings(obj, save) {
 
 function log(text) {
     console.log(
-        '%c [alike03\'s Sub info] %c ' + text,
+        '%c [alike03\'s Sub info] v' + version + ' %c ' + text,
         'color:#f7f7f7; background-color:#0f780f;',
         'color:inherit; background-color:inherit;'
     );
