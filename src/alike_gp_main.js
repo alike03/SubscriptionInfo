@@ -16,7 +16,8 @@ let save = {
             eaplaypro: true
         },
         timeFrame: 30,
-        menuToggle: 'mouseenter'
+        menuToggle: 'mouseenter',
+		showNoInfoBar: true
     }
 };
 

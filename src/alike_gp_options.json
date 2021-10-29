@@ -104,6 +104,38 @@
                 "children": [
                     {
                         "element": "h3",
+                        "text": "Show Information for missing games"
+                    },
+                    {
+                        "element": "div",
+						"children": [
+							{
+								"element": "input",
+								"attributes": {
+									"type": "checkbox",
+									"id": "aSubO_showNoInfoBar",
+									"name": "aSubO_showNoInfoBar"
+								}
+							},
+							{
+								"element": "label",
+                                "text": "  Show Information for missing games",
+								"attributes": {
+									"for": "aSubO_showNoInfoBar"
+								}
+							}
+						]
+                    }
+                ]
+            },
+            {
+                "element": "div",
+                "attributes": {
+                    "class": "cont"
+                },
+                "children": [
+                    {
+                        "element": "h3",
                         "text": "Which Subscriptions should be displayed"
                     },
                     {

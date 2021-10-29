@@ -139,6 +139,15 @@ function loadOptions() {
             saveData();
         });
 
+		// Load Missing Game Infobar
+		let showNoInfoBar = document.querySelector('#aSubO_showNoInfoBar');
+		showNoInfoBar.checked = save.options.showNoInfoBar;
+
+        showNoInfoBar.addEventListener('change', (e) => {
+            save.options.showNoInfoBar = e.target.checked;
+            saveData();
+        });
+
         let sub_parent = document.querySelector('.aSubO_subCont');
         let br = document.createElement("br");
 

@@ -181,6 +181,7 @@ function addSubInfo(g) {
 			element.appendChild(container);
 		});
 	} else if (g.status === 'missing') {
+		if (!save.options.showNoInfoBar) return;
 		let element = document.querySelector('.alike_sub');
 
 		if (parseInt(element.dataset.subType) === 3) {
