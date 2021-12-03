@@ -58,21 +58,37 @@ waitForElement('#store_controls #cart_status_data').then(function (element) {
     loadChanges(save.options.timeFrame);
 });
 
+const allowedTags = ["h2","h3","h4","div","span","a","picture","source","img","ul","li","p","i","b","br","select","option","optgroup","input","label"];
+const allowedAttributes = ["id","class","style","href","srcset","loading","title","alt","target","value","type","name","for","placeholder","checked"];
+
 function createElementsFromJSON(content, parent) {
     if (content.hasOwnProperty('element')) {
-        let obj = document.createElement(content.element);
+		// Validate if Tag is allowed
+		let obj = parent;
+		if (allowedTags.includes(content.element)) {
+			// if tag is allowed set it as the default object
+			obj = document.createElement(content.element);
 
-        if (content.hasOwnProperty('attributes')) {
-            for(let attr in content.attributes) {
-                obj.setAttribute(attr, content.attributes[attr]);
-            }
-        }
+			if (content.hasOwnProperty('attributes')) {
+				for(let attr in content.attributes) {
+					// check for allowed attributes and for src for images and for datasets
+					if (
+						allowedAttributes.includes(attr) ||
+						(attr === 'src' && content.element === 'img') ||
+						attr.startsWith('data-')
+					) {
+						if (attr.startsWith('data-')) console.log(attr);
+						obj.setAttribute(attr, content.attributes[attr]);
+					}
+				}
+			}
 
-        if (content.hasOwnProperty('text')) {
-            obj.appendChild(document.createTextNode(content.text));
-        }
+			if (content.hasOwnProperty('text')) {
+				obj.appendChild(document.createTextNode(content.text));
+			}
 
-        parent.appendChild(obj);
+			parent.appendChild(obj);
+		}
 
         if (content.hasOwnProperty('children')) {
             if (Array.isArray(content.children)) {
