@@ -2,7 +2,7 @@
     "manifest_version": 2,
     "name": "alike03's Subscription Info on Steam",
     "description": "See on Steam if the game is currently available on any Subscription package like Xbox Game Pass PC & Console, Ubisoft+ or EA Play",
-    "version": "1.2.2.2",
+    "version": "1.2.2.3",
     "homepage_url": "https://aligueler.com/SubscriptionInfo/",
     "permissions": [
         "https://aligueler.com/",

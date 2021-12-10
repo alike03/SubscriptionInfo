@@ -18,9 +18,9 @@ switch (navigator.language) {
                     case "gamepass":
                         return "GAME PASS";
                     case "gamepasspc":
-                        return "GAME PASS PC";
+                        return "PC GAME PASS";
                     case "gamepasscon":
-                        return "GAME PASS CONSOLE";
+                        return "XBOX GAME PASS";
                     case "ubiplus":
                         return "UBISOFT+";
                     case "eaplay":
