@@ -77,7 +77,6 @@ function createElementsFromJSON(content, parent) {
 						(attr === 'src' && content.element === 'img') ||
 						attr.startsWith('data-')
 					) {
-						if (attr.startsWith('data-')) console.log(attr);
 						obj.setAttribute(attr, content.attributes[attr]);
 					}
 				}

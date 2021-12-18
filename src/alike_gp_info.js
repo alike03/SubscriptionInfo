@@ -232,7 +232,7 @@ function appendToContainer(container, g, sub, p, type) {
 			link.setAttribute('class', 'button link');
 			link.setAttribute('href', sub.link);
 			link.setAttribute('title', 'Show the Game on their Platform');
-			link.setAttribute('target', '_blank');
+			link.setAttribute('target', sub.target);
 			textDiv.appendChild(link);
 		}
 
