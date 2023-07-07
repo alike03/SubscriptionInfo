@@ -111,11 +111,10 @@
   overflow: hidden;
 }
 .alike_cont.type-6 .sub_flag:hover {
-  filter: none;
-  /* Bugfix filter doesn't allow hover effect for children */
+  filter: none; /* Bugfix filter doesn't allow hover effect for children */
 }
 
-.sort_order .alike_cont.type-5 {
+.as_show_order_input .alike_cont.type-5 {
   left: 56px;
 }
 
@@ -130,7 +129,7 @@
   left: 4px;
   width: 162px;
 }
-.compact.sort_order .alike_cont.type-5 {
+.compact.as_show_order_input .alike_cont.type-5 {
   left: 44px;
 }
 
@@ -148,6 +147,9 @@
   transition: opacity 0.15s ease;
 }
 
+.sub_flag:hover {
+  z-index: 1;
+}
 .sub_flag:hover > .hover_info {
   opacity: 1;
 }
@@ -341,7 +343,8 @@
   box-shadow: 0 0 5px black;
   width: 100%;
   height: 225px;
-  object-fit: fill;
+  -o-object-fit: fill;
+     object-fit: fill;
 }
 .ag_changes .game .platforms {
   position: absolute;
