@@ -195,8 +195,12 @@
     transition: opacity 0.15s ease;
 }
 
-.sub_flag:hover > .hover_info {
+.sub_flag:hover {
+	z-index: 1;
+
+	> .hover_info {
 		opacity: 1;
+	}
 }
 
 .alike_cont .sub_flag,
