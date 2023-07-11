@@ -5,6 +5,15 @@
   line-height: 19px;
   z-index: 10;
 }
+.alike_cont.type-2 {
+  pointer-events: none;
+}
+.TopSellerCapsule .alike_cont.type-2 {
+  top: 45px;
+}
+.home_content.twowide .alike_cont.type-2 {
+  top: 68px;
+}
 .home_content.fourwide .alike_cont.type-1, .home_content.fourwide .alike_cont.type-2 {
   top: 15px;
 }

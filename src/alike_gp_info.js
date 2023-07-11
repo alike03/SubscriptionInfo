@@ -41,7 +41,7 @@ if (path.split('/')[1] === '') {
 				list.querySelectorAll('[data-ds-appid]:not(.screenshot)').forEach(game => {
 					if (!game.classList.contains('alike_sub')) {
 						game.classList.add('alike_sub');
-						game.dataset.subType = 2;
+						game.dataset.subType = 1;
 						game.dataset.subId = game.dataset.dsAppid;
 
 						gameListHomeMore.push(game.dataset.dsAppid);
@@ -158,7 +158,6 @@ if (path.split('/')[1] === '') {
  */
 observe(() => {
 	let list = [];
-	log('Page changed');
 
 	// query class starting with salepreviewwidgets_
 	document.querySelectorAll('[class^="salepreviewwidgets_"]:not(.alike_sub)').forEach(game => {
@@ -171,7 +170,7 @@ observe(() => {
 				if (appId) {
 					list.push(appId);
 					const isRow = game.attributes.class.value.includes('salepreviewwidgets_SaleItemBrowserRow');
-					game.dataset.subType = (isRow ? 6 : 1);
+					game.dataset.subType = (isRow ? 6 : 2);
 					game.dataset.subId = appId;
 				}
 			}
@@ -181,13 +180,10 @@ observe(() => {
 
 	// query elements with data-ds-appid attribute
 	document.querySelectorAll('[data-ds-appid]:not(.alike_sub)').forEach(game => {
-		console.log(game);
 		list.push(game.dataset.dsAppid);
 		game.classList.add('alike_sub');
-		game.dataset.subType = 1;
+		game.dataset.subType = 2;
 		game.dataset.subId = game.dataset.dsAppid;
-
-game.style.filter = 'sepia(1) hue-rotate(66deg) contrast(1.4) brightness(1) saturate(3)';
 	});
 	getGameList(list);
 });

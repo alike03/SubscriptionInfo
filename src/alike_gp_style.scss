@@ -9,6 +9,18 @@
         z-index: 10;
     }
 
+    &.type-2 {
+        pointer-events: none;
+    }
+
+    .TopSellerCapsule &.type-2 {
+        top: 45px;
+    }
+
+    .home_content.twowide &.type-2 {
+        top: 68px;
+    }
+
     .home_content.fourwide & {
         &.type-1,
         &.type-2 {
