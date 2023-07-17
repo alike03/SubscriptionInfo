@@ -1,3 +1,14 @@
+.alike_sub {
+
+    &[class^="salepreviewwidgets_SaleItemBrowserRow_"] {
+        position: relative;
+    }
+
+    &[class^="salepreviewwidgets_StoreSaleItemReview_"] {
+        position: initial;
+    }
+}
+
 .alike_cont {
 
     &.type-1,

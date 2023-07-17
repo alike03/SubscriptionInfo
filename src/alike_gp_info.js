@@ -1,59 +1,7 @@
 const path = window.location.pathname;
 var triggerLimit = false;
 
-if (path.split('/')[1] === '') {
-	// Starting page
-	waitForElement('.home_page_content').then(function () {
-		let gameListHome = [];
-		document.querySelectorAll('.home_page_content .home_tabs_content .tab_content a[data-ds-appid]').forEach(game => {
-			if (!game.classList.contains('alike_sub')) {
-				game.classList.add('alike_sub');
-				game.dataset.subType = 6;
-				game.dataset.subId = game.dataset.dsAppid;
-
-				gameListHome.push(game.dataset.dsAppid);
-			}
-		});
-
-		document.querySelectorAll(
-			'.home_page_content .carousel_items a[data-ds-appid],' +
-			'.home_page_content .carousel_items div[data-ds-appid],' +
-			'.home_page_content .store_capsule_frame a[data-ds-appid],' +
-			'.home_page_content .marketingmessage_container a[data-ds-appid]'
-		).forEach(game => {
-			if (!game.classList.contains('alike_sub')) {
-				game.classList.add('alike_sub');
-				game.dataset.subType = 1;
-				game.dataset.subId = game.dataset.dsAppid;
-
-				gameListHome.push(game.dataset.dsAppid);
-			}
-		});
-
-		getGameList(gameListHome);
-
-		document.addEventListener('scroll', function () { limitFunction(moreHomeList) });
-
-		function moreHomeList() {
-			let gameListHomeMore = [];
-			document.querySelectorAll('.page_content_ctn:not(.alike_sub_read)').forEach(list => {
-				list.classList.add('alike_sub_read');
-				list.querySelectorAll('[data-ds-appid]:not(.screenshot)').forEach(game => {
-					if (!game.classList.contains('alike_sub')) {
-						game.classList.add('alike_sub');
-						game.dataset.subType = 1;
-						game.dataset.subId = game.dataset.dsAppid;
-
-						gameListHomeMore.push(game.dataset.dsAppid);
-					}
-				});
-			});
-
-			getGameList(gameListHomeMore);
-			triggerLimit = false;
-		}
-	})
-} else if (path.split('/')[1] === 'search') {
+if (path.split('/')[1] === 'search') {
 	// Search Page
 	waitForElement('.search_results #search_result_container #search_resultsRows').then(function () {
 
@@ -72,9 +20,9 @@ if (path.split('/')[1] === '') {
 				if (!game.classList.contains('alike_sub')) {
 					list.push(game.dataset.dsAppid);
 					game.classList.add('alike_sub');
-					game.dataset.subType = 6;
 					game.dataset.subId = game.dataset.dsAppid;
 				}
+				game.dataset.subType = 6;
 			});
 
 			getGameList(list);
@@ -94,9 +42,9 @@ if (path.split('/')[1] === '') {
 				if (!game.classList.contains('alike_sub')) {
 					list.push(game.dataset.appId);
 					game.classList.add('alike_sub');
-					game.dataset.subType = 5;
 					game.dataset.subId = game.dataset.appId;
 				}
+				game.dataset.subType = 5;
 			});
 
 			getGameList(list);
@@ -132,25 +80,6 @@ if (path.split('/')[1] === '') {
 			'&lang=' + document.documentElement.lang
 		);
 	});
-} else if (path.split('/')[1] === 'developer' || path.split('/')[1] === 'publisher' || path.split('/')[1] === 'curator' || path.split('/')[1] === 'bundle') {
-	// Developer, Publisher, Curator and Bundle
-	document.addEventListener('scroll', function () { limitFunction(filterDev) });
-	filterDev();
-
-	function filterDev() {
-		let list = [];
-		document.querySelectorAll('[data-ds-appid]:not(.alike_sub)').forEach(game => {
-			if (!game.classList.contains('alike_sub')) {
-				list.push(game.dataset.dsAppid);
-				game.classList.add('alike_sub');
-				game.dataset.subType = 1;
-				game.dataset.subId = game.dataset.dsAppid;
-			}
-		});
-
-		getGameList(list);
-		triggerLimit = false;
-	}
 }
 
 /**
@@ -169,8 +98,11 @@ observe(() => {
 				const appId = link.href.split('/')[4];
 				if (appId) {
 					list.push(appId);
-					const isRow = game.attributes.class.value.includes('salepreviewwidgets_SaleItemBrowserRow');
-					game.dataset.subType = (isRow ? 6 : 2);
+					if (!game.dataset.subType) {
+						const isRowContainer = ['salepreviewwidgets_StoreSaleItemReview', 'salepreviewwidgets_SaleItemBrowserRow'];
+						const isRow = isRowContainer.some(c => game.attributes.class.value.includes(c));
+						game.dataset.subType = (isRow ? 6 : 2);
+					}
 					game.dataset.subId = appId;
 				}
 			}
@@ -179,10 +111,14 @@ observe(() => {
 	});
 
 	// query elements with data-ds-appid attribute
-	document.querySelectorAll('[data-ds-appid]:not(.alike_sub)').forEach(game => {
+	document.querySelectorAll('[data-ds-appid]:not(.alike_sub):not(.gutter_item)').forEach(game => {
 		list.push(game.dataset.dsAppid);
 		game.classList.add('alike_sub');
-		game.dataset.subType = 2;
+		if (!game.dataset.subType) {
+			const isRowContainer = ['tab_item'];
+			const isRow = isRowContainer.some(c => game.attributes.class.value.includes(c));
+			game.dataset.subType = (isRow ? 6 : 2);
+		}
 		game.dataset.subId = game.dataset.dsAppid;
 	});
 	getGameList(list);

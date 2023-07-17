@@ -1,3 +1,10 @@
+.alike_sub[class^=salepreviewwidgets_SaleItemBrowserRow_] {
+  position: relative;
+}
+.alike_sub[class^=salepreviewwidgets_StoreSaleItemReview_] {
+  position: initial;
+}
+
 .alike_cont.type-1, .alike_cont.type-2 {
   position: absolute;
   left: 0;
