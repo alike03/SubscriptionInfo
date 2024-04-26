@@ -1,24 +1,47 @@
 {
-    "manifest_version": 2,
+    "manifest_version": 3,
     "name": "alike03's Subscription Info on Steam",
     "description": "See on Steam if the game is currently available on any Subscription package like Xbox Game Pass PC & Console, Ubisoft+ or EA Play",
-    "version": "1.2.3.2",
+    "version": "1.3.0.0",
     "homepage_url": "https://aligueler.com/SubscriptionInfo/",
     "permissions": [
-        "https://aligueler.com/",
         "storage"
     ],
     "icons": {
         "48": "icon.png",
         "96": "icon@2x.png"
     },
-    "content_scripts": [{
-        "matches": ["*://store.steampowered.com/*"],
-        "js": ["alike_gp_lang.js", "alike_gp_main.js", "alike_gp_ajax.js", "alike_gp_info.js"],
-        "css": ["alike_gp_style.css"],
-        "run_at": "document_start"
-    }],
+    "content_scripts": [
+        {
+            "matches": [
+                "*://store.steampowered.com/*"
+            ],
+            "js": [
+                "alike_gp_lang.js",
+                "alike_gp_main.js",
+                "alike_gp_ajax.js",
+                "alike_gp_info.js"
+            ],
+            "css": [
+                "alike_gp_style.css"
+            ],
+            "run_at": "document_start"
+        }
+    ],
     "web_accessible_resources": [
-        "alike_gp_options.json"
+        {
+            "resources": [
+                "alike_gp_options.json"
+            ],
+            "matches": [
+                "*://store.steampowered.com/*"
+            ]
+        }
+    ],
+    "content_security_policy": {
+        "extension_pages": "default-src 'self'"
+    },
+    "host_permissions": [
+        "https://aligueler.com/"
     ]
 }
