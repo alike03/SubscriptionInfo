@@ -1,0 +1,18 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    color: white;
+    background-color: #222;
+    margin: 0;
+}
+
+a {
+    color: #f0f0f0;
+}
+
+.ag_changes {
+    position: initial;
+    height: auto;
+    opacity: 1;
+    width: 800px;
+    height: 600px;
+}

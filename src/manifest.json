@@ -19,6 +19,10 @@
             "id": "alike_sub_info@aligueler.com"
         }
     },
+    "action": {
+        "default_title": "alike03's Subscription Info",
+        "default_popup": "popup/popup.html"
+    },
     "content_scripts": [
         {
             "matches": [ "*://store.steampowered.com/*" ],
