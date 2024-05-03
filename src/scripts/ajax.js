@@ -104,8 +104,7 @@ function createElementsFromJSON(content, parent) {
 }
 
 function loadChanges(tf) {
-    transferData(2, "v=" + version.replaceAll(".", "-") + "&tf=" + tf, function(resp) {
-		response = JSON.parse(resp);
+	chrome.runtime.sendMessage({type: 'fetch-menu', data:{ v: version.replaceAll(".", "-"), tf: tf }}, (response) => {
 		document.querySelector(".ag_changes_title").innerText = "alike03's Subscription Info on Steam v" + version;
 
         let ajax_parent = document.querySelector(".alike_xhr_data");
@@ -128,7 +127,7 @@ function loadOptions() {
     pulldown.setAttribute("class", "pulldown");
     button.appendChild(pulldown);
 
-    let page = currentBrowser.runtime.getURL("alike_gp_options.json");
+    let page = chrome.runtime.getURL("options.json");
     fetch(page).then(response => response.json()).then(result => {
         createElementsFromJSON(result, document.querySelector(".alike_xhr_data .ag_tabs"));
 
@@ -182,7 +181,7 @@ function loadOptions() {
 
             let label = document.createElement("label");
             label.setAttribute("for", "aSub_" + p);
-            label.appendChild(document.createTextNode("\u00A0\u00A0" + alike_lang.options.which_sub(p)));
+            label.appendChild(document.createTextNode("\u00A0\u00A0" + lang.options.which_sub(p)));
             cont.appendChild(label);
 
             cont.appendChild(br.cloneNode(true));

@@ -1,9 +1,5 @@
-const isChrome = navigator.userAgent.match('Chrome');
-//const isFirefox = navigator.userAgent.match('Firefox');
-const currentBrowser = (isChrome ? chrome : browser);
-
-const version = currentBrowser.runtime.getManifest().version;
-
+/*******  Variables  *******/
+const version = chrome.runtime.getManifest().version;
 const platforms = ["gamepasspc", "gamepasscon", "ubiplus", "eaplay", "eaplaypro"];
 
 let save = {
@@ -19,6 +15,17 @@ let save = {
         menuToggle: 'mouseenter',
 		showNoInfoBar: true
     }
+};
+
+/*******  Updated Functions  *******/
+const log = (...args) => {
+	let messageConfig = '%c%s ';
+
+	args.forEach((argument) => {
+		messageConfig += '%o';
+	});
+
+	console.log(messageConfig, 'color:#f7f7f7; background-color:#0f780f;', '[alike03\'s Sub info]', ...args);
 };
 
 let saveLoaded = loadData();
@@ -53,56 +60,15 @@ function waitForElement(selector) {
     });
 }
 
-async function transferData(target, param, callback = null) {
-    await saveLoaded;
-    
-    switch (target) {
-        case 1:
-            url = 'passdata.php';
-            break;
-
-        case 2:
-            url = 'menudata.php';
-            param += "&ns=" + getStatusAsString(save.options.enabled, false);
-            break;
-
-        default:
-            url = 'gamedata.php';
-            param += "&ns=" + getStatusAsString(save.options.enabled, false);
-            break;
-    }
-
-    let xhr = new XMLHttpRequest;
-    xhr.open('POST', 'https://aligueler.com/SubscriptionInfo/ajax/' + url, true);
-    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-    xhr.onreadystatechange = function () {
-        if (callback != null && this.readyState == 4 && this.status == 200) {
-            callback(xhr.responseText);
-        };
-    }
-    xhr.send(param);
-}
-
-function getStatusAsString(target, status) {
-    let resp = '';
-
-    Object.keys(target).forEach(function(child) {
-        if (target[child] === status) 
-            resp += child + ",";
-    });
-
-    return resp.substring(0, resp.length - 1);
-}
-
 function saveData() {
-    currentBrowser.storage.sync.set({"aSub_options": save}, function() {
+    chrome.storage.sync.set({"aSub_options": save}, function() {
         log("Options saved");
     });
 }
 
 function loadData() {
     return new Promise(function (resolve, reject) {
-        currentBrowser.storage.sync.get("aSub_options", function(result) {
+        chrome.storage.sync.get("aSub_options", function(result) {
             if (typeof result === 'object' && typeof result.aSub_options !== 'undefined' && typeof result.aSub_options === 'object')
                 loadSavedSettings(result.aSub_options, save);
 
@@ -117,12 +83,4 @@ function loadSavedSettings(obj, save) {
         if (obj[child] === Object(obj[child])) loadSavedSettings(obj[child], save[child]);
         else save[child] = obj[child];
     });
-}
-
-function log(text) {
-    console.log(
-        '%c [alike03\'s Sub info] v' + version + ' %c ' + text,
-        'color:#f7f7f7; background-color:#0f780f;',
-        'color:inherit; background-color:inherit;'
-    );
 }
