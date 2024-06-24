@@ -18,12 +18,12 @@ const getMenu = async (data, url) => {
 	// todo: clear cache if settings change
 	const menu = await chrome.storage.session.get("menu");
 
-	// Check if the menu is in the cache and if it's not older than 30 minutes
-	if (menu?.menu?.timestamp > Date.now() - 1000 * 60 * 30) {
+	// Check if the menu is in the cache and if it's not older than 15 minutes
+	if (menu?.menu?.timestamp > Date.now() - 1000 * 60 * 15) {
 		return menu?.menu?.data;
 	}
 
-	// If the menu is not in the cache or it's older than 30 minutes, fetch it from the server
+	// else fetch the menu
 	return fetchData(data, url);
 }
 

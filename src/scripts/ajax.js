@@ -1,3 +1,7 @@
+const allowedTags = ["h2","h3","h4","div","span","a","picture","source","img","ul","li","p","i","b","br","select","option","optgroup","input","label"];
+const allowedAttributes = ["id","class","style","href","srcset","loading","title","alt","target","value","type","name","for","placeholder","checked"];
+
+
 waitForElement('#store_controls #cart_status_data').then(function (element) {
     let title = document.createElement('h1');
     title.setAttribute('class', 'ag_changes_title');
@@ -57,9 +61,6 @@ waitForElement('#store_controls #cart_status_data').then(function (element) {
 
     loadChanges(save.options.timeFrame);
 });
-
-const allowedTags = ["h2","h3","h4","div","span","a","picture","source","img","ul","li","p","i","b","br","select","option","optgroup","input","label"];
-const allowedAttributes = ["id","class","style","href","srcset","loading","title","alt","target","value","type","name","for","placeholder","checked"];
 
 function createElementsFromJSON(content, parent) {
     if (content.hasOwnProperty('element')) {

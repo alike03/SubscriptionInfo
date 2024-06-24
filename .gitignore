@@ -3,6 +3,7 @@ _info/
 _dump/
 
 .vscode/
+debug.log
 
 ### Compressed ###
 *.7z
