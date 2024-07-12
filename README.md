@@ -35,9 +35,9 @@ If you like this addon, please consider supporting me. You can do this by donati
 ## Star History
 
 <a href="https://star-history.com/#alike03/SubscriptionInfo&Date">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=alike03/SubscriptionInfo&type=Date&theme=dark" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=alike03/SubscriptionInfo&type=Date" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=alike03/SubscriptionInfo&type=Date" />
- </picture>
+	<picture>
+		<source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=alike03/SubscriptionInfo&type=Date&theme=dark" />
+		<source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=alike03/SubscriptionInfo&type=Date" />
+		<img alt="Star History Chart" src="https://api.star-history.com/svg?repos=alike03/SubscriptionInfo&type=Date" />
+	</picture>
 </a>

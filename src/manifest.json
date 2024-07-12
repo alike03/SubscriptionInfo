@@ -2,17 +2,24 @@
     "manifest_version": 3,
     "name": "alike03's Subscription Info on Steam",
     "description": "See on Steam if the game is currently available on any Subscription package like Xbox Game Pass PC & Console, Ubisoft+ or EA Play",
-    "version": "2.0.0",
+    "version": "{{version}}",
     "homepage_url": "https://aligueler.com/SubscriptionInfo/",
-    "permissions": [ "activeTab", "cookies", "notifications", "storage" ],
+    "permissions": [
+        "activeTab",
+        "cookies",
+        "notifications",
+        "storage"
+    ],
     "icons": {
-        "48": "assets/icon-48.png",
-        "96": "assets/icon-96.png"
+        "16": "icon/16.png",
+        "32": "icon/32.png",
+        "48": "icon/48.png",
+        "96": "icon/96.png",
+        "128": "icon/128.png"
     },
     "background": {
-        "scripts": ["scripts/background.js"],
-        "type": "module",
-        "service_worker": "scripts/background.js"
+        "{{firefox}}.scripts": [ "src/page/background.ts" ],
+        "{{chrome}}.service_worker": "src/page/background.ts"
     },
     "browser_specific_settings": {
         "gecko": {
@@ -21,25 +28,17 @@
     },
     "action": {
         "default_title": "alike03's Subscription Info",
-        "default_popup": "popup/popup.html"
+        "default_popup": "src/popup/popup.html"
     },
     "content_scripts": [
         {
-            "matches": [ "*://store.steampowered.com/*" ],
-            "js": [
-                "scripts/lang.js",
-                "scripts/functions.js",
-                "scripts/ajax.js",
-                "scripts/info.js"
+            "matches": [
+                "*://store.steampowered.com/*"
             ],
-            "css": [ "style.css" ],
+            "js": [
+                "src/page/page.ts"
+            ],
             "run_at": "document_start"
-        }
-    ],
-    "web_accessible_resources": [
-        {
-            "matches": [ "*://store.steampowered.com/*" ],
-            "resources": [ "options.json" ]
         }
     ],
     "host_permissions": [
