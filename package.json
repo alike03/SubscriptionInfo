@@ -1,10 +1,13 @@
 {
 	"name": "subscriptioninfo",
-	"version": "2.0.0",
+	"description": "See on Steam if the game is currently available on any Subscription package like Xbox Game Pass PC & Console, Ubisoft+ or EA Play",
+	"version": "3.0.0",
 	"type": "module",
 	"scripts": {
 		"dev": "vite",
-		"build": "vite build",
+		"build": "npm run build:firefox && npm run build:chrome",
+		"build:firefox": "TARGET=firefox vite build",
+		"build:chrome": "TARGET=chrome vite build",
 		"check": "svelte-check --tsconfig ./tsconfig.json"
 	},
 	"devDependencies": {
@@ -18,6 +21,7 @@
 		"typescript": "^5.5.3",
 		"vite": "^5.3.3",
 		"vite-plugin-web-extension": "^4.1.6",
-		"webextension-polyfill": "^0.12.0"
+		"webextension-polyfill": "^0.12.0",
+		"zip-a-folder": "^3.1.7"
 	}
 }

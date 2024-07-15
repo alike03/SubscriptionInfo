@@ -18,12 +18,17 @@
         "128": "icon/128.png"
     },
     "background": {
+        "type": "module",
         "{{firefox}}.scripts": [ "src/page/background.ts" ],
         "{{chrome}}.service_worker": "src/page/background.ts"
     },
-    "browser_specific_settings": {
+    "{{firefox}}.browser_specific_settings": {
         "gecko": {
-            "id": "alike_sub_info@aligueler.com"
+            "id": "{7d7241f8-5541-4ab7-9c8a-ad15bd3aa4c7}",
+            "strict_min_version": "115.0"
+        },
+        "gecko_android": {
+            "strict_min_version": "115.0"
         }
     },
     "action": {
@@ -32,16 +37,10 @@
     },
     "content_scripts": [
         {
-            "matches": [
-                "*://store.steampowered.com/*"
-            ],
-            "js": [
-                "src/page/page.ts"
-            ],
+            "matches": [ "*://store.steampowered.com/*" ],
+            "js": [ "src/page/page.ts" ],
             "run_at": "document_start"
         }
     ],
-    "host_permissions": [
-        "https://aligueler.com/"
-    ]
+    "host_permissions": [ "https://aligueler.com/" ]
 }
