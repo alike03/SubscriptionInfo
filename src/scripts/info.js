@@ -53,32 +53,29 @@ if (path.split('/')[1] === 'search') {
 	});
 } else if (path.split('/')[1] === 'app') {
 	// App store page
-	const appId = path.split('/')[2];
+	const appId = parseInt(path.split('/')[2]);
 
 	// add alike_sub class to avoid information on text
 	document.querySelectorAll('#appHubAppName').forEach(game => {
 		game.classList.add('alike_sub');
 	});
 
-	transferData(0, 'v=' + version.replaceAll('.', '-') + '&id=' + appId, function (resp) {
-		response = JSON.parse(resp)[0];
+	chrome.runtime.sendMessage({type: 'fetch-game', data:{ ids: [appId] }}, (response) => {
 		waitForElement('.page_content_ctn > .block .queue_overflow_ctn').then(function (game) {
 			game.classList.add('alike_sub');
 			game.dataset.subType = 3;
 			game.dataset.subId = appId;
-			addSubInfo(response);
+			addSubInfo(response[0]);
 		});
-	});
+    });
 	waitForElement('.release_date .date').then(function (date) {
-		transferData(
-			1,
-			'v=' + version.replaceAll('.', '-') +
-			'&type=info' +
-			'&id=' + appId +
-			'&name=' + document.querySelector('#appHubAppName').textContent +
-			'&date=' + date.textContent +
-			'&lang=' + document.documentElement.lang
-		);
+		chrome.runtime.sendMessage({type: 'fetch-pass', data: {
+			type: 'info',
+			id: appId,
+			name: document.querySelector('#appHubAppName').textContent,
+			date: date.textContent,
+			lang: document.documentElement.lang
+		}});
 	});
 }
 
@@ -132,10 +129,9 @@ observe(() => {
  * @param {Array} list - An array of game IDs to retrieve subscription information for.
  */
 function getGameList(list) {
-	let uniq = [...new Set(list.filter(Boolean))];
+	let uniq = [...new Set(list.filter(Boolean).map(Number))];
 	if (uniq.length > 0) {
-		transferData(0, 'v=' + version.replaceAll('.', '-') + '&id=' + uniq.toString(), function (resp) {
-			response = JSON.parse(resp);
+		chrome.runtime.sendMessage({type: 'fetch-game', data:{ ids: uniq }}, (response) => {
 			if (response.length === 0) return false;
 			response.forEach(game => { addSubInfo(game) });
 		});
@@ -249,14 +245,14 @@ function addSubInfo(g) {
 function appendToContainer(container, g, sub, p, type) {
 	let flagDiv = document.createElement('div');
 	flagDiv.setAttribute('class', 'sub_flag ' + sub.status + ' ' + p);
-	flagDiv.innerText = alike_lang.flag[sub.status](p);
+	flagDiv.innerText = lang.flag[sub.status](p);
 
 	if (type === 3) {
 		let textDiv = document.createElement('div');
 		textDiv.setAttribute('class', 'sub_text ' + sub.status + ' ' + p);
 
 		let textSpan = document.createElement('span');
-		textSpan.appendChild(document.createTextNode(alike_lang.long[sub.status](p, g.name, sub.date)));
+		textSpan.appendChild(document.createTextNode(lang.long[sub.status](p, g.name, sub.date)));
 
 		flagDiv.setAttribute('class', 'sub_flag ' + p);
 		textDiv.appendChild(flagDiv);
@@ -284,7 +280,7 @@ function appendToContainer(container, g, sub, p, type) {
 	} else if (type === 6) {
 		let pName = document.createElement('span');
 		pName.setAttribute('class', 'hover_info');
-		pName.innerText = alike_lang.flag[sub.status](p);
+		pName.innerText = lang.flag[sub.status](p);
 
 		flagDiv.innerText = '';
 		container.appendChild(flagDiv);

@@ -11,9 +11,16 @@
     },
     "background": {
         "type": "module",
-        "service_worker": "scripts/background.js"
+        "scripts": ["scripts/background.js"]
     },
-    "minimum_chrome_version": "88",
+    "browser_specific_settings": {
+        "gecko": {
+            "strict_min_version": "115.0"
+        },
+        "gecko_android": {
+            "strict_min_version": "115.0"
+        }
+    },
     "action": {
         "default_title": "alike03's Subscription Info",
         "default_popup": "popup/popup.html"
