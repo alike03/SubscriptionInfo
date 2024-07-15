@@ -1,17 +1,17 @@
-// import { save } from './functions.js';
-
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 	switch (request.type) {
 		case 'fetch-game':
-			sendResponse(fetchData(request.data, 'game'));
+			fetchData(request.data, 'game').then(r => sendResponse(r));
 		break;
 		case 'fetch-pass':
-			sendResponse(fetchData(request.data, 'pass'));
+			fetchData(request.data, 'pass').then(r => sendResponse(r));
 		break;
 		case 'fetch-menu':
-			sendResponse(getMenu(request.data, 'menu'));
+			getMenu(request.data, 'menu').then(r => sendResponse(r));
 		break;
 	}
+
+	return true;
 });
 
 const getMenu = async (data, url) => {
@@ -23,8 +23,7 @@ const getMenu = async (data, url) => {
 		return menu?.menu?.data;
 	}
 
-	// else fetch the menu
-	return fetchData(data, url);
+	return await fetchData(data, url);
 }
 
 const fetchData = async (data, url) => {

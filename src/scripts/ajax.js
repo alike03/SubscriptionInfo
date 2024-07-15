@@ -106,7 +106,7 @@ function createElementsFromJSON(content, parent) {
 
 function loadChanges(tf) {
 	chrome.runtime.sendMessage({type: 'fetch-menu', data:{ tf: tf }}, (response) => {
-		document.querySelector(".ag_changes_title").innerText = "alike03's Subscription Info on Steam v" + version;
+		document.querySelector(".ag_changes_title").innerText = "alike03's Subscription Info on Steam";
 
         let ajax_parent = document.querySelector(".alike_xhr_data");
 

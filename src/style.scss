@@ -72,10 +72,7 @@
         line-height: 40px;
         color: #ffffff;
         margin: auto;
-        width: 940px;
-        position: relative;
-        margin: auto;
-        width: 940px;
+        max-width: 940px;
 
         .sub_flag {
             line-height: 18px;
@@ -128,10 +125,23 @@
     				background-image: url("data:image/svg+xml,%3Csvg aria-hidden='true' focusable='false' data-prefix='fad' data-icon='shopping-basket' role='img' xmlns='http://www.w3.org/2000/svg' viewBox='0 -50 576 544' class='svg-inline--fa fa-shopping-basket fa-w-18' style='--fa-secondary-opacity: 0.1;'%3E%3Cg class='fa-group'%3E%3Cpath fill='lightgrey' d='M242.82 38.12a32 32 0 0 0-44.7 7.06L91.34 192h79.14l79.4-109.18a32 32 0 0 0-7.06-44.7zm135.06 7.06a32 32 0 1 0-51.76 37.64L405.52 192h79.14z' class='fa-secondary'%3E%3C/path%3E%3Cpath fill='white' d='M552 192H24a24 24 0 0 0-24 24v16a24 24 0 0 0 24 24h8l26.11 182.79A48 48 0 0 0 105.63 480h364.74a48 48 0 0 0 47.52-41.21L544 256h8a24 24 0 0 0 24-24v-16a24 24 0 0 0-24-24zM200 392a24 24 0 0 1-48 0V280a24 24 0 0 1 48 0zm112 0a24 24 0 0 1-48 0V280a24 24 0 0 1 48 0zm112 0a24 24 0 0 1-48 0V280a24 24 0 0 1 48 0z' class='fa-primary'%3E%3C/path%3E%3C/g%3E%3C/svg%3E");
 				}
 			}
+
+            @media (max-width: 768px) {
+                flex-wrap: wrap;
+
+                span {
+                    order: 10;
+                    white-space: normal;
+                }
+            }
         }
 
         &:hover span {
             white-space: normal;
+        }
+
+        @media (max-width: 910px) {
+            margin: 15px 2%;
         }
     }
 

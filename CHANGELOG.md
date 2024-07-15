@@ -1,7 +1,8 @@
 # Changelog
 
-## 2.0.0 (unreleased)
+## 2.0.1 (15 Jul 2024)
 - Migrated to Manifest V3
+- Optimized for mobile
 - Organized the codebase
 - Added Popup variant for access outsite Steam
 - Moved requests to background script to avoid cors issues

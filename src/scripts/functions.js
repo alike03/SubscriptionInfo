@@ -12,7 +12,7 @@ let save = {
             eaplaypro: true
         },
         timeFrame: 30,
-        menuToggle: 'mouseenter',
+        menuToggle: 'click',
 		showNoInfoBar: true
     }
 };

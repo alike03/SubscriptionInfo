@@ -20,9 +20,9 @@ This addon checks your game selections against a database, displaying current av
 
 ## Download
 
-[![Download for Firefox](/.git/images/firefox.png)](https://addons.mozilla.org/en-US/firefox/addon/alike03s-subscription-info/)
-[![Download for Chrome](/.git/images/chrome.png)](https://chrome.google.com/webstore/detail/jecikjbpiedagpmibmgpfgnkfpomgeok/)
-[![Download for Edge](/.git/images/edge.png)](https://microsoftedge.microsoft.com/addons/detail/bapbeljhlgbcmoofikfboidiooefimdp)
+[![Download for Firefox](/public/images/firefox.png)](https://addons.mozilla.org/en-US/firefox/addon/alike03s-subscription-info/)
+[![Download for Chrome](/public/images/chrome.png)](https://chrome.google.com/webstore/detail/jecikjbpiedagpmibmgpfgnkfpomgeok/)
+[![Download for Edge](/public/images/edge.png)](https://microsoftedge.microsoft.com/addons/detail/bapbeljhlgbcmoofikfboidiooefimdp)
 
 
 ## Support me
