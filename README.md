@@ -24,7 +24,6 @@ This addon checks your game selections against a database, displaying current av
 [![Download for Chrome](/public/images/chrome.png)](https://chrome.google.com/webstore/detail/jecikjbpiedagpmibmgpfgnkfpomgeok/)
 [![Download for Edge](/public/images/edge.png)](https://microsoftedge.microsoft.com/addons/detail/bapbeljhlgbcmoofikfboidiooefimdp)
 
-
 ## Support me
 
 If you like this addon, please consider supporting me. You can do this by donating via PayPal or buy ing me a coffee. Your support is greatly appreciated!

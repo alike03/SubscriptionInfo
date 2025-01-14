@@ -1,27 +1,38 @@
 {
-	"name": "subscriptioninfo",
-	"description": "See on Steam if the game is currently available on any Subscription package like Xbox Game Pass PC & Console, Ubisoft+ or EA Play",
-	"version": "3.0.0",
-	"type": "module",
-	"scripts": {
-		"dev": "vite",
-		"build": "npm run build:firefox && npm run build:chrome",
-		"build:firefox": "TARGET=firefox vite build",
-		"build:chrome": "TARGET=chrome vite build",
-		"check": "svelte-check --tsconfig ./tsconfig.json"
-	},
-	"devDependencies": {
-		"@sveltejs/vite-plugin-svelte": "^3.1.1",
-		"@tsconfig/svelte": "^5.0.4",
-		"@types/webextension-polyfill": "^0.10.7",
-		"sass": "^1.77.8",
-		"svelte": "^4.2.18",
-		"svelte-check": "^3.8.4",
-		"tslib": "^2.6.3",
-		"typescript": "^5.5.3",
-		"vite": "^5.3.3",
-		"vite-plugin-web-extension": "^4.1.6",
-		"webextension-polyfill": "^0.12.0",
-		"zip-a-folder": "^3.1.7"
-	}
+  "name": "subscriptioninfo",
+  "description": "See on Steam if the game is currently available on any Subscription package like Xbox Game Pass PC & Console, Ubisoft+ or EA Play",
+  "version": "3.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "npm run build:firefox && npm run build:chrome",
+    "build:firefox": "TARGET=firefox vite build",
+    "build:chrome": "TARGET=chrome vite build",
+    "check": "svelte-check --tsconfig ./tsconfig.json"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^3.1.1",
+    "@tsconfig/svelte": "^5.0.4",
+    "@types/webextension-polyfill": "^0.10.7",
+    "autoprefixer": "^10.4.20",
+    "sass": "^1.77.8",
+    "svelte": "^4.2.18",
+    "svelte-check": "^3.8.4",
+    "tailwindcss": "^3.4.9",
+    "tslib": "^2.6.3",
+    "typescript": "^5.5.3",
+    "vite": "^5.3.3",
+    "vite-plugin-web-extension": "^4.1.6",
+    "webextension-polyfill": "^0.12.0",
+    "zip-a-folder": "^3.1.7"
+  },
+  "dependencies": {
+    "bits-ui": "^0.21.16",
+    "clsx": "^2.1.1",
+    "embla-carousel-svelte": "^8.3.0",
+    "lucide-svelte": "^0.451.0",
+    "svelte-radix": "^1.1.1",
+    "tailwind-merge": "^2.5.3",
+    "tailwind-variants": "^0.2.1"
+  }
 }
