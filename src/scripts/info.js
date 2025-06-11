@@ -1,5 +1,6 @@
 const path = window.location.pathname;
-var triggerLimit = false;
+let triggerLimit = false;
+let games = [];
 
 if (path.split('/')[1] === 'search') {
 	// Search Page
@@ -31,20 +32,29 @@ if (path.split('/')[1] === 'search') {
 	});
 } else if (path.split('/')[1] === 'wishlist') {
 	// Wishlist page
-	waitForElement('.page_content #wishlist_ctn .wishlist_row').then(function () {
-		document.getElementById('wishlist_search').addEventListener("keyup", function () { limitFunction(filterWishlistList) });
-		document.addEventListener('scroll', function () { limitFunction(filterWishlistList) });
+	waitForElement('#StoreTemplate .Panel input.Focusable').then(function (input) {
+		input.addEventListener('keyup', function () { limitFunction(filterWishlistList) });
+		document.getElementById('StoreTemplate').addEventListener('scroll', function () { limitFunction(filterWishlistList) });
 		filterWishlistList();
 
 		function filterWishlistList() {
 			let list = [];
-			Array.from(document.getElementById('wishlist_ctn').children).forEach(game => {
-				if (!game.classList.contains('alike_sub')) {
-					list.push(game.dataset.appId);
+
+			// The page is reactive, so we have to clear the previous results
+			document.querySelectorAll('.alike_cont').forEach(badge => {
+				badge.remove();
+			});
+
+			document.querySelectorAll('#StoreTemplate .Panel .Panel a[href*="/app/"]').forEach(game => {
+				// if game doesn't have img element, skip it
+				if (!game.querySelector('img')) return;
+				const appId = game.href.split('app/')[1].split('/')[0];
+				if (appId) {
+					list.push(appId);
 					game.classList.add('alike_sub');
-					game.dataset.subId = game.dataset.appId;
+					game.dataset.subId = appId;
+					game.dataset.subType = 6;
 				}
-				game.dataset.subType = 5;
 			});
 
 			getGameList(list);
@@ -60,22 +70,24 @@ if (path.split('/')[1] === 'search') {
 		game.classList.add('alike_sub');
 	});
 
-	chrome.runtime.sendMessage({type: 'fetch-game', data:{ ids: [appId] }}, (response) => {
+	chrome.runtime.sendMessage({ type: 'fetch-game', data: { ids: [appId] } }, (response) => {
 		waitForElement('.page_content_ctn > .block .queue_overflow_ctn').then(function (game) {
 			game.classList.add('alike_sub');
 			game.dataset.subType = 3;
 			game.dataset.subId = appId;
 			addSubInfo(response[0]);
 		});
-    });
+	});
 	waitForElement('.release_date .date').then(function (date) {
-		chrome.runtime.sendMessage({type: 'fetch-pass', data: {
-			type: 'info',
-			id: appId,
-			name: document.querySelector('#appHubAppName').textContent,
-			date: date.textContent,
-			lang: document.documentElement.lang
-		}});
+		chrome.runtime.sendMessage({
+			type: 'fetch-pass', data: {
+				type: 'info',
+				id: appId,
+				name: document.querySelector('#appHubAppName').textContent,
+				date: date.textContent,
+				lang: document.documentElement.lang
+			}
+		});
 	});
 }
 
@@ -130,10 +142,46 @@ observe(() => {
  */
 function getGameList(list) {
 	let uniq = [...new Set(list.filter(Boolean).map(Number))];
-	if (uniq.length > 0) {
-		chrome.runtime.sendMessage({type: 'fetch-game', data:{ ids: uniq }}, (response) => {
-			if (response.length === 0) return false;
-			response.forEach(game => { addSubInfo(game) });
+
+	if (uniq.length === 0) return false;
+
+	// Create a Map for O(1) lookups of existing games
+	const gameMap = new Map(games.map(game => [game.sid, game]));
+
+	// Separate existing games from new ones that need to be fetched
+	let newGameIds = [];
+
+	uniq.forEach(id => {
+		const existingGame = gameMap.get(id);
+		if (existingGame) {
+			// Immediately add subscription info for existing games
+			addSubInfo(existingGame);
+		} else {
+			newGameIds.push(id);
+		}
+	});
+
+	// Fetch and add info for new games
+	if (newGameIds.length > 0) {
+		chrome.runtime.sendMessage({ type: 'fetch-game', data: { ids: newGameIds } }, (response) => {
+			// Create a Set of found game IDs for O(1) lookups
+			const foundGameIds = response && response.length > 0 ? new Set(response.map(game => game.sid)) : new Set();
+
+			// Process found games
+			if (response && response.length > 0) {
+				response.forEach(game => {
+					games.push(game);
+					addSubInfo(game);
+				});
+			}
+
+			// Process missing games (both when no response and when some games are missing)
+			newGameIds.forEach(id => {
+				if (!foundGameIds.has(id)) {
+					const missingGame = { sid: id, status: 'missing' };
+					games.push(missingGame);
+				}
+			});
 		});
 	}
 }
