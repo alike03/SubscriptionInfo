@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.2 (11 Jun 2025)
+- Fixed Wishlist page not displaying subscription information
+- Added caching for pages with multiple games
+
 ## 2.0.1 (15 Jul 2024)
 - Migrated to Manifest V3
 - Optimized for mobile
