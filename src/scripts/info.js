@@ -71,7 +71,10 @@ if (path.split('/')[1] === 'search') {
 	});
 
 	chrome.runtime.sendMessage({ type: 'fetch-game', data: { ids: [appId] } }, (response) => {
-		waitForElement('.page_content_ctn > .block .queue_overflow_ctn').then(function (game) {
+		waitForElement('.page_content_ctn > .page_content').then(function (details) {
+			const game = document.createElement('div');
+			details.prepend(game);
+
 			game.classList.add('alike_sub');
 			game.dataset.subType = 3;
 			game.dataset.subId = appId;

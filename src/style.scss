@@ -307,23 +307,35 @@
 }
 
 #ag_changes_button {
-    position: static;
+    position: absolute;
+    top: 7px;
+    right: 0;
 
-    padding-right: 3px;
-    padding-left: 8px;
-    margin: 0 5px;
-
-    font-size: 11px;
-    line-height: 20px;
-    text-align: left;
+    border-radius: 1px;
+    background: #1a9fff;
+    z-index: 9999;
 
     cursor: pointer;
     color: #fff;
 
-    &:hover {
-        color: #111111;
-        background: #fff;
-        background: linear-gradient(135deg, #fff 0%,#919aa3 100%);
+    > .pulldownButton {
+        display: block;
+        padding: 2px 3px 2px 7px;
+
+        background: #1a9fff;
+        transition-property: background, box-shadow;
+        transition-duration: .2s;
+        transition-timing-function: ease-out;
+    }
+
+    &:hover > .pulldownButton {
+        background: #45acff;
+        text-shadow: 1px 1px 1px #0281bb;
+        box-shadow: 2px 2px 3px rgba(0,0,0,.2);
+    }
+
+    a {
+        color: #fff;
     }
 
     .pulldown {
@@ -354,7 +366,7 @@
     opacity: 0;
     
     cursor: default;
-    color: #ffffff;
+    color: #fff;
     transform-origin: top;
     overflow: hidden;
     z-index: 151;
@@ -365,6 +377,10 @@
     &.open {
         animation: anim_open 0.2s cubic-bezier(0, 1, 0.8, 1) forwards;
         animation-timing-function: linear;
+
+        .page_top_area:has(&) {
+            overflow-y: visible;
+        }
     }
 
     &.closed {
@@ -390,9 +406,13 @@
 
         &.active,
         &:hover {
-            background: linear-gradient(to bottom, #e3eaef 5%, #c7d5e0 95%);
             color: black;
+            background: linear-gradient(to bottom, #e3eaef 5%, #c7d5e0 95%);
             text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.25);
+
+            a {
+                color: black;
+            }
         }
     }
 

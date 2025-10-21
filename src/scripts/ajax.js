@@ -2,7 +2,7 @@ const allowedTags = ["h2","h3","h4","div","span","a","picture","source","img","u
 const allowedAttributes = ["id","class","style","href","srcset","loading","title","alt","target","value","type","name","for","placeholder","checked"];
 
 
-waitForElement('#store_controls #cart_status_data').then(function (element) {
+waitForElement('.breadcrumbs').then(function (element) {
     let title = document.createElement('h1');
     title.setAttribute('class', 'ag_changes_title');
     title.innerText = "Loading...";
@@ -25,7 +25,6 @@ waitForElement('#store_controls #cart_status_data').then(function (element) {
 
     let button = document.createElement('div');
     button.setAttribute('id', 'ag_changes_button');
-    button.setAttribute('class', 'store_header_btn store_header_btn_gray');
 
     button.appendChild(span);
     button.appendChild(container);
@@ -54,10 +53,11 @@ waitForElement('#store_controls #cart_status_data').then(function (element) {
         };
     }
 
-    element.querySelectorAll('#ag_changes_button').forEach((oldButton) => { 
+    document.querySelectorAll('#ag_changes_button').forEach((oldButton) => {
         oldButton.remove();
     });
-    element.prepend(button);
+    element.style.position = 'relative';
+    element.appendChild(button);
 
     loadChanges(save.options.timeFrame);
 });

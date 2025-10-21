@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.1.0 (22 Oct 2025)
+- Added support for the new Steam UI
+
 ## 2.0.2 (11 Jun 2025)
 - Fixed Wishlist page not displaying subscription information
 - Added caching for pages with multiple games
