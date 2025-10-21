@@ -2,7 +2,7 @@
     "manifest_version": 3,
     "name": "alike03's Subscription Info on Steam",
     "description": "See on Steam if the game is currently available on any Subscription package like Xbox Game Pass PC & Console, Ubisoft+ or EA Play",
-    "version": "2.0.2",
+    "version": "2.1.0",
     "homepage_url": "https://aligueler.com/SubscriptionInfo/",
     "permissions": [ "storage" ],
     "icons": {
@@ -15,7 +15,7 @@
     },
     "browser_specific_settings": {
         "gecko": {
-            "id": "7d7241f8-5541-4ab7-9c8a-ad15bd3aa4c7",
+            "id": "{7d7241f8-5541-4ab7-9c8a-ad15bd3aa4c7}",
             "strict_min_version": "115.0"
         },
         "gecko_android": {

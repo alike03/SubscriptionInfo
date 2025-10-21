@@ -14,3 +14,5 @@ debug.log
 ### Packing ###
 .web-extension-id
 web-ext-artifacts/
+node_modules/
+.DS_Store
