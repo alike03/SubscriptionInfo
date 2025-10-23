@@ -42,6 +42,9 @@ jobs:
           rm -f build/chrome/manifest.json
           cp src/manifest_chrome.json build/chrome/manifest.json
 
+          # Remove other manifest files
+          rm -f build/chrome/manifest_*.json
+
           # Create zip
           cd build/chrome
           zip -r ../../SubscriptionInfo-Chrome-${{ steps.tag.outputs.VERSION }}.zip .
@@ -61,6 +64,9 @@ jobs:
           # Replace manifest.json with manifest_firefox.json
           rm -f build/firefox/manifest.json
           cp src/manifest_firefox.json build/firefox/manifest.json
+
+          # Remove other manifest files
+          rm -f build/firefox/manifest_*.json
 
           # Create zip
           cd build/firefox
