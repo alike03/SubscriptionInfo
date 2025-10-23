@@ -16,3 +16,4 @@ debug.log
 web-ext-artifacts/
 node_modules/
 .DS_Store
+src/manifest.json

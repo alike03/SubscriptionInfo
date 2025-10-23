@@ -1,0 +1,98 @@
+name: Release Build
+
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Get tag version
+        id: tag
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Extract latest changelog
+        id: changelog
+        run: |
+          # Extract the first changelog entry (between first ## and second ##)
+          CHANGELOG=$(awk '/^## / {if (++count == 2) exit; if (count == 1) next} count == 1' CHANGELOG.md)
+          # Save to output (escape for multiline)
+          echo "BODY<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGELOG" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Build Chrome extension
+        run: |
+          # Create temporary build directory
+          mkdir -p build/chrome
+
+          # Copy src contents to build directory
+          cp -r src/* build/chrome/
+
+          # Remove style.scss
+          rm -f build/chrome/style.scss
+
+          # Replace manifest.json with manifest_chrome.json
+          rm -f build/chrome/manifest.json
+          cp src/manifest_chrome.json build/chrome/manifest.json
+
+          # Remove other manifest files
+          rm -f build/chrome/manifest_*.json
+
+          # Create zip
+          cd build/chrome
+          zip -r ../../SubscriptionInfo-Chrome-${{ steps.tag.outputs.VERSION }}.zip .
+          cd ../..
+
+      - name: Build Firefox extension
+        run: |
+          # Create temporary build directory
+          mkdir -p build/firefox
+
+          # Copy src contents to build directory
+          cp -r src/* build/firefox/
+
+          # Remove style.scss
+          rm -f build/firefox/style.scss
+
+          # Replace manifest.json with manifest_firefox.json
+          rm -f build/firefox/manifest.json
+          cp src/manifest_firefox.json build/firefox/manifest.json
+
+          # Remove other manifest files
+          rm -f build/firefox/manifest_*.json
+
+          # Create zip
+          cd build/firefox
+          zip -r ../../SubscriptionInfo-Firefox-${{ steps.tag.outputs.VERSION }}.zip .
+          cd ../..
+
+      - name: Upload Chrome artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SubscriptionInfo-Chrome-${{ steps.tag.outputs.VERSION }}
+          path: SubscriptionInfo-Chrome-${{ steps.tag.outputs.VERSION }}.zip
+          retention-days: 90
+
+      - name: Upload Firefox artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SubscriptionInfo-Firefox-${{ steps.tag.outputs.VERSION }}
+          path: SubscriptionInfo-Firefox-${{ steps.tag.outputs.VERSION }}.zip
+          retention-days: 90
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            SubscriptionInfo-Chrome-${{ steps.tag.outputs.VERSION }}.zip
+            SubscriptionInfo-Firefox-${{ steps.tag.outputs.VERSION }}.zip
+          body: ${{ steps.changelog.outputs.BODY }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
