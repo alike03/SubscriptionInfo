@@ -2,10 +2,8 @@ name: Release Build
 
 on:
   push:
-    branches:
-      - feat/release
-    # tags:
-    #   - "*"
+    tags:
+      - "*"
 
 jobs:
   build:
