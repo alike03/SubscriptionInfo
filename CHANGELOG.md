@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.1.1 (23 Oct 2025)
+- Fixed placement issue of Sub Info on game details page
+
 ## 2.1.0 (22 Oct 2025)
 - Added support for the new Steam UI
 
