@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.1.2 (19 Nov 2025)
+- Added support for SaleSectionContainer widgets
+- Increased width to adapt to new Steam page widths
+- Adjusted game card sizes and spacing
+- Optimized popup layout for better visibility
+
 ## 2.1.1 (23 Oct 2025)
 - Fixed placement issue of Sub Info on game details page
 
