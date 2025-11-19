@@ -1,7 +1,6 @@
 const allowedTags = ["h2","h3","h4","div","span","a","picture","source","img","ul","li","p","i","b","br","select","option","optgroup","input","label"];
 const allowedAttributes = ["id","class","style","href","srcset","loading","title","alt","target","value","type","name","for","placeholder","checked"];
 
-
 waitForElement('.breadcrumbs').then(function (element) {
     let title = document.createElement('h1');
     title.setAttribute('class', 'ag_changes_title');
@@ -61,6 +60,10 @@ waitForElement('.breadcrumbs').then(function (element) {
 
     loadChanges(save.options.timeFrame);
 });
+
+function contextPopup() {
+    return (typeof isPopup !== 'undefined' && isPopup);
+}
 
 function createElementsFromJSON(content, parent) {
     if (content.hasOwnProperty('element')) {
@@ -235,6 +238,8 @@ function loadNavArrows() {
         });
         function slideSelection(e, change, sib) {
             clist = e.classList;
+            const cardCount = contextPopup() ? 5 : 6;
+
             if (!clist.contains('disabled')) {
                 let cont = e.parentNode.firstElementChild.firstElementChild;
                 let pos = parseInt(cont.dataset.position) + change;
@@ -244,7 +249,7 @@ function loadNavArrows() {
                 if (change === -1) {
                     if (parseInt(cont.dataset.position) <= 0)
                         clist.add('disabled');
-                } else if (change === 1 && parseInt(cont.dataset.position) + 1 >= cont.childElementCount / 5) {
+                } else if (change === 1 && parseInt(cont.dataset.position) + 1 >= cont.childElementCount / cardCount) {
                     clist.add('disabled');
                 }
             }

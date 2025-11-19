@@ -1,3 +1,5 @@
+const isPopup = true;
+
 const main = document.querySelector('main');
 
 const breadcrumbs = document.createElement('div');
