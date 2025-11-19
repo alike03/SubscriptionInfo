@@ -2,6 +2,8 @@ name: Release Build
 
 on:
   push:
+    branches:
+      - master
     tags:
       - "*"
 
@@ -12,10 +14,31 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Extract version from manifest
+        id: manifest_version
+        run: |
+          VERSION=$(grep -oP '"version":\s*"\K[^"]+' src/manifest_firefox.json)
+          echo "VERSION=v$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Create and push tag
+        if: github.ref == 'refs/heads/master'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag ${{ steps.manifest_version.outputs.VERSION }}
+          git push origin ${{ steps.manifest_version.outputs.VERSION }}
 
       - name: Get tag version
         id: tag
-        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+        run: |
+          if [ "${{ github.ref_type }}" == "tag" ]; then
+            echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          else
+            echo "VERSION=${{ steps.manifest_version.outputs.VERSION }}" >> $GITHUB_OUTPUT
+          fi
 
       - name: Extract latest changelog
         id: changelog
