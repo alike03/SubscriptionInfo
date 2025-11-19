@@ -100,8 +100,7 @@ if (path.split('/')[1] === 'search') {
 observe(() => {
 	let list = [];
 
-	// query class starting with salepreviewwidgets_
-	document.querySelectorAll('[class^="salepreviewwidgets_"]:not(.alike_sub)').forEach(game => {
+	document.querySelectorAll('[class^="salepreviewwidgets_"]:not(.alike_sub), .SaleSectionContainer:not(.alike_sub) .Panel').forEach(game => {
 		// check if game is not already checked with alike_sub class and also check if a parent element doesnt have .alike_sub class
 		if (!game.closest('.alike_sub')) {
 			// get Steam ID from a[href]
