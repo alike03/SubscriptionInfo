@@ -24,7 +24,7 @@ h1 {
     height: auto;
     opacity: 1;
     width: 800px;
-    height: 600px;
+    height: 580px;
 }
 
 .ag_changes .ag_button {
@@ -47,9 +47,14 @@ h1 {
     overflow-y: scroll;
 }
 
+.ag_changes .no_overflow {
+    margin: 0 4px;
+}
+
 .ag_changes .game {
     height: 233px;
     width: 122px;
+    margin: 9px 7px;
 }
 
 .ag_changes .game img {
