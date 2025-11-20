@@ -43,6 +43,7 @@ jobs:
 
       - name: Get tag version
         id: tag
+        if: github.ref_type == 'tag' || steps.check_tag.outputs.TAG_EXISTS == 'false'
         run: |
           if [ "${{ github.ref_type }}" == "tag" ]; then
             echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
@@ -52,6 +53,7 @@ jobs:
 
       - name: Extract latest changelog
         id: changelog
+        if: github.ref_type == 'tag' || steps.check_tag.outputs.TAG_EXISTS == 'false'
         run: |
           # Extract the first changelog entry (between first ## and second ##)
           CHANGELOG=$(awk '/^## / {if (++count == 2) exit; if (count == 1) next} count == 1' CHANGELOG.md)
@@ -61,6 +63,7 @@ jobs:
           echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Build Chrome extension
+        if: github.ref_type == 'tag' || steps.check_tag.outputs.TAG_EXISTS == 'false'
         run: |
           # Create temporary build directory
           mkdir -p build/chrome
@@ -84,6 +87,7 @@ jobs:
           cd ../..
 
       - name: Build Firefox extension
+        if: github.ref_type == 'tag' || steps.check_tag.outputs.TAG_EXISTS == 'false'
         run: |
           # Create temporary build directory
           mkdir -p build/firefox
@@ -107,6 +111,7 @@ jobs:
           cd ../..
 
       - name: Upload Chrome artifact
+        if: github.ref_type == 'tag' || steps.check_tag.outputs.TAG_EXISTS == 'false'
         uses: actions/upload-artifact@v4
         with:
           name: SubscriptionInfo-Chrome-${{ steps.tag.outputs.VERSION }}
@@ -114,6 +119,7 @@ jobs:
           retention-days: 90
 
       - name: Upload Firefox artifact
+        if: github.ref_type == 'tag' || steps.check_tag.outputs.TAG_EXISTS == 'false'
         uses: actions/upload-artifact@v4
         with:
           name: SubscriptionInfo-Firefox-${{ steps.tag.outputs.VERSION }}
@@ -121,6 +127,7 @@ jobs:
           retention-days: 90
 
       - name: Create GitHub Release
+        if: github.ref_type == 'tag' || steps.check_tag.outputs.TAG_EXISTS == 'false'
         uses: softprops/action-gh-release@v1
         with:
           files: |
