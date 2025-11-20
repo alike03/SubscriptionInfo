@@ -23,8 +23,18 @@ jobs:
           VERSION=$(grep -oP '"version":\s*"\K[^"]+' src/manifest_firefox.json)
           echo "VERSION=v$VERSION" >> $GITHUB_OUTPUT
 
-      - name: Create and push tag
+      - name: Check if tag exists
+        id: check_tag
         if: github.ref == 'refs/heads/master'
+        run: |
+          if git rev-parse ${{ steps.manifest_version.outputs.VERSION }} >/dev/null 2>&1; then
+            echo "TAG_EXISTS=true" >> $GITHUB_OUTPUT
+          else
+            echo "TAG_EXISTS=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create and push tag
+        if: github.ref == 'refs/heads/master' && steps.check_tag.outputs.TAG_EXISTS == 'false'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
