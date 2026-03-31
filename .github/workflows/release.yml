@@ -116,7 +116,7 @@ jobs:
         with:
           name: SubscriptionInfo-Chrome-${{ steps.tag.outputs.VERSION }}
           path: SubscriptionInfo-Chrome-${{ steps.tag.outputs.VERSION }}.zip
-          retention-days: 90
+          retention-days: 7
 
       - name: Upload Firefox artifact
         if: github.ref_type == 'tag' || steps.check_tag.outputs.TAG_EXISTS == 'false'
@@ -124,7 +124,7 @@ jobs:
         with:
           name: SubscriptionInfo-Firefox-${{ steps.tag.outputs.VERSION }}
           path: SubscriptionInfo-Firefox-${{ steps.tag.outputs.VERSION }}.zip
-          retention-days: 90
+          retention-days: 7
 
       - name: Create GitHub Release
         if: github.ref_type == 'tag' || steps.check_tag.outputs.TAG_EXISTS == 'false'
