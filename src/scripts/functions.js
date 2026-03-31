@@ -1,6 +1,6 @@
 /*******  Variables  *******/
 const version = chrome.runtime.getManifest().version;
-const platforms = ["gamepasspc", "gamepasscon", "ubiplus", "eaplay", "eaplaypro"];
+const platforms = ["gamepasspc", "gamepasscon", "ubiplus", "eaplay", "eaplaypro", "psplus"];
 
 let save = {
     options: {
@@ -9,7 +9,8 @@ let save = {
             gamepasscon: true,
             ubiplus: true,
             eaplay: true,
-            eaplaypro: true
+            eaplaypro: true,
+            psplus: true
         },
         timeFrame: 30,
         menuToggle: 'click',

@@ -27,6 +27,8 @@ switch (navigator.language) {
                         return "EA PLAY"
                     case "eaplaypro":
                         return "EA PLAY PRO"
+                    case "psplus":
+                        return "PS PLUS"
                 }
             },
             options: {
@@ -55,16 +57,25 @@ switch (navigator.language) {
             },
             long: {
                 active: function(platform, name, date) {
-                    return name + " has been on " + lang.platform(platform) + " since " + lang.formatDate(date.since)
+                    if (date && date.since) {
+                        return name + " has been on " + lang.platform(platform) + " since " + lang.formatDate(date.since)
+                    }
+                    return name + " is available on " + lang.platform(platform)
                 },
                 left: function(platform, name, date) {
-                    return name + " left " + lang.platform(platform) + " on " + lang.formatDate(date.until, false)
+                    if (date && date.until) {
+                        return name + " left " + lang.platform(platform) + " on " + lang.formatDate(date.until, false)
+                    }
+                    return name + " has left " + lang.platform(platform)
                 },
                 leaving: function(platform, name, date) {
-                    return name + " is leaving " + lang.platform(platform) + " " + (date.until ? lang.formatDate(date.until) : "soon")
+                    return name + " is leaving " + lang.platform(platform) + " " + (date && date.until ? lang.formatDate(date.until) : "soon")
                 },
                 soon: function(platform, name, date) {
-                    return name + " is coming to " + lang.platform(platform) + " on " + lang.formatDate(date.since)
+                    if (date && date.since) {
+                        return name + " is coming to " + lang.platform(platform) + " on " + lang.formatDate(date.since)
+                    }
+                    return name + " is coming soon to " + lang.platform(platform)
                 },
                 missing: function(platform, name, date) {
                     return name + " is not on any subscription service"

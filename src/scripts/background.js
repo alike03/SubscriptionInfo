@@ -1,7 +1,94 @@
+// PS Plus game name lookup map (normalized name -> game data)
+let psplusGamesMap = null;
+let psplusLoadPromise = null;
+
+// Load PS Plus games data
+const loadPSPlusGames = async () => {
+	if (psplusGamesMap) return psplusGamesMap;
+	if (psplusLoadPromise) return psplusLoadPromise;
+
+	psplusLoadPromise = (async () => {
+		try {
+			const url = 'https://www.playstation.com/bin/imagic/gameslist?locale=en-us&categoryList=plus-games-list';
+			const response = await fetch(url);
+			const data = await response.json();
+
+			// Build normalized name lookup map
+			psplusGamesMap = new Map();
+			data.forEach(category => {
+				if (category.games) {
+					category.games.forEach(game => {
+						const normalizedName = normalizeName(game.nameEn || game.name);
+						psplusGamesMap.set(normalizedName, {
+							name: game.nameEn || game.name,
+							conceptUrl: game.conceptUrl,
+							device: game.device
+						});
+					});
+				}
+			});
+			return psplusGamesMap;
+		} catch (error) {
+			console.error('Failed to load PS Plus games:', error);
+			psplusGamesMap = new Map();
+			return psplusGamesMap;
+		}
+	})();
+
+	return psplusLoadPromise;
+};
+
+// Normalize game name for matching
+const normalizeName = (name) => {
+	if (!name) return '';
+	return name
+		.toLowerCase()
+		.replace(/[™®©]/g, '')
+		.replace(/[:''"\-–—]/g, ' ')
+		.replace(/\s+/g, ' ')
+		.trim();
+};
+
+// Check if game matches PS Plus by name
+const checkPSPlus = async (gameName) => {
+	const map = await loadPSPlusGames();
+	const normalized = normalizeName(gameName);
+	return map.get(normalized) || null;
+};
+
+// Add PS Plus info to game response
+const addPSPlusToGames = async (games) => {
+	if (!games || !Array.isArray(games)) return games;
+
+	await loadPSPlusGames();
+
+	for (const game of games) {
+		if (game.name && game.status === 'found') {
+			const psplusMatch = await checkPSPlus(game.name);
+			if (psplusMatch) {
+				if (!game.subs) game.subs = {};
+				game.subs.psplus = {
+					status: 'active',
+					date: {
+						since: null,
+						until: null
+					},
+					link: psplusMatch.conceptUrl,
+					target: '_blank'
+				};
+			}
+		}
+	}
+
+	return games;
+};
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 	switch (request.type) {
 		case 'fetch-game':
-			fetchData(request.data, 'game').then(r => sendResponse(r));
+			fetchData(request.data, 'game')
+				.then(r => addPSPlusToGames(r))
+				.then(r => sendResponse(r));
 		break;
 		case 'fetch-pass':
 			fetchData(request.data, 'pass').then(r => sendResponse(r));

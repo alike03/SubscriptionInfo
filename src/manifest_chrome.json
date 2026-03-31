@@ -37,5 +37,5 @@
             "resources": [ "options.json" ]
         }
     ],
-    "host_permissions": [ "https://aligueler.com/" ]
+    "host_permissions": [ "https://aligueler.com/", "https://www.playstation.com/" ]
 }
