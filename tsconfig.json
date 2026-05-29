@@ -10,11 +10,20 @@
 		"resolveJsonModule": true,
 		"isolatedModules": true,
 		"esModuleInterop": true,
+		"baseUrl": ".",
+		"paths": {
+			"$lib/*": [
+				"./src/page/lib/*"
+			]
+		},
 		"lib": [
 			"ESNext",
 			"DOM"
 		],
 		"skipLibCheck": true,
+		"types": [
+			"webextension-polyfill"
+		],
 		"noEmit": true
 	},
 	"include": [

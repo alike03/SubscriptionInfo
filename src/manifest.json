@@ -19,8 +19,8 @@
     },
     "background": {
         "type": "module",
-        "{{firefox}}.scripts": [ "src/page/background.ts" ],
-        "{{chrome}}.service_worker": "src/page/background.ts"
+        "{{firefox}}.scripts": [ "src/page/background/index.ts" ],
+        "{{chrome}}.service_worker": "src/page/background/index.ts"
     },
     "{{firefox}}.browser_specific_settings": {
         "gecko": {
@@ -38,9 +38,9 @@
     "content_scripts": [
         {
             "matches": [ "*://store.steampowered.com/*" ],
-            "js": [ "src/page/page.ts" ],
+            "js": [ "src/page/content/index.ts" ],
             "run_at": "document_start"
         }
     ],
-    "host_permissions": [ "https://aligueler.com/" ]
+    "host_permissions": [ "https://aligueler.com/*", "https://sub.aligueler.com/*" ]
 }

@@ -5,12 +5,18 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite",
-		"build": "npm run build:firefox && npm run build:chrome",
-		"build:firefox": "TARGET=firefox vite build",
+		"dev:chrome": "TARGET=chrome vite",
+		"dev:firefox": "TARGET=firefox vite",
+		"build": "bun run build:chrome && bun run build:firefox",
 		"build:chrome": "TARGET=chrome vite build",
-		"check": "svelte-check --tsconfig ./tsconfig.json"
+		"build:firefox": "TARGET=firefox vite build",
+		"check": "svelte-check --tsconfig ./tsconfig.json",
+		"check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
+		"format": "prettier --write .",
+		"lint": "prettier --check . && eslint ."
 	},
 	"devDependencies": {
+		"@tailwindcss/vite": "^4.0.17",
 		"@sveltejs/vite-plugin-svelte": "^3.1.1",
 		"@tsconfig/svelte": "^5.0.4",
 		"@types/webextension-polyfill": "^0.10.7",
@@ -22,6 +28,23 @@
 		"vite": "^5.3.3",
 		"vite-plugin-web-extension": "^4.1.6",
 		"webextension-polyfill": "^0.12.0",
-		"zip-a-folder": "^3.1.7"
+		"zip-a-folder": "^3.1.7",
+		"@eslint/compat": "^1.2.7",
+		"@eslint/js": "^9.23.0",
+		"eslint": "^9.23.0",
+		"eslint-config-prettier": "^10.1.1",
+		"eslint-plugin-svelte": "^3.4.1",
+		"globals": "^16.0.0",
+		"prettier": "^3.5.3",
+		"prettier-plugin-svelte": "^3.3.3",
+		"typescript-eslint": "^8.29.0"
+	},
+	"dependencies": {
+		"@fontsource-variable/open-sans": "^5.2.5",
+		"embla-carousel": "^8.5.2",
+		"embla-carousel-svelte": "^8.5.2",
+		"lucide-svelte": "0.555.0",
+		"tailwindcss": "^4.0.17",
+		"prettier-plugin-tailwindcss": "^0.6.11"
 	}
 }

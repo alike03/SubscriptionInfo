@@ -1,11 +1,13 @@
-import { defineConfig, PluginOption } from "vite";
-import { svelte } from "@sveltejs/vite-plugin-svelte";
-import webExtension, { readJsonFile } from "vite-plugin-web-extension";
+import tailwindcss from '@tailwindcss/vite';
+import { svelte } from '@sveltejs/vite-plugin-svelte';
+import { resolve } from 'path';
+import { defineConfig, PluginOption } from 'vite';
+import webExtension, { readJsonFile } from 'vite-plugin-web-extension';
 import { COMPRESSION_LEVEL, zip } from 'zip-a-folder';
 
 function generateManifest() {
-	const manifest = readJsonFile("src/manifest.json");
-	const pkg = readJsonFile("package.json");
+	const manifest = readJsonFile('src/manifest.json');
+	const pkg = readJsonFile('package.json');
 	return {
 		...manifest,
 		description: pkg.description,
@@ -15,13 +17,13 @@ function generateManifest() {
 
 function packageExtension(): PluginOption {
 	return {
-		name: "package-extension",
-		apply: "build",
+		name: 'package-extension',
+		apply: 'build',
 		writeBundle: {
 			sequential: true,
 			async handler() {
-				const manifest = readJsonFile("package.json");
-				const target = process.env.TARGET || "chrome";
+				const manifest = readJsonFile('package.json');
+				const target = process.env.TARGET || 'chrome';
 
 				await zip(
 					'dist',
@@ -34,16 +36,22 @@ function packageExtension(): PluginOption {
 }
 
 export default defineConfig({
+	resolve: {
+		alias: {
+			$lib: resolve(__dirname, './src/page/lib')
+		}
+	},
 	plugins: [
 		svelte(),
+		tailwindcss(),
 		webExtension({
 			manifest: generateManifest,
-			watchFilePaths: ["package.json", "manifest.json"],
+			watchFilePaths: ['package.json', 'src/manifest.json'],
 			webExtConfig: {
 				startUrl: 'https://store.steampowered.com/app/1551360/Forza_Horizon_5',
-				args: ["--window-size=400x300"],
+				args: ['--window-size=400x300'],
 			},
-			browser: process.env.TARGET || "chrome",
+			browser: process.env.TARGET || 'chrome',
 		}),
 		packageExtension(),
 	],

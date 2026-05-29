@@ -1,0 +1,94 @@
+<script lang="ts">
+	import type { EmblaCarouselType } from 'embla-carousel';
+	import emblaCarouselSvelte from 'embla-carousel-svelte';
+	import { ChevronLeft, ChevronRight } from 'lucide-svelte';
+
+	let emblaApi: EmblaCarouselType | undefined;
+	let dots: boolean[] = [true];
+	let canScrollPrev = false;
+	let canScrollNext = false;
+
+	const embla = {
+		options: {
+			slidesToScroll: 3,
+			skipSnaps: true,
+			breakpoints: {
+				'(width <= 40rem)': {
+					slidesToScroll: 2
+				},
+				'(width <= 28rem)': {
+					slidesToScroll: 1
+				}
+			},
+			watchResize: (api: EmblaCarouselType) => {
+				setDots(api);
+				return true;
+			}
+		},
+		plugins: []
+	};
+
+	function updateButtonStates() {
+		if (!emblaApi) {
+			canScrollPrev = false;
+			canScrollNext = false;
+			return;
+		}
+
+		canScrollPrev = emblaApi.canScrollPrev();
+		canScrollNext = emblaApi.canScrollNext();
+	}
+
+	function setDots(api: EmblaCarouselType) {
+		dots = Array.from(
+			{ length: api.scrollSnapList().length },
+			(_, index) => index === api.selectedScrollSnap()
+		);
+		updateButtonStates();
+	}
+
+	function init(event: CustomEvent<EmblaCarouselType>) {
+		emblaApi = event.detail;
+		setDots(emblaApi);
+		emblaApi.on('select', setDots);
+		emblaApi.on('slidesInView', setDots);
+		emblaApi.on('reInit', setDots);
+	}
+</script>
+
+<div class="relative select-none rounded-md bg-card/20 px-10 py-4">
+	<div class="embla overflow-hidden" use:emblaCarouselSvelte={embla} on:emblaInit={init}>
+		<div class="embla__container">
+			<slot />
+		</div>
+		<button
+			class="akg-glow absolute left-1 top-1/2 z-10 -translate-y-1/2 cursor-pointer p-2 disabled:pointer-events-none disabled:opacity-20"
+			aria-label="Previous"
+			disabled={!canScrollPrev}
+			on:click={() => emblaApi && emblaApi.scrollPrev()}
+		>
+			<ChevronLeft class="size-5" />
+		</button>
+
+		<button
+			class="akg-glow absolute right-1 top-1/2 z-10 -translate-y-1/2 cursor-pointer p-2 disabled:pointer-events-none disabled:opacity-20"
+			aria-label="Next"
+			disabled={!canScrollNext}
+			on:click={() => emblaApi && emblaApi.scrollNext()}
+		>
+			<ChevronRight class="size-5" />
+		</button>
+	</div>
+</div>
+{#if dots.length > 1}
+	<div class="mt-3 flex justify-center gap-2">
+		{#each dots as active, index}
+			<button
+				class={`h-1.5 w-6 cursor-pointer rounded-4xl ${active ? 'bg-secondary' : 'bg-section'}`}
+				aria-label="Go to slide"
+				aria-current={active}
+				on:click={() => emblaApi && emblaApi.scrollTo(index)}
+			></button>
+		{/each}
+	</div>
+{/if}
