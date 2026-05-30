@@ -16,7 +16,7 @@
 	<div class="relative flex items-start justify-between gap-4">
 		<div class="flex min-w-0 items-center gap-3">
 			<div
-				class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-white/8 bg-card shadow-[var(--shadow-icon)]"
+				class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-white/8 bg-card shadow-(--shadow-icon)"
 			>
 				<img src={logo} alt="alike03" class="h-7 w-7 opacity-90" />
 			</div>
@@ -42,7 +42,7 @@
 			<span>Site</span>
 		</a>
 		<button
-			class={`flex items-center gap-2 rounded-xl border px-3.5 py-2 text-sm font-medium transition-all duration-200 ease-out ${
+			class={`flex items-center gap-2 rounded-xl border px-3.5 py-2 text-sm font-medium transition-all duration-200 ease-out cursor-pointer ${
 				showSettings
 					? 'border-primary/35 bg-primary/15 text-main shadow-[0_12px_28px_-18px_rgba(161,205,68,0.9)]'
 					: 'border-white/8 bg-card/70 text-dim hover:-translate-y-0.5 hover:border-primary/30 hover:text-main'

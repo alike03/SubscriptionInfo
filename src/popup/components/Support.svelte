@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Supporters from './Supporters.svelte';
 	import { Coffee, Github, HeartPlus, Twitter } from 'lucide-svelte';
 
 	const supportLinks = [
@@ -67,4 +68,6 @@
 			</a>
 		{/each}
 	</div>
+
+	<Supporters />
 </section>
