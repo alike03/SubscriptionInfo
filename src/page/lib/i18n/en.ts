@@ -50,6 +50,6 @@ export const translationsEn: Translations = {
 	languages: {
 		en: 'English',
 		de: 'Deutsch',
-		tr: 'Turkce',
+		tr: 'Türkçe',
 	},
 };
