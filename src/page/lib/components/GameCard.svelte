@@ -1,8 +1,9 @@
 <script lang="ts">
 	import SubscriptionBadges from '$lib/components/SubscriptionBadges.svelte';
-	import type { Game } from '$lib/types';
+	import type { Game, Language } from '$lib/types';
 
 	export let game: Game;
+	export let language: Language;
 </script>
 
 <div class="group h-full rounded-md bg-card p-2.5 transition-colors hover:bg-section sm:p-3">
@@ -24,6 +25,6 @@
 			</span>
 		</div>
 
-		<SubscriptionBadges subs={game.subs} />
+		<SubscriptionBadges subs={game.subs} {language} />
 	</div>
 </div>

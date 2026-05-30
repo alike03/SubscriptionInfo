@@ -1,10 +1,11 @@
 import eaplay from './icons/eaplay.svg';
 import eaplaypro from './icons/eaplaypro.svg';
+import gamepass from './icons/gamepass.svg';
 import gamepasscon from './icons/gamepasscon.svg';
 import gamepasspc from './icons/gamepasspc.svg';
 import ubiplus from './icons/ubiplus.svg';
 
-import type { Platform, PlatformDetails } from './types';
+import type { Platform, PlatformDetail, PlatformDetails, SubscriptionPlatform } from './types';
 
 const platformDetails: PlatformDetails = {
 	eaplay: {
@@ -39,6 +40,27 @@ const platformDetails: PlatformDetails = {
 	}
 };
 
+const subscriptionPlatformDetails: Record<string, PlatformDetail> = {
+	...platformDetails,
+	gamepass: {
+		name: 'XBOX GAME PASS',
+		bg: 'bg-gamepass',
+		shadow: 'shadow-gamepass',
+		icon: gamepass
+	}
+};
+
 export const getPlatforms = () => Object.keys(platformDetails) as Platform[];
 
-export const getPlatformDetails = (platform: Platform) => platformDetails[platform];
+export const getPlatformDetails = (platform: SubscriptionPlatform | undefined): PlatformDetail => {
+	const platformKey = platform ?? 'unknown';
+
+	return (
+		subscriptionPlatformDetails[platformKey] ?? {
+			name: platformKey.toUpperCase(),
+			bg: 'bg-card',
+			shadow: 'shadow-icon',
+			icon: gamepass
+		}
+	);
+};

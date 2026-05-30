@@ -7,25 +7,25 @@ export interface Game {
 }
 
 export type Platform = 'eaplay' | 'eaplaypro' | 'gamepasspc' | 'gamepasscon' | 'ubiplus';
+export type SubscriptionPlatform = Platform | 'gamepass' | (string & {});
 
 export type Language = 'en' | 'de' | 'tr';
 
 export interface SubscriptionInfo {
-	platform: Platform;
+	platform: SubscriptionPlatform;
 	entry: string;
 	leave: string;
 	leaving: boolean;
 }
 
-export type PlatformDetails = Record<
-	Platform,
-	{
-		name: string;
-		bg: string;
-		shadow: string;
-		icon: string;
-	}
->;
+export interface PlatformDetail {
+	name: string;
+	bg: string;
+	shadow: string;
+	icon: string;
+}
+
+export type PlatformDetails = Record<Platform, PlatformDetail>;
 
 export interface ExtensionOptions {
 	enabled: Record<Platform, boolean>;

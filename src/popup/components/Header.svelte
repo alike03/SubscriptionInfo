@@ -28,7 +28,7 @@
 		</div>
 		<div class="flex shrink-0 items-center gap-2">
 		<a
-			href="https://aligueler.com/SubscriptionInfo/"
+			href="https://sub.aligueler.com"
 			target="_blank"
 			rel="noreferrer"
 			class="inline-flex items-center gap-1.5 rounded-xl border border-white/8 bg-card/70 px-2.5 py-1.5 text-[12px] font-medium text-dim transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-primary/40 hover:text-main hover:shadow-[0_12px_28px_-18px_rgba(161,205,68,0.9)]"

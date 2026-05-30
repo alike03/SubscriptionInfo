@@ -45,11 +45,34 @@ export function throttle<T extends (...args: unknown[]) => unknown>(
 	};
 }
 
+const localesByLanguage = {
+	en: 'en-US',
+	de: 'de-DE',
+	tr: 'tr-TR'
+} as const;
+
 export function formatDate(
 	date: string,
+	language: keyof typeof localesByLanguage = 'en',
 	options: Intl.DateTimeFormatOptions = { dateStyle: 'medium' }
 ): string {
-	return new Intl.DateTimeFormat('en-US', options).format(new Date(date));
+	const parsedDate = parseDate(date);
+	if (!parsedDate) return date;
+
+	return new Intl.DateTimeFormat(localesByLanguage[language] ?? localesByLanguage.en, options).format(
+		parsedDate
+	);
+}
+
+function parseDate(date: string): Date | null {
+	const match = date.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+	if (match) {
+		const [, year, month, day] = match;
+		return new Date(Number(year), Number(month) - 1, Number(day));
+	}
+
+	const parsedDate = new Date(date);
+	return Number.isNaN(parsedDate.getTime()) ? null : parsedDate;
 }
 
 export function waitForElement(selector: string): Promise<Element> {

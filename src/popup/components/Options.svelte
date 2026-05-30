@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
+	import Tabs from '$lib/components/Tabs.svelte';
 	import type { Translations } from '$lib/i18n';
 	import Support from './Support.svelte';
 
@@ -30,6 +31,24 @@
 	];
 
 	const languageOptions: Language[] = ['en', 'de', 'tr'];
+
+	$: languageTabs = languageOptions.map((language) => ({
+		id: language,
+		label: translations.languages[language],
+	}));
+
+	$: timeFrameTabs = timeFrameOptions.map((timeFrameOption) => ({
+		id: String(timeFrameOption.value),
+		label: translations.options[timeFrameOption.labelKey],
+	}));
+
+	function handleLanguageSelect(language: string) {
+		dispatch('languagechange', language as Language);
+	}
+
+	function handleTimeFrameSelect(timeFrame: string) {
+		dispatch('timeframechange', Number(timeFrame));
+	}
 </script>
 
 <div class="space-y-3 border-b border-hover bg-card px-4 py-3">
@@ -44,19 +63,13 @@
 				<p class="mt-1 text-[11px] text-dim">{translations.options.languageSubtitle}</p>
 			</div>
 
-			<div class="flex items-center gap-2">
-				{#each languageOptions as languageOption}
-					<button
-						class={`cursor-pointer rounded-xl border px-3 py-1.5 text-sm font-medium transition-all duration-200 ease-out ${
-							options.language === languageOption
-								? 'border-primary/35 bg-primary/15 text-main shadow-[0_12px_24px_-18px_rgba(161,205,68,0.9)]'
-								: 'border-white/8 bg-card/70 text-dim hover:-translate-y-0.5 hover:border-primary/25 hover:text-main'
-						}`}
-						on:click={() => dispatch('languagechange', languageOption)}
-					>
-						{translations.languages[languageOption]}
-					</button>
-				{/each}
+			<div class="w-64">
+				<Tabs
+					activeTab={options.language}
+					tabs={languageTabs}
+					ariaLabel={translations.options.languageTitle}
+					on:select={(event) => handleLanguageSelect(event.detail)}
+				/>
 			</div>
 		</div>
 
@@ -67,19 +80,13 @@
 					<p class="mt-1 text-[11px] text-dim">{translations.options.timeFrameSubtitle}</p>
 				</div>
 
-				<div class="flex items-center gap-2">
-					{#each timeFrameOptions as timeFrameOption}
-						<button
-							class={`cursor-pointer rounded-xl border px-3 py-1.5 text-sm font-medium transition-all duration-200 ease-out ${
-								options.timeFrame === timeFrameOption.value
-									? 'border-primary/35 bg-primary/15 text-main shadow-[0_12px_24px_-18px_rgba(161,205,68,0.9)]'
-									: 'border-white/8 bg-card/70 text-dim hover:-translate-y-0.5 hover:border-primary/25 hover:text-main'
-							}`}
-							on:click={() => dispatch('timeframechange', timeFrameOption.value)}
-						>
-							{translations.options[timeFrameOption.labelKey]}
-						</button>
-					{/each}
+				<div class="w-64">
+					<Tabs
+						activeTab={String(options.timeFrame)}
+						tabs={timeFrameTabs}
+						ariaLabel={translations.options.timeFrameTitle}
+						on:select={(event) => handleTimeFrameSelect(event.detail)}
+					/>
 				</div>
 			</div>
 		</div>
