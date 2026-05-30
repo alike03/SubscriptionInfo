@@ -62,3 +62,10 @@ export interface MenuSection {
 	title: string;
 	games: Game[];
 }
+
+export type TabType = 'added' | 'left' | 'coming' | 'leaving';
+
+export interface TabDefinition {
+	id: TabType;
+	label: string;
+}

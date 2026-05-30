@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 
-	import type { TabDefinition, TabType } from '../types';
+	import type { TabDefinition, TabType } from '$lib/types';
 
 	export let activeTab: TabType;
 	export let tabs: TabDefinition[];

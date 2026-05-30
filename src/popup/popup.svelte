@@ -8,8 +8,7 @@
     import Tabs from "./components/Tabs.svelte";
     import { fetchAllChanges } from "$lib/api";
     import { defaultOptions, getOptions, saveOptions } from "$lib/storage";
-    import type { ExtensionOptions, Game, Language, Platform } from "$lib/types";
-    import type { TabDefinition, TabType } from "./types";
+	import type { ExtensionOptions, Game, Language, Platform, TabDefinition, TabType } from "$lib/types";
 
     let activeTab: TabType = "added";
     let showSettings = false;

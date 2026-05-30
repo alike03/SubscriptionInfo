@@ -4,7 +4,7 @@
 	import type { Translations } from '$lib/i18n';
 	import type { Game } from '$lib/types';
 
-	import type { TabType } from '../types';
+	import type { TabType } from '$lib/types';
 
 	export let activeTab: TabType;
 	export let loading = true;
