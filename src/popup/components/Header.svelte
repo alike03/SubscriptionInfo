@@ -1,10 +1,12 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 	import { ExternalLink, Settings } from 'lucide-svelte';
+	import type { Translations } from '$lib/i18n';
 
 	import logo from '../../page/lib/icons/alike.svg';
 
 	export let showSettings = false;
+	export let translations: Translations['header'];
 
 	const dispatch = createEventDispatcher<{
 		togglesettings: void;
@@ -24,10 +26,10 @@
 				<p
 					class="inline-flex rounded-full border border-white/8 bg-white/5 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-dim"
 				>
-					Browser Extension
+					{translations.badge}
 				</p>
 				<h1 class="truncate text-lg font-bold leading-tight text-main">Subscription Info</h1>
-				<p class="text-xs text-dim">Track what changed across your subscriptions.</p>
+				<p class="text-xs text-dim">{translations.subtitle}</p>
 			</div>
 		</div>
 		<div class="flex shrink-0 items-center gap-2 pt-0.5">
@@ -36,10 +38,10 @@
 			target="_blank"
 			rel="noreferrer"
 			class="inline-flex items-center gap-2 rounded-xl border border-white/8 bg-card/70 px-3 py-2 text-sm font-medium text-dim transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-primary/40 hover:text-main hover:shadow-[0_12px_28px_-18px_rgba(161,205,68,0.9)]"
-			title="Visit website"
+			title={translations.visitWebsite}
 		>
 			<ExternalLink class="h-4 w-4" />
-			<span>Site</span>
+			<span>{translations.site}</span>
 		</a>
 		<button
 			class={`flex items-center gap-2 rounded-xl border px-3.5 py-2 text-sm font-medium transition-all duration-200 ease-out cursor-pointer ${
@@ -49,10 +51,10 @@
 			}`}
 			aria-pressed={showSettings}
 			on:click={() => dispatch('togglesettings')}
-			title="Toggle settings"
+			title={translations.toggleSettings}
 		>
 			<Settings class="h-4 w-4" />
-			<span>Settings</span>
+			<span>{translations.settings}</span>
 		</button>
 		</div>
 	</div>

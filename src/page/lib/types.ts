@@ -8,6 +8,8 @@ export interface Game {
 
 export type Platform = 'eaplay' | 'eaplaypro' | 'gamepasspc' | 'gamepasscon' | 'ubiplus';
 
+export type Language = 'en' | 'de' | 'tr';
+
 export interface SubscriptionInfo {
 	platform: Platform;
 	entry: string;
@@ -29,6 +31,7 @@ export interface ExtensionOptions {
 	enabled: Record<Platform, boolean>;
 	timeFrame: number;
 	showNoInfoBar: boolean;
+	language: Language;
 }
 
 export interface StorageData {

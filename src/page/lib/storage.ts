@@ -11,7 +11,8 @@ export const defaultOptions: ExtensionOptions = {
 		eaplaypro: true
 	},
 	timeFrame: 30,
-	showNoInfoBar: true
+	showNoInfoBar: true,
+	language: 'en'
 };
 
 export async function getOptions(): Promise<ExtensionOptions> {

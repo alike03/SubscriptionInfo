@@ -1,6 +1,9 @@
 <script lang="ts">
 	import Supporters from './Supporters.svelte';
 	import { Coffee, Github, HeartPlus, Twitter } from 'lucide-svelte';
+	import type { Translations } from '$lib/i18n';
+
+	export let translations: Translations;
 
 	const supportLinks = [
 		{
@@ -33,8 +36,8 @@
 <section class="border-t border-hover bg-section/40 px-4 py-4">
 	<div class="mb-3 flex items-start justify-between gap-3">
 		<div>
-			<h3 class="text-sm font-semibold text-main">Support</h3>
-			<p class="mt-1 text-xs text-dim">Support the project or follow future updates.</p>
+			<h3 class="text-sm font-semibold text-main">{translations.support.title}</h3>
+			<p class="mt-1 text-xs text-dim">{translations.support.subtitle}</p>
 		</div>
 		<span
 			class="rounded-full border border-primary/25 bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-primary"
@@ -69,5 +72,5 @@
 		{/each}
 	</div>
 
-	<Supporters />
+	<Supporters translations={translations.supporters} />
 </section>

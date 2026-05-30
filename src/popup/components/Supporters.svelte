@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount, tick } from 'svelte';
+	import type { Translations } from '$lib/i18n';
 
 	type Contributor = {
 		name: string;
@@ -18,6 +19,8 @@
 	};
 
 	const PIXELS_PER_SECOND = 30;
+
+	export let translations: Translations['supporters'];
 
 	let supporters: Contributor[] = [];
 	let isLoading = true;
@@ -94,8 +97,8 @@
 
 <section class="mt-3 overflow-hidden">
 	<div class="mb-3">
-		<h4 class="text-sm font-semibold text-main">Supporters</h4>
-		<p class="mt-1 text-xs text-dim">Thanks to everyone who has contributed to the project.</p>
+		<h4 class="text-sm font-semibold text-main">{translations.title}</h4>
+		<p class="mt-1 text-xs text-dim">{translations.subtitle}</p>
 	</div>
 
 	{#if tickerSupporters.length > 0}
@@ -114,11 +117,11 @@
 			</div>
 		</div>
 	{:else if isLoading}
-		<p class="text-xs text-dim">Loading supporters...</p>
+		<p class="text-xs text-dim">{translations.loading}</p>
 	{:else if loadError}
-		<p class="text-xs text-dim">Supporter list unavailable right now.</p>
+		<p class="text-xs text-dim">{translations.unavailable}</p>
 	{:else}
-		<p class="text-xs text-dim">No supporters listed yet.</p>
+		<p class="text-xs text-dim">{translations.empty}</p>
 	{/if}
 </section>
 
