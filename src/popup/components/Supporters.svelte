@@ -1,28 +1,14 @@
 <script lang="ts">
+	import { fetchSupporters } from '$lib/api';
 	import { onMount, tick } from 'svelte';
+	import type { Supporter } from '$lib/api';
 	import type { Translations } from '$lib/i18n';
-
-	type Contributor = {
-		name: string;
-		amount: number;
-		currency: string;
-	};
-
-	type ContributorsPayload = {
-		supporter?: Contributor[];
-	};
-
-	type RuntimeWithGetUrl = {
-		runtime?: {
-			getURL?: (path: string) => string;
-		};
-	};
 
 	const PIXELS_PER_SECOND = 30;
 
 	export let translations: Translations['supporters'];
 
-	let supporters: Contributor[] = [];
+	let supporters: Supporter[] = [];
 	let isLoading = true;
 	let loadError = false;
 	let tickerTrackElement: HTMLDivElement | null = null;
@@ -33,7 +19,7 @@
 		void syncTickerDuration();
 	}
 
-	function formatSupporter(supporter: Contributor) {
+	function formatSupporter(supporter: Supporter) {
 		return `${supporter.currency}${supporter.amount}`;
 	}
 
@@ -52,38 +38,9 @@
 		void syncTickerDuration();
 	}
 
-	function getContributorsUrl() {
-		if (import.meta.env.DEV) {
-			return new URL('/contributors.json', 'http://localhost:5173').toString();
-		}
-
-		const runtimes = globalThis as typeof globalThis & {
-			browser?: RuntimeWithGetUrl;
-			chrome?: RuntimeWithGetUrl;
-		};
-
-		return (
-			runtimes.browser?.runtime?.getURL?.('contributors.json') ??
-			runtimes.chrome?.runtime?.getURL?.('contributors.json') ??
-			new URL('/contributors.json', window.location.origin).toString()
-		);
-	}
-
 	onMount(async () => {
 		try {
-			const response = await fetch(getContributorsUrl());
-
-			if (!response.ok) {
-				throw new Error(`Failed to fetch contributors: ${response.status}`);
-			}
-
-			const payload = (await response.json()) as ContributorsPayload;
-
-			supporters =
-				payload.supporter?.map((supporter) => ({
-					...supporter,
-					name: supporter.name.trim(),
-				})) ?? [];
+			supporters = await fetchSupporters();
 		} catch (error) {
 			loadError = true;
 			console.error('Failed to load supporters ticker:', error);

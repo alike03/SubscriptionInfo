@@ -7,12 +7,24 @@ interface GameAPIResponse {
 	games: Game[];
 }
 
+export interface Supporter {
+	name: string;
+	amount: number;
+	currency: string;
+}
+
 interface ChangesAPIResponse {
 	added: Game[];
 	left: Game[];
 	coming: Game[];
 	leaving: Game[];
 }
+
+type SupportersAPIResponse =
+	| Supporter[]
+	| {
+		supporter?: Supporter[];
+	};
 
 export async function fetchGamesByIds(
 	steamIds: number[],
@@ -83,4 +95,24 @@ export async function fetchAllChanges(
 		console.error('Error fetching all changes:', error);
 		return { added: [], left: [], coming: [], leaving: [] };
 	}
+}
+
+export async function fetchSupporters(): Promise<Supporter[]> {
+	const url = new URL('/api/supporters', WEB_API_BASE);
+	const response = await fetch(url.toString());
+
+	if (!response.ok) {
+		throw new Error(`API error: ${response.status}`);
+	}
+
+	const data = (await response.json()) as SupportersAPIResponse;
+	const supporters = Array.isArray(data) ? data : data.supporter ?? [];
+
+	return supporters
+		.map((supporter) => ({
+			name: supporter.name.trim(),
+			amount: supporter.amount,
+			currency: supporter.currency
+		}))
+		.filter((supporter) => supporter.name.length > 0);
 }
