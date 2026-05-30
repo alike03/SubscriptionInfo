@@ -1,14 +1,26 @@
 import browser from 'webextension-polyfill';
+import type { Storage } from 'webextension-polyfill';
 
-import { getPlatformDetails } from '$lib/data';
+import { defaultOptions, getOptions } from '$lib/storage';
 import { throttle, waitForElement } from '$lib/utils';
-import type { Game, SubscriptionInfo } from '$lib/types';
+import type { ExtensionOptions, Game, Language } from '$lib/types';
+import SubscriptionMount from './components/SubscriptionMount.svelte';
 import './content.scss';
 
+interface MountedComponent {
+	$set(props: { language?: Language }): void;
+	$destroy(): void;
+}
+
 const path = window.location.pathname;
-let games: Game[] = [];
+const games = new Map<number, Game>();
+const mountedTargets = new Map<HTMLElement, MountedComponent>();
+let currentLanguage: Language = defaultOptions.language;
 
 async function init() {
+	currentLanguage = (await getOptions()).language;
+	browser.storage.onChanged.addListener(handleStorageChange);
+
 	if (path.split('/')[1] === 'search') {
 		initSearchPage();
 	} else if (path.split('/')[1] === 'wishlist') {
@@ -25,21 +37,8 @@ function initSearchPage() {
 		let triggerLimit = false;
 
 		const filterSearchList = () => {
-			const list: number[] = [];
-
-			document
-				.querySelectorAll<HTMLAnchorElement>('#search_resultsRows a[data-ds-appid]:not(.alike_sub)')
-				.forEach((game) => {
-					const appId = parseInt(game.dataset.dsAppid || '0', 10);
-					if (appId) {
-						list.push(appId);
-						game.classList.add('alike_sub');
-						game.dataset.subId = String(appId);
-						game.dataset.subType = '6';
-					}
-				});
-
-			void getGameList(list);
+			const list = collectSearchTargets();
+			void loadGamesForIds(list);
 			triggerLimit = false;
 		};
 
@@ -65,29 +64,28 @@ function initSearchPage() {
 	});
 }
 
+function collectSearchTargets() {
+	const list: number[] = [];
+
+	document
+		.querySelectorAll<HTMLAnchorElement>('#search_resultsRows a[data-ds-appid]')
+		.forEach((element) => {
+			const appId = parseAppId(element.dataset.dsAppid);
+			if (setupTarget(element, appId, 6)) {
+				list.push(appId);
+			}
+		});
+
+	return list;
+}
+
 function initWishlistPage() {
 	waitForElement('#StoreTemplate .Panel input.Focusable').then((input) => {
 		let triggerLimit = false;
 
 		const filterWishlistList = () => {
-			const list: number[] = [];
-
-			document.querySelectorAll('.alike_cont').forEach((badge) => badge.remove());
-
-			document
-				.querySelectorAll<HTMLAnchorElement>('#StoreTemplate .Panel .Panel a[href*="/app/"]')
-				.forEach((game) => {
-					if (!game.querySelector('img')) return;
-					const appId = parseInt(game.href.split('app/')[1]?.split('/')[0] || '0', 10);
-					if (appId) {
-						list.push(appId);
-						game.classList.add('alike_sub');
-						game.dataset.subId = String(appId);
-						game.dataset.subType = '6';
-					}
-				});
-
-			void getGameList(list);
+			const list = collectWishlistTargets();
+			void loadGamesForIds(list);
 			triggerLimit = false;
 		};
 
@@ -107,26 +105,39 @@ function initWishlistPage() {
 	});
 }
 
+function collectWishlistTargets() {
+	const list: number[] = [];
+
+	document
+		.querySelectorAll<HTMLAnchorElement>('#StoreTemplate .Panel .Panel a[href*="/app/"]')
+		.forEach((element) => {
+			if (!element.querySelector('img')) return;
+
+			const appId = parseAppIdFromUrl(element.href);
+			if (setupTarget(element, appId, 6)) {
+				list.push(appId);
+			}
+		});
+
+	return list;
+}
+
 function initAppPage() {
-	const appId = parseInt(path.split('/')[2] || '0', 10);
+	const appId = parseAppIdFromUrl(path);
 	if (!appId) return;
 
-	document.querySelectorAll('#appHubAppName').forEach((game) => {
-		game.classList.add('alike_sub');
-	});
-
 	browser.runtime.sendMessage({ type: 'fetch-game', data: { ids: [appId] } }).then((response) => {
-		const gameData = (response as Game[])?.[0];
-		if (!gameData) return;
+		const game = (response as Game[])?.[0];
+		if (!game) return;
+
+		games.set(game.sid, game);
 
 		waitForElement('.page_content_ctn > .page_content').then((details) => {
-			const game = document.createElement('div');
-			details.before(game);
+			const mountTarget = document.createElement('div');
+			details.before(mountTarget);
 
-			game.classList.add('alike_sub');
-			game.dataset.subType = '3';
-			game.dataset.subId = String(appId);
-			addSubInfo(gameData);
+			setupTarget(mountTarget, appId, 3);
+			mountGame(game);
 		});
 	});
 }
@@ -139,146 +150,141 @@ function initGeneralObserver() {
 			.querySelectorAll<HTMLElement>(
 				'[class^="salepreviewwidgets_"]:not(.alike_sub), .SaleSectionContainer:not(.alike_sub) .Panel'
 			)
-			.forEach((game) => {
-				if (!game.closest('.alike_sub')) {
-					const link = game.querySelector<HTMLAnchorElement>('a[href*="app/"]');
-					if (link) {
-						const appId = parseInt(link.href.split('/')[4] || '0', 10);
-						if (appId) {
-							list.push(appId);
-							if (!game.dataset.subType) {
-								const isRowContainer = [
-									'salepreviewwidgets_StoreSaleItemReview',
-									'salepreviewwidgets_SaleItemBrowserRow'
-								];
-								const className = game.getAttribute('class') || '';
-								const isRow = isRowContainer.some((classFragment) => className.includes(classFragment));
-								game.dataset.subType = isRow ? '6' : '2';
-							}
-							game.dataset.subId = String(appId);
-						}
-					}
-					game.classList.add('alike_sub');
+			.forEach((element) => {
+				if (element.closest('.alike_sub')) return;
+
+				const link = element.querySelector<HTMLAnchorElement>('a[href*="/app/"]');
+				const appId = parseAppIdFromUrl(link?.href ?? '');
+				if (appId) {
+					setupTarget(element, appId, getSaleWidgetType(element));
+					list.push(appId);
 				}
+
+				element.classList.add('alike_sub');
 			});
 
 		document
 			.querySelectorAll<HTMLElement>('[data-ds-appid]:not(.alike_sub):not(.gutter_item)')
-			.forEach((game) => {
-				const appId = parseInt(game.dataset.dsAppid || '0', 10);
-				if (appId) {
+			.forEach((element) => {
+				const appId = parseAppId(element.dataset.dsAppid);
+				if (setupTarget(element, appId, getDataAppIdType(element))) {
 					list.push(appId);
-					game.classList.add('alike_sub');
-					if (!game.dataset.subType) {
-						const className = game.getAttribute('class') || '';
-						const isRow = ['tab_item'].some((classFragment) => className.includes(classFragment));
-						game.dataset.subType = isRow ? '6' : '2';
-					}
-					game.dataset.subId = String(appId);
 				}
 			});
 
-		void getGameList(list);
+		void loadGamesForIds(list);
 	}, 1000);
 
 	waitForElement('body').then((body) => {
 		const observer = new MutationObserver(observe);
 		observer.observe(body, { childList: true, subtree: true });
+		observe();
 	});
 }
 
-async function getGameList(list: number[]) {
+async function loadGamesForIds(list: number[]) {
 	const uniqueIds = [...new Set(list.filter(Boolean))];
 	if (uniqueIds.length === 0) return;
 
-	const gameMap = new Map(games.map((game) => [game.sid, game]));
-	const newGameIds: number[] = [];
+	const missingIds: number[] = [];
 
 	for (const id of uniqueIds) {
-		const existingGame = gameMap.get(id);
-		if (existingGame) {
-			addSubInfo(existingGame);
+		const cachedGame = games.get(id);
+		if (cachedGame) {
+			mountGame(cachedGame);
 		} else {
-			newGameIds.push(id);
+			missingIds.push(id);
 		}
 	}
 
-	if (newGameIds.length > 0) {
-		try {
-			const response = (await browser.runtime.sendMessage({
-				type: 'fetch-game',
-				data: { ids: newGameIds }
-			})) as Game[];
+	if (missingIds.length === 0) return;
 
-			if (response && response.length > 0) {
-				for (const game of response) {
-					games.push(game);
-					addSubInfo(game);
-				}
-			}
-		} catch (error) {
-			console.error('Error fetching games:', error);
+	try {
+		const response = (await browser.runtime.sendMessage({
+			type: 'fetch-game',
+			data: { ids: missingIds }
+		})) as Game[];
+
+		for (const game of response ?? []) {
+			games.set(game.sid, game);
+			mountGame(game);
 		}
+	} catch (error) {
+		console.error('Error fetching games:', error);
 	}
 }
 
-function addSubInfo(game: Game) {
+function mountGame(game: Game) {
 	if (!game || game.subs.length === 0) return;
 
 	document.querySelectorAll<HTMLElement>(`.alike_sub[data-sub-id="${game.sid}"]`).forEach((element) => {
-		if (element.querySelector('.alike_cont')) return;
+		if (mountedTargets.has(element)) return;
 
-		const container = document.createElement('div');
-		const subType = parseInt(element.dataset.subType || '2', 10);
+		const type = parseInt(element.dataset.subType || '2', 10);
+		const component = new SubscriptionMount({
+			target: element,
+			props: { game, type, language: currentLanguage }
+		}) as MountedComponent;
 
-		for (const sub of game.subs) {
-			appendToContainer(container, game, sub, subType);
-		}
-
-		container.className = `alike_cont type-${subType}`;
-		element.appendChild(container);
+		mountedTargets.set(element, component);
 	});
 }
 
-function appendToContainer(container: HTMLElement, game: Game, sub: SubscriptionInfo, type: number) {
-	const platform = getPlatformDetails(sub.platform);
-	const statusClass = sub.leaving ? 'leaving' : sub.leave ? 'left' : 'active';
+function setupTarget(element: HTMLElement, appId: number, type: number) {
+	if (!appId) return false;
 
-	const flagDiv = document.createElement('div');
-	flagDiv.className = `sub_flag ${statusClass} ${sub.platform}`;
-
-	if (type === 3) {
-		const textDiv = document.createElement('div');
-		textDiv.className = `sub_text ${statusClass} ${sub.platform}`;
-
-		const flagSpan = document.createElement('div');
-		flagSpan.className = `sub_flag ${sub.platform}`;
-		textDiv.appendChild(flagSpan);
-
-		const textSpan = document.createElement('span');
-		let text = '';
-		if (sub.leaving) {
-			text = `${game.name} is leaving ${platform.name}${sub.leave ? ` on ${sub.leave}` : ' soon'}`;
-		} else if (sub.leave) {
-			text = `${game.name} left ${platform.name} on ${sub.leave}`;
-		} else {
-			text = `${game.name} has been on ${platform.name} since ${sub.entry}`;
-		}
-		textSpan.textContent = text;
-		textDiv.appendChild(textSpan);
-
-		container.appendChild(textDiv);
-	} else if (type === 6) {
-		const platformName = document.createElement('span');
-		platformName.className = 'hover_info';
-		platformName.textContent = `ON ${platform.name}`;
-
-		flagDiv.appendChild(platformName);
-		container.appendChild(flagDiv);
-	} else {
-		flagDiv.textContent = `ON ${platform.name}`;
-		container.appendChild(flagDiv);
+	const currentAppId = parseAppId(element.dataset.subId);
+	if (currentAppId && currentAppId !== appId) {
+		unmountTarget(element);
 	}
+
+	element.classList.add('alike_sub');
+	element.dataset.subId = String(appId);
+	element.dataset.subType = String(type);
+
+	return true;
+}
+
+function unmountTarget(element: HTMLElement) {
+	mountedTargets.get(element)?.$destroy();
+	mountedTargets.delete(element);
+	element.querySelector('.alike_cont')?.remove();
+}
+
+function handleStorageChange(changes: Record<string, Storage.StorageChange>, areaName: string) {
+	if (areaName !== 'sync' || !changes.aSub_options?.newValue) return;
+
+	const data = changes.aSub_options.newValue as { options?: Partial<ExtensionOptions> };
+	const language = data.options?.language;
+	if (!language || language === currentLanguage) return;
+
+	currentLanguage = language;
+	for (const component of mountedTargets.values()) {
+		component.$set({ language });
+	}
+}
+
+function getSaleWidgetType(element: HTMLElement) {
+	const className = element.getAttribute('class') || '';
+	const isRow = ['salepreviewwidgets_StoreSaleItemReview', 'salepreviewwidgets_SaleItemBrowserRow'].some(
+		(classFragment) => className.includes(classFragment)
+	);
+
+	return isRow ? 6 : 2;
+}
+
+function getDataAppIdType(element: HTMLElement) {
+	const className = element.getAttribute('class') || '';
+	return className.includes('tab_item') ? 6 : 2;
+}
+
+function parseAppId(value: string | undefined) {
+	const appId = parseInt(value || '0', 10);
+	return Number.isFinite(appId) ? appId : 0;
+}
+
+function parseAppIdFromUrl(value: string) {
+	return parseAppId(value.match(/\/app\/(\d+)/)?.[1]);
 }
 
 void init();

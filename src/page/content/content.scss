@@ -1,5 +1,10 @@
 /* Content script styles for Steam page injection */
 
+.alike_cont,
+.alike_cont * {
+	box-sizing: border-box;
+}
+
 .alike_sub[class^=salepreviewwidgets_SaleItemBrowserRow_] {
 	position: relative;
 }

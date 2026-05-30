@@ -1,9 +1,13 @@
 <script lang="ts">
 	import { getPlatformDetails } from '$lib/data';
+	import { getTranslations } from '$lib/i18n';
 	import { formatDate } from '$lib/utils';
-	import type { SubscriptionInfo } from '$lib/types';
+	import type { Language, SubscriptionInfo } from '$lib/types';
 
 	export let subs: SubscriptionInfo[];
+	export let language: Language;
+
+	$: translations = getTranslations(language).subscriptionBadge;
 </script>
 
 <div class="space-y-1.5 sm:space-y-2">
@@ -19,11 +23,11 @@
 				<span class="text-xs font-medium sm:text-sm">{platform.name}</span>
 				{#if sub.leave}
 					<p class="text-[10px] text-red sm:text-xs">
-						{formatDate(sub.entry)} - {formatDate(sub.leave)}
+						{formatDate(sub.entry, language)} - {formatDate(sub.leave, language)}
 					</p>
 				{:else}
 					<p class="text-[10px] text-primary sm:text-xs">
-						Since {formatDate(sub.entry)}
+						{translations.since} {formatDate(sub.entry, language)}
 					</p>
 				{/if}
 			</div>

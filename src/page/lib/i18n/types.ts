@@ -47,5 +47,13 @@ export interface Translations {
 		unavailable: string;
 		empty: string;
 	};
+	subscriptionBadge: {
+		on: string;
+		since: string;
+		leavingSoon: (gameName: string, platformName: string) => string;
+		leavingOn: (gameName: string, platformName: string, date: string) => string;
+		leftOn: (gameName: string, platformName: string, date: string) => string;
+		activeSince: (gameName: string, platformName: string, date: string) => string;
+	};
 	languages: Record<Language, string>;
 }

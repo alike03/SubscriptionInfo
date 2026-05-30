@@ -47,6 +47,17 @@ export const translationsTr: Translations = {
 		unavailable: 'Destekci listesi su anda kullanilamiyor.',
 		empty: 'Henuz listelenmis destekci yok.',
 	},
+	subscriptionBadge: {
+		on: 'ÜZERINDE',
+		since: 'Başlangıç',
+		leavingSoon: (gameName, platformName) => `${gameName}, yakinda ${platformName} hizmetinden ayriliyor`,
+		leavingOn: (gameName, platformName, date) =>
+			`${gameName}, ${date} tarihinde ${platformName} hizmetinden ayriliyor`,
+		leftOn: (gameName, platformName, date) =>
+			`${gameName}, ${date} tarihinde ${platformName} hizmetinden ayrildi`,
+		activeSince: (gameName, platformName, date) =>
+			`${gameName}, ${date} tarihinden beri ${platformName} hizmetinde`,
+	},
 	languages: {
 		en: 'English',
 		de: 'Deutsch',

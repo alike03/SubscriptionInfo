@@ -47,6 +47,15 @@ export const translationsEn: Translations = {
 		unavailable: 'Supporter list unavailable right now.',
 		empty: 'No supporters listed yet.',
 	},
+	subscriptionBadge: {
+		on: 'ON',
+		since: 'Since',
+		leavingSoon: (gameName, platformName) => `${gameName} is leaving ${platformName} soon`,
+		leavingOn: (gameName, platformName, date) => `${gameName} is leaving ${platformName} on ${date}`,
+		leftOn: (gameName, platformName, date) => `${gameName} left ${platformName} on ${date}`,
+		activeSince: (gameName, platformName, date) =>
+			`${gameName} has been on ${platformName} since ${date}`,
+	},
 	languages: {
 		en: 'English',
 		de: 'Deutsch',

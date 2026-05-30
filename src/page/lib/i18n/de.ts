@@ -47,6 +47,15 @@ export const translationsDe: Translations = {
 		unavailable: 'Die Unterstuetzerliste ist gerade nicht verfuegbar.',
 		empty: 'Es sind noch keine Unterstuetzer eingetragen.',
 	},
+	subscriptionBadge: {
+		on: 'AUF',
+		since: 'Seit',
+		leavingSoon: (gameName, platformName) => `${gameName} verlaesst ${platformName} bald`,
+		leavingOn: (gameName, platformName, date) => `${gameName} verlaesst ${platformName} am ${date}`,
+		leftOn: (gameName, platformName, date) => `${gameName} hat ${platformName} am ${date} verlassen`,
+		activeSince: (gameName, platformName, date) =>
+			`${gameName} ist seit ${date} auf ${platformName}`,
+	},
 	languages: {
 		en: 'English',
 		de: 'Deutsch',

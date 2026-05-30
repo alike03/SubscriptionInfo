@@ -57,7 +57,7 @@
 </script>
 
 
-<div class="relative select-none rounded-md px-8">
+<div class="relative select-none">
 	{#if dots.length > 1}
 		<div class="pointer-events-none absolute inset-x-0 -bottom-6 z-10 flex justify-center">
 			<div class="pointer-events-auto flex items-center gap-1.5 rounded-full border border-primary/15 bg-black/15 px-2 py-1 backdrop-blur-sm">
@@ -81,7 +81,7 @@
 			<slot />
 		</div>
 		<button
-			class="akg-glow absolute -left-2 top-1/2 z-10 -translate-y-1/2 cursor-pointer p-2 disabled:pointer-events-none disabled:opacity-20"
+			class="akg-glow absolute -left-12 top-1/2 z-10 -translate-y-1/2 cursor-pointer p-2 disabled:pointer-events-none disabled:opacity-20"
 			aria-label="Previous"
 			disabled={!canScrollPrev}
 			on:click={() => emblaApi && emblaApi.scrollPrev()}
@@ -90,7 +90,7 @@
 		</button>
 
 		<button
-			class="akg-glow absolute -right-2 top-1/2 z-10 -translate-y-1/2 cursor-pointer p-2 disabled:pointer-events-none disabled:opacity-20"
+			class="akg-glow absolute -right-12 top-1/2 z-10 -translate-y-1/2 cursor-pointer p-2 disabled:pointer-events-none disabled:opacity-20"
 			aria-label="Next"
 			disabled={!canScrollNext}
 			on:click={() => emblaApi && emblaApi.scrollNext()}
