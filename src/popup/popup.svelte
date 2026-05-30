@@ -1,7 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
 
-    import Footer from "./components/Footer.svelte";
     import Games from "./components/Games.svelte";
     import Header from "./components/Header.svelte";
     import Options from "./components/Options.svelte";
@@ -100,6 +99,4 @@
 
         <Games {activeTab} {loading} {games} />
     {/if}
-
-    <Footer />
 </div>

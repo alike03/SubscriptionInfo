@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
+	import Support from './Support.svelte';
 
 	import { getPlatformDetails, getPlatforms } from '$lib/data';
 	import type { ExtensionOptions, Platform } from '$lib/types';
@@ -75,3 +76,5 @@
 		</label>
 	</div>
 </div>
+
+<Support />
