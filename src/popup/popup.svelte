@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { getPopupMessages } from "$lib/i18n";
+    import { getTranslations } from "$lib/i18n";
 
     import Games from "./components/Games.svelte";
     import Header from "./components/Header.svelte";
@@ -21,15 +21,15 @@
         coming: [],
         leaving: [],
     };
-    let messages = getPopupMessages(defaultOptions.language);
+    let translations = getTranslations(defaultOptions.language);
     let tabs: TabDefinition[] = [];
 
-    $: messages = getPopupMessages(options.language);
+    $: translations = getTranslations(options.language);
     $: tabs = [
-        { id: "added", label: messages.tabs.added },
-        { id: "left", label: messages.tabs.left },
-        { id: "coming", label: messages.tabs.coming },
-        { id: "leaving", label: messages.tabs.leaving },
+        { id: "added", label: translations.tabs.added },
+        { id: "left", label: translations.tabs.left },
+        { id: "coming", label: translations.tabs.coming },
+        { id: "leaving", label: translations.tabs.leaving },
     ];
 
     $: if (typeof document !== 'undefined') {
@@ -100,13 +100,13 @@
 </script>
 
 <div class="flex h-full flex-col">
-    <Header {showSettings} messages={messages.header} on:togglesettings={() => (showSettings = !showSettings)} />
+    <Header {showSettings} translations={translations.header} on:togglesettings={() => (showSettings = !showSettings)} />
 
     {#if showSettings}
         <div class="flex-1 overflow-y-auto bg-card">
             <Options
                 {options}
-                {messages}
+                {translations}
                 on:platformtoggle={(event) => void handlePlatformToggle(event.detail)}
                 on:timeframechange={(event) => void handleTimeFrameChange(event.detail)}
                 on:togglenoinfobar={() => void handleShowNoInfoBarChange()}
@@ -116,6 +116,6 @@
     {:else}
         <Tabs {activeTab} {tabs} on:select={(event) => (activeTab = event.detail)} />
 
-        <Games {activeTab} {loading} {games} messages={messages.games} />
+        <Games {activeTab} {loading} {games} translations={translations.games} />
     {/if}
 </div>

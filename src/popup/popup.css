@@ -29,10 +29,12 @@ html {
     @apply scroll-smooth;
 }
 
+html,
 body {
     @apply bg-background text-main m-0 p-0;
-    min-width: 600px;
-    min-height: 400px;
+    width: 800px;
+    height: 600px;
+    overflow: hidden;
 }
 
 .embla {
