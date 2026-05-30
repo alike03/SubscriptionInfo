@@ -1,19 +1,19 @@
 <script lang="ts">
-    import '@fontsource-variable/open-sans';
-    import { onMount } from 'svelte';
-    import { ExternalLink, Settings } from 'lucide-svelte';
+    import "@fontsource-variable/open-sans";
+    import { onMount } from "svelte";
+    import { ExternalLink, Settings } from "lucide-svelte";
 
-    import Carousel from '$lib/components/Carousel.svelte';
-    import GameCard from '$lib/components/GameCard.svelte';
-    import { fetchAllChanges } from '$lib/api';
-    import { getPlatformDetails, getPlatforms } from '$lib/data';
-    import { defaultOptions, getOptions, saveOptions } from '$lib/storage';
-    import type { ExtensionOptions, Game, Platform } from '$lib/types';
-    import logo from '../page/lib/icons/alike.svg';
+    import Carousel from "$lib/components/Carousel.svelte";
+    import GameCard from "$lib/components/GameCard.svelte";
+    import { fetchAllChanges } from "$lib/api";
+    import { getPlatformDetails, getPlatforms } from "$lib/data";
+    import { defaultOptions, getOptions, saveOptions } from "$lib/storage";
+    import type { ExtensionOptions, Game, Platform } from "$lib/types";
+    import logo from "../page/lib/icons/alike.svg";
 
-    type TabType = 'added' | 'left' | 'coming' | 'leaving';
+    type TabType = "added" | "left" | "coming" | "leaving";
 
-    let activeTab: TabType = 'added';
+    let activeTab: TabType = "added";
     let showSettings = false;
     let loading = true;
     let options: ExtensionOptions = structuredClone(defaultOptions);
@@ -21,14 +21,14 @@
         added: [],
         left: [],
         coming: [],
-        leaving: []
+        leaving: [],
     };
 
     const tabs: { id: TabType; label: string }[] = [
-        { id: 'added', label: 'Recently Added' },
-        { id: 'left', label: 'Recently Left' },
-        { id: 'coming', label: 'Coming Soon' },
-        { id: 'leaving', label: 'Leaving Soon' }
+        { id: "added", label: "Recently Added" },
+        { id: "left", label: "Recently Left" },
+        { id: "coming", label: "Coming Soon" },
+        { id: "leaving", label: "Leaving Soon" },
     ];
 
     async function loadGames() {
@@ -37,9 +37,12 @@
         try {
             const storedOptions = await getOptions();
             options = storedOptions;
-            games = await fetchAllChanges(storedOptions.timeFrame, storedOptions);
+            games = await fetchAllChanges(
+                storedOptions.timeFrame,
+                storedOptions,
+            );
         } catch (error) {
-            console.error('Error loading games:', error);
+            console.error("Error loading games:", error);
         } finally {
             loading = false;
         }
@@ -50,8 +53,8 @@
             ...options,
             enabled: {
                 ...options.enabled,
-                [platform]: !options.enabled[platform]
-            }
+                [platform]: !options.enabled[platform],
+            },
         };
 
         await saveOptions(options);
@@ -62,7 +65,7 @@
         const target = event.currentTarget as HTMLSelectElement;
         options = {
             ...options,
-            timeFrame: parseInt(target.value, 10)
+            timeFrame: parseInt(target.value, 10),
         };
 
         await saveOptions(options);
@@ -72,7 +75,7 @@
     async function handleShowNoInfoBarChange() {
         options = {
             ...options,
-            showNoInfoBar: !options.showNoInfoBar
+            showNoInfoBar: !options.showNoInfoBar,
         };
 
         await saveOptions(options);
@@ -113,7 +116,10 @@
             <h2 class="mb-3 text-sm font-semibold text-dim">Settings</h2>
 
             <div class="mb-4">
-                <label for="timeframe-select" class="mb-2 block text-xs text-dim">Time Frame</label>
+                <label
+                    for="timeframe-select"
+                    class="mb-2 block text-xs text-dim">Time Frame</label
+                >
                 <select
                     id="timeframe-select"
                     class="rounded-md border border-hover bg-section px-3 py-1.5 text-sm text-main"
@@ -127,7 +133,9 @@
             </div>
 
             <div class="mb-4">
-                <span class="mb-2 block text-xs text-dim">Enabled Platforms</span>
+                <span class="mb-2 block text-xs text-dim"
+                    >Enabled Platforms</span
+                >
                 <div class="flex flex-wrap gap-2">
                     {#each getPlatforms() as platform}
                         {@const details = getPlatformDetails(platform)}
@@ -135,11 +143,15 @@
                             class={`flex items-center gap-1.5 rounded-md px-2 py-1 text-xs transition-all ${
                                 options.enabled[platform]
                                     ? `${details.bg} text-white`
-                                    : 'bg-section text-dim opacity-50'
+                                    : "bg-section text-dim opacity-50"
                             }`}
                             on:click={() => handlePlatformToggle(platform)}
                         >
-                            <img src={details.icon} alt={details.name} class="h-3.5 w-3.5" />
+                            <img
+                                src={details.icon}
+                                alt={details.name}
+                                class="h-3.5 w-3.5"
+                            />
                             {details.name}
                         </button>
                     {/each}
@@ -154,7 +166,9 @@
                         on:change={handleShowNoInfoBarChange}
                         class="rounded"
                     />
-                    <span class="text-dim">Show info bar for games not in any service</span>
+                    <span class="text-dim"
+                        >Show info bar for games not in any service</span
+                    >
                 </label>
             </div>
         </div>
@@ -165,8 +179,8 @@
             <button
                 class={`flex-1 px-4 py-2.5 text-sm font-medium transition-colors ${
                     activeTab === tab.id
-                        ? 'border-b-2 border-primary text-primary'
-                        : 'text-dim hover:bg-hover hover:text-main'
+                        ? "border-b-2 border-primary text-primary"
+                        : "text-dim hover:bg-hover hover:text-main"
                 }`}
                 on:click={() => (activeTab = tab.id)}
             >
@@ -184,7 +198,9 @@
             <div class="flex h-full items-center justify-center">
                 <div class="text-center text-dim">
                     <p class="mb-2">No games found</p>
-                    <p class="text-xs">Try adjusting the time frame in settings</p>
+                    <p class="text-xs">
+                        Try adjusting the time frame in settings
+                    </p>
                 </div>
             </div>
         {:else}
@@ -198,9 +214,15 @@
         {/if}
     </main>
 
-    <footer class="border-t border-hover bg-section px-4 py-2 text-center text-xs text-dim">
+    <footer
+        class="border-t border-hover bg-section px-4 py-2 text-center text-xs text-dim"
+    >
         Made by
-        <a href="https://github.com/alike03" target="_blank" class="text-primary hover:underline">
+        <a
+            href="https://github.com/alike03"
+            target="_blank"
+            class="text-primary hover:underline"
+        >
             alike03
         </a>
     </footer>

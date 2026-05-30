@@ -1,0 +1,69 @@
+@import "tailwindcss";
+
+@theme {
+    --default-font-family: "Open Sans Variable", sans-serif;
+
+    --color-primary: rgb(161, 205, 68);
+    --color-yellow: rgb(193, 177, 95);
+    --color-red: rgb(205, 84, 68);
+    --color-secondary: rgb(75, 97, 155);
+    --color-main: rgb(243, 243, 243);
+    --color-dim: rgb(118, 128, 140);
+    --color-hover: rgb(49, 56, 67);
+    --color-background: rgb(32, 43, 60);
+    --color-section: rgb(30, 35, 41);
+    --color-card: rgb(14, 20, 27);
+
+    --color-gamepass: rgb(16, 124, 15);
+    --color-gamepasspc: rgb(16, 124, 15);
+    --color-gamepasscon: rgb(16, 124, 15);
+    --color-ubiplus: rgb(66, 142, 224);
+    --color-eaplay: rgb(255, 71, 71);
+    --color-eaplaypro: rgb(255, 71, 71);
+
+    --shadow-icon:
+        0 5px 25px -3px rgb(0 0 0 / 0.5), 0 4px 16px -4px rgb(0 0 0 / 0.5);
+}
+
+html {
+    @apply scroll-smooth;
+}
+
+body {
+    @apply bg-background text-main m-0 p-0;
+    min-width: 600px;
+    min-height: 400px;
+}
+
+.embla {
+    overflow: hidden;
+    --slide-height: 14rem;
+    --slide-spacing: calc(var(--spacing) * 3);
+    --slide-size: 33.333%;
+
+    @media (max-width: 32rem) {
+        --slide-size: 50%;
+    }
+}
+
+.embla__container {
+    display: flex;
+    touch-action: pan-y pinch-zoom;
+    margin-left: calc(var(--slide-spacing) * -1);
+}
+
+.embla__slide {
+    flex: 0 0 var(--slide-size);
+    min-width: 0;
+    padding-left: var(--slide-spacing);
+}
+
+.akg-glow {
+    transition: filter 0.2s ease-out;
+
+    &:hover {
+        filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5))
+            drop-shadow(0 0 8px rgba(255, 255, 255, 0.5))
+            drop-shadow(0 0 5px rgba(255, 255, 255, 0.8));
+    }
+}
