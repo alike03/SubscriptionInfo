@@ -10,7 +10,6 @@
     import { defaultOptions, getOptions, saveOptions } from '$lib/storage';
     import type { ExtensionOptions, Game, Platform } from '$lib/types';
     import logo from '../page/lib/icons/alike.svg';
-    import './popup.scss';
 
     type TabType = 'added' | 'left' | 'coming' | 'leaving';
 

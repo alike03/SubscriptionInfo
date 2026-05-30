@@ -1,0 +1,3 @@
+[install]
+# Only allow package versions published at least 50 days ago.
+minimumReleaseAge = 4320000

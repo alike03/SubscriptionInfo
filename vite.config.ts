@@ -1,9 +1,13 @@
+import { mkdir } from 'node:fs/promises';
 import tailwindcss from '@tailwindcss/vite';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 import { resolve } from 'path';
 import { defineConfig, PluginOption } from 'vite';
 import webExtension, { readJsonFile } from 'vite-plugin-web-extension';
 import { COMPRESSION_LEVEL, zip } from 'zip-a-folder';
+
+const target = process.env.TARGET || 'chrome';
+const webExtTarget = target === 'firefox' ? 'firefox-desktop' : 'chromium';
 
 function generateManifest() {
 	const manifest = readJsonFile('src/manifest.json');
@@ -16,14 +20,23 @@ function generateManifest() {
 }
 
 function packageExtension(): PluginOption {
+	let isProductionBuild = false;
+
 	return {
 		name: 'package-extension',
 		apply: 'build',
+		configResolved(config) {
+			isProductionBuild = config.mode === 'production';
+		},
 		writeBundle: {
 			sequential: true,
 			async handler() {
+				if (!isProductionBuild) {
+					return;
+				}
+
 				const manifest = readJsonFile('package.json');
-				const target = process.env.TARGET || 'chrome';
+				await mkdir('_info', { recursive: true });
 
 				await zip(
 					'dist',
@@ -36,6 +49,10 @@ function packageExtension(): PluginOption {
 }
 
 export default defineConfig({
+	server: {
+		port: 5173,
+		strictPort: true,
+	},
 	resolve: {
 		alias: {
 			$lib: resolve(__dirname, './src/page/lib')
@@ -47,11 +64,24 @@ export default defineConfig({
 		webExtension({
 			manifest: generateManifest,
 			watchFilePaths: ['package.json', 'src/manifest.json'],
+			htmlViteConfig: {
+				server: {
+					port: 5173,
+					strictPort: true,
+				},
+			},
+			scriptViteConfig: {
+				server: {
+					port: 5173,
+					strictPort: true,
+				},
+			},
 			webExtConfig: {
+				target: webExtTarget,
 				startUrl: 'https://store.steampowered.com/app/1551360/Forza_Horizon_5',
 				args: ['--window-size=400x300'],
 			},
-			browser: process.env.TARGET || 'chrome',
+			browser: target,
 		}),
 		packageExtension(),
 	],
