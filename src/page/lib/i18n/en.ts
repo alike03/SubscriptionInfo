@@ -2,8 +2,6 @@ import type { Translations } from './types';
 
 export const translationsEn: Translations = {
 	header: {
-		badge: 'Browser Extension',
-		subtitle: 'Track what changed across your subscriptions.',
 		site: 'Site',
 		visitWebsite: 'Visit website',
 		settings: 'Settings',
@@ -30,11 +28,9 @@ export const translationsEn: Translations = {
 		timeFrame14: '14 Days',
 		timeFrame30: '30 Days',
 		platformsTitle: 'Platforms',
-		platformsSubtitle: 'Pick the services that should affect the popup results.',
+		platformsSubtitle: 'Pick the services that should be shown.',
 		displayTitle: 'Display',
-		displaySubtitle: 'Show or hide info bars for unassigned titles.',
-		shown: 'Shown',
-		hidden: 'Hidden',
+		displaySubtitle: 'Show info bars when no subscription info is available.',
 	},
 	support: {
 		title: 'Support',
@@ -48,8 +44,8 @@ export const translationsEn: Translations = {
 		empty: 'No supporters listed yet.',
 	},
 	subscriptionBadge: {
-		on: 'ON',
-		since: 'Since',
+		on: (platformName) => `on ${platformName}`,
+		since: (date) => `Since ${date}`,
 		leavingSoon: (gameName, platformName) => `${gameName} is leaving ${platformName} soon`,
 		leavingOn: (gameName, platformName, date) => `${gameName} is leaving ${platformName} on ${date}`,
 		leftOn: (gameName, platformName, date) => `${gameName} left ${platformName} on ${date}`,

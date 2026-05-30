@@ -27,7 +27,7 @@
 					</p>
 				{:else}
 					<p class="text-[10px] text-primary sm:text-xs">
-						{translations.since} {formatDate(sub.entry, language)}
+						{translations.since(formatDate(sub.entry, language))}
 					</p>
 				{/if}
 			</div>

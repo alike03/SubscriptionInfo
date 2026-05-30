@@ -2,8 +2,6 @@ import type { Language } from '$lib/types';
 
 export interface Translations {
 	header: {
-		badge: string;
-		subtitle: string;
 		site: string;
 		visitWebsite: string;
 		settings: string;
@@ -33,8 +31,6 @@ export interface Translations {
 		platformsSubtitle: string;
 		displayTitle: string;
 		displaySubtitle: string;
-		shown: string;
-		hidden: string;
 	};
 	support: {
 		title: string;
@@ -48,8 +44,8 @@ export interface Translations {
 		empty: string;
 	};
 	subscriptionBadge: {
-		on: string;
-		since: string;
+		on: (platformName: string) => string;
+		since: (date: string) => string;
 		leavingSoon: (gameName: string, platformName: string) => string;
 		leavingOn: (gameName: string, platformName: string, date: string) => string;
 		leftOn: (gameName: string, platformName: string, date: string) => string;

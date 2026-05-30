@@ -13,6 +13,7 @@
 	$: platform = getPlatformDetails(sub.platform);
 	$: platformName = platform.name;
 	$: translations = getTranslations(language).subscriptionBadge;
+	$: platformLabel = translations.on(platformName);
 	$: entryDate = formatDate(sub.entry, language);
 	$: leaveDate = sub.leave ? formatDate(sub.leave, language) : '';
 	$: statusClass = sub.leaving ? 'leaving' : sub.leave ? 'left' : 'active';
@@ -32,8 +33,8 @@
 	</div>
 {:else if type === 6}
 	<div class={`sub_flag ${statusClass} ${sub.platform}`}>
-		<span class="hover_info">{translations.on} {platformName}</span>
+		<span class="hover_info">{platformLabel}</span>
 	</div>
 {:else}
-	<div class={`sub_flag ${statusClass} ${sub.platform}`}>{translations.on} {platformName}</div>
+	<div class={`sub_flag ${statusClass} ${sub.platform}`}>{platformLabel}</div>
 {/if}

@@ -5,7 +5,7 @@ import { defaultOptions, getOptions } from '$lib/storage';
 import { throttle, waitForElement } from '$lib/utils';
 import type { ExtensionOptions, Game, Language } from '$lib/types';
 import SubscriptionMount from './components/SubscriptionMount.svelte';
-import './content.scss';
+import './content.css';
 
 interface MountedComponent {
 	$set(props: { language?: Language }): void;
