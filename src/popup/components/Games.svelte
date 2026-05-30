@@ -12,7 +12,7 @@
 	export let translations: Translations['games'];
 </script>
 
-<main class="flex-1 overflow-y-auto p-4">
+<main class="flex-1 overflow-y-auto px-3 pb-3 pt-2.5">
 	{#if loading}
 		<div class="flex h-full items-center justify-center">
 			<div class="text-dim">{translations.loading}</div>

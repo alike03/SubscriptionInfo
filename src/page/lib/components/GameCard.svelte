@@ -5,16 +5,16 @@
 	export let game: Game;
 </script>
 
-<div class="group h-full rounded-md bg-card p-3 transition-colors hover:bg-section sm:p-4">
+<div class="group h-full rounded-md bg-card p-2.5 transition-colors hover:bg-section sm:p-3">
 	<div
-		class="relative aspect-[2/3] overflow-hidden rounded-sm transition-[filter] group-hover:brightness-125"
+		class="relative aspect-2/3 overflow-hidden rounded-sm transition-[filter] group-hover:brightness-125"
 	>
 		<img src={game.poster} alt={game.name} class="h-full w-full object-cover" />
 	</div>
 
 	<div>
 		<div class="relative text-lg font-semibold">
-			<h2 class="my-3 truncate">
+			<h2 class="my-2 truncate">
 				{game.name}
 			</h2>
 			<span
