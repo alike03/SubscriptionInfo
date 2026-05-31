@@ -28,7 +28,7 @@
 
 {#if type === 3}
 	<div class={`sub_text ${statusClass} ${sub.platform}`}>
-		<div class={`sub_flag ${sub.platform}`}></div>
+		<div class={`sub_flag ${sub.platform}`}>{platformLabel}</div>
 		<span>{detailText}</span>
 	</div>
 {:else if type === 6}
