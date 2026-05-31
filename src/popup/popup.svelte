@@ -70,45 +70,55 @@
         }
     }
 
-    async function handlePlatformToggle(platform: Platform) {
-        options = {
-            ...options,
-            enabled: {
-                ...options.enabled,
-                [platform]: !options.enabled[platform],
-            },
-        };
+    async function updateOptions(
+        updater: (currentOptions: ExtensionOptions) => ExtensionOptions,
+        shouldReloadGames = false
+    ) {
+        const nextOptions = updater(options);
+        options = nextOptions;
 
-        await saveOptions(options);
-        await loadGames(options);
+        await saveOptions(nextOptions);
+
+        if (shouldReloadGames) {
+            await loadGames(nextOptions);
+        }
+    }
+
+    async function handlePlatformToggle(platform: Platform) {
+        await updateOptions(
+            (currentOptions) => ({
+                ...currentOptions,
+                enabled: {
+                    ...currentOptions.enabled,
+                    [platform]: !currentOptions.enabled[platform],
+                },
+            }),
+            true
+        );
     }
 
     async function handleTimeFrameChange(timeFrame: number) {
-        options = {
-            ...options,
-            timeFrame,
-        };
-
-        await saveOptions(options);
-        await loadGames(options);
+        await updateOptions(
+            (currentOptions) => ({
+                ...currentOptions,
+                timeFrame,
+            }),
+            true
+        );
     }
 
     async function handleShowNoInfoBarChange() {
-        options = {
-            ...options,
-            showNoInfoBar: !options.showNoInfoBar,
-        };
-
-        await saveOptions(options);
+        await updateOptions((currentOptions) => ({
+            ...currentOptions,
+            showNoInfoBar: !currentOptions.showNoInfoBar,
+        }));
     }
 
     async function handleLanguageChange(language: Language) {
-        options = {
-            ...options,
+        await updateOptions((currentOptions) => ({
+            ...currentOptions,
             language,
-        };
-
-        await saveOptions(options);
+        }));
     }
 
     function handleTabSelect(tab: string) {
