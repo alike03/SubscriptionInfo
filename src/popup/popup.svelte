@@ -7,10 +7,13 @@
     import Options from "./components/Options.svelte";
     import Tabs from "$lib/components/Tabs.svelte";
     import { fetchAllChanges } from "$lib/api";
+    import { getOrSetLocalCache } from "$lib/cache";
     import { defaultOptions, getOptions, saveOptions } from "$lib/storage";
 	import type { ExtensionOptions, Game, Language, Platform, TabDefinition, TabType } from "$lib/types";
 
     const tabOrder: TabType[] = ["added", "left", "coming", "leaving"];
+	const POPUP_CHANGES_CACHE_KEY = 'aSub_changes_cache';
+	const POPUP_CHANGES_CACHE_TTL_MS = 5 * 60 * 1000;
 
     let activeTab: TabType = "added";
     let showSettings = false;
@@ -50,10 +53,16 @@
         try {
             const storedOptions = nextOptions ?? await getOptions();
             options = storedOptions;
-            games = await fetchAllChanges(
-                storedOptions.timeFrame,
-                storedOptions,
-            );
+            games = await getOrSetLocalCache<Record<TabType, Game[]>>({
+                storageKey: POPUP_CHANGES_CACHE_KEY,
+                ttlMs: POPUP_CHANGES_CACHE_TTL_MS,
+                cacheKey: createChangesCacheKey(storedOptions),
+                loader: () =>
+                    fetchAllChanges(
+                        storedOptions.timeFrame,
+                        storedOptions,
+                    )
+            });
         } catch (error) {
             console.error("Error loading games:", error);
         } finally {
@@ -104,6 +113,16 @@
 
     function handleTabSelect(tab: string) {
         activeTab = tab as TabType;
+    }
+
+    function createChangesCacheKey(options: ExtensionOptions): string {
+        const enabledPlatforms = Object.entries(options.enabled)
+            .filter(([, enabled]) => enabled)
+            .map(([platform]) => platform)
+            .sort()
+            .join(',');
+
+        return `${options.timeFrame}:${enabledPlatforms}`;
     }
 
     function handleCarouselBoundary(event: CustomEvent<'prev' | 'next'>) {

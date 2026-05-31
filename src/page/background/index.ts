@@ -23,6 +23,12 @@ interface CachedGame {
 
 const gameCache = new Map<number, CachedGame>();
 
+browser.storage.onChanged.addListener((changes, areaName) => {
+	if (areaName === 'sync' && changes.aSub_options) {
+		gameCache.clear();
+	}
+});
+
 browser.runtime.onMessage.addListener(
 	(message: unknown): Promise<Game[]> | undefined => {
 		if (isBackgroundMessage(message)) {

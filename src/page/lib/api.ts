@@ -1,7 +1,10 @@
+import { getOrSetLocalCache } from '$lib/cache';
 import { getPlatforms } from '$lib/data';
 import type { ExtensionOptions, Game } from '$lib/types';
 
 const WEB_API_BASE = 'https://sub.aligueler.com';
+const SUPPORTERS_CACHE_KEY = 'aSub_supporters_cache';
+const SUPPORTERS_CACHE_TTL_MS = 15 * 60 * 1000;
 
 interface GameAPIResponse {
 	games: Game[];
@@ -96,21 +99,27 @@ export async function fetchAllChanges(
 }
 
 export async function fetchSupporters(): Promise<Supporter[]> {
-	const url = new URL('/api/supporters', WEB_API_BASE);
-	const response = await fetch(url.toString());
+	return getOrSetLocalCache<Supporter[]>({
+		storageKey: SUPPORTERS_CACHE_KEY,
+		ttlMs: SUPPORTERS_CACHE_TTL_MS,
+		loader: async () => {
+			const url = new URL('/api/supporters', WEB_API_BASE);
+			const response = await fetch(url.toString());
 
-	if (!response.ok) {
-		throw new Error(`API error: ${response.status}`);
-	}
+			if (!response.ok) {
+				throw new Error(`API error: ${response.status}`);
+			}
 
-	const data = (await response.json()) as SupportersAPIResponse;
-	const supporters = Array.isArray(data) ? data : data.supporter ?? [];
+			const data = (await response.json()) as SupportersAPIResponse;
+			const supporters = Array.isArray(data) ? data : data.supporter ?? [];
 
-	return supporters
-		.map((supporter) => ({
-			name: supporter.name.trim(),
-			amount: supporter.amount,
-			currency: supporter.currency
-		}))
-		.filter((supporter) => supporter.name.length > 0);
+			return supporters
+				.map((supporter) => ({
+					name: supporter.name.trim(),
+					amount: supporter.amount,
+					currency: supporter.currency
+				}))
+				.filter((supporter) => supporter.name.length > 0);
+		}
+	});
 }
