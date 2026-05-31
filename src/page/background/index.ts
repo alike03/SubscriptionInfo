@@ -1,9 +1,10 @@
 import browser from 'webextension-polyfill';
-import type { Runtime } from 'webextension-polyfill';
 
 import { fetchGamesByIds } from '$lib/api';
 import { getOptions } from '$lib/storage';
 import type { Game } from '$lib/types';
+
+const CACHE_TTL_MS = 15 * 60 * 1000;
 
 interface FetchGameMessage {
 	type: 'fetch-game';
@@ -14,37 +15,36 @@ interface FetchGameMessage {
 
 type BackgroundMessage = FetchGameMessage;
 
-const gameCache = new Map<number, Game>();
-const CACHE_DURATION = 15 * 60 * 1000;
-let lastCacheTime = 0;
+interface CachedGame {
+	game: Game;
+	expiresAt: number;
+}
+
+const gameCache = new Map<number, CachedGame>();
 
 browser.runtime.onMessage.addListener(
-	(message: unknown, _sender: Runtime.MessageSender): Promise<unknown> | undefined => {
-		const msg = message as BackgroundMessage;
-
-		switch (msg.type) {
+	(message: unknown): Promise<Game[]> | undefined => {
+		if (isBackgroundMessage(message)) {
+			switch (message.type) {
 			case 'fetch-game':
-				return handleFetchGame(msg.data.ids);
-			default:
-				return undefined;
+				return handleFetchGame(message.data.ids);
+			}
 		}
+
+		return undefined;
 	}
 );
 
 async function handleFetchGame(ids: number[]): Promise<Game[]> {
-	if (Date.now() - lastCacheTime > CACHE_DURATION) {
-		gameCache.clear();
-		lastCacheTime = Date.now();
-	}
+	const requestedIds = [...new Set(ids.filter(isValidSteamId))];
+	if (requestedIds.length === 0) return [];
 
-	const cachedGames: Game[] = [];
 	const uncachedIds: number[] = [];
+	const now = Date.now();
 
-	for (const id of ids) {
-		const cached = gameCache.get(id);
-		if (cached) {
-			cachedGames.push(cached);
-		} else {
+	for (const id of requestedIds) {
+		const cached = getCachedGame(id, now);
+		if (!cached) {
 			uncachedIds.push(id);
 		}
 	}
@@ -55,15 +55,52 @@ async function handleFetchGame(ids: number[]): Promise<Game[]> {
 			const fetchedGames = await fetchGamesByIds(uncachedIds, options);
 
 			for (const game of fetchedGames) {
-				gameCache.set(game.sid, game);
-				cachedGames.push(game);
+				setCachedGame(game);
 			}
 		} catch (error) {
 			console.error('Error fetching games:', error);
 		}
 	}
 
-	return cachedGames;
+	return requestedIds
+		.map((id) => getCachedGame(id))
+		.filter((game): game is Game => Boolean(game));
+}
+
+function isBackgroundMessage(message: unknown): message is BackgroundMessage {
+	if (!isRecord(message) || message.type !== 'fetch-game') {
+		return false;
+	}
+
+	const data = message.data;
+	return isRecord(data) && Array.isArray(data.ids) && data.ids.every(isValidSteamId);
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+	return typeof value === 'object' && value !== null;
+}
+
+function isValidSteamId(value: unknown): value is number {
+	return typeof value === 'number' && Number.isInteger(value) && value > 0;
+}
+
+function getCachedGame(id: number, now = Date.now()): Game | undefined {
+	const cached = gameCache.get(id);
+	if (!cached) return undefined;
+
+	if (cached.expiresAt <= now) {
+		gameCache.delete(id);
+		return undefined;
+	}
+
+	return cached.game;
+}
+
+function setCachedGame(game: Game) {
+	gameCache.set(game.sid, {
+		game,
+		expiresAt: Date.now() + CACHE_TTL_MS
+	});
 }
 
 console.log("[alike03's Subscription Info] Extension loaded");

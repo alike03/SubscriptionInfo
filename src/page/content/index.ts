@@ -7,183 +7,191 @@ import type { ExtensionOptions, Game, Language } from '$lib/types';
 import SubscriptionMount from './components/SubscriptionMount.svelte';
 import './content.css';
 
+const SEARCH_RESULTS_SELECTOR = '#search_resultsRows a[data-ds-appid]';
+const WISHLIST_RESULTS_SELECTOR =
+	'#StoreTemplate .Panel .Panel a[href*="/app/"]';
+const SALE_WIDGET_SELECTOR =
+	'[class^="salepreviewwidgets_"]:not(.alike_sub), .SaleSectionContainer:not(.alike_sub) .Panel';
+const DATA_APP_SELECTOR = '[data-ds-appid]:not(.alike_sub):not(.gutter_item)';
+const APP_DETAILS_SELECTOR = '.page_content_ctn > .page_content';
+const SEARCH_DEBOUNCE_MS = 700;
+const OBSERVER_THROTTLE_MS = 1000;
+const DEFAULT_MOUNT_TYPE = 2;
+const APP_PAGE_MOUNT_TYPE = 3;
+const ROW_MOUNT_TYPE = 6;
+
 interface MountedComponent {
 	$set(props: { language?: Language }): void;
 	$destroy(): void;
 }
 
-const path = window.location.pathname;
+interface FetchGameMessage {
+	type: 'fetch-game';
+	data: {
+		ids: number[];
+	};
+}
+
+const currentPath = window.location.pathname;
+const pageSection = currentPath.split('/')[1] ?? '';
 const games = new Map<number, Game>();
 const mountedTargets = new Map<HTMLElement, MountedComponent>();
 let currentLanguage: Language = defaultOptions.language;
 
 async function init() {
-	currentLanguage = (await getOptions()).language;
+	try {
+		currentLanguage = (await getOptions()).language;
+	} catch (error) {
+		console.error('Error loading initial options:', error);
+	}
+
 	browser.storage.onChanged.addListener(handleStorageChange);
 
-	if (path.split('/')[1] === 'search') {
-		initSearchPage();
-	} else if (path.split('/')[1] === 'wishlist') {
-		initWishlistPage();
-	} else if (path.split('/')[1] === 'app') {
-		initAppPage();
+	switch (pageSection) {
+		case 'search':
+			initSearchPage();
+			break;
+		case 'wishlist':
+			initWishlistPage();
+			break;
+		case 'app':
+			void initAppPage();
+			break;
 	}
 
 	initGeneralObserver();
 }
 
 function initSearchPage() {
-	waitForElement('.search_results #search_result_container #search_resultsRows').then(() => {
-		let triggerLimit = false;
+	void waitForElement(
+		'.search_results #search_result_container #search_resultsRows',
+	).then(() => {
+		const reloadSearchResults = createDelayedRunner(() => {
+			void loadGamesForIds(collectSearchTargets());
+		}, SEARCH_DEBOUNCE_MS);
 
-		const filterSearchList = () => {
-			const list = collectSearchTargets();
-			void loadGamesForIds(list);
-			triggerLimit = false;
-		};
-
-		const limitFunction = (callback: () => void) => {
-			if (!triggerLimit) {
-				triggerLimit = true;
-				setTimeout(callback, 700);
-			}
-		};
-
-		window.addEventListener('popstate', () => limitFunction(filterSearchList));
-		document.addEventListener('scroll', () => limitFunction(filterSearchList));
+		window.addEventListener('popstate', reloadSearchResults);
+		document.addEventListener('scroll', reloadSearchResults);
 
 		const form = document.getElementById('advsearchform');
-		if (form) {
-			form.addEventListener('submit', () => limitFunction(filterSearchList));
-			form.addEventListener('keyup', (event) => {
-				if ((event as KeyboardEvent).key === 'Enter') limitFunction(filterSearchList);
-			});
-		}
+		form?.addEventListener('submit', reloadSearchResults);
+		form?.addEventListener('keyup', (event) => {
+			if (event.key === 'Enter') {
+				reloadSearchResults();
+			}
+		});
 
-		filterSearchList();
+		void loadGamesForIds(collectSearchTargets());
 	});
 }
 
 function collectSearchTargets() {
-	const list: number[] = [];
-
-	document
-		.querySelectorAll<HTMLAnchorElement>('#search_resultsRows a[data-ds-appid]')
-		.forEach((element) => {
-			const appId = parseAppId(element.dataset.dsAppid);
-			if (setupTarget(element, appId, 6)) {
-				list.push(appId);
-			}
-		});
-
-	return list;
+	return collectTargets(
+		document.querySelectorAll<HTMLAnchorElement>(SEARCH_RESULTS_SELECTOR),
+		(element) => parseAppId(element.dataset.dsAppid),
+	);
 }
 
 function initWishlistPage() {
-	waitForElement('#StoreTemplate .Panel input.Focusable').then((input) => {
-		let triggerLimit = false;
+	void waitForElement('#StoreTemplate .Panel input.Focusable').then((input) => {
+		const reloadWishlistResults = createDelayedRunner(() => {
+			void loadGamesForIds(collectWishlistTargets());
+		}, SEARCH_DEBOUNCE_MS);
 
-		const filterWishlistList = () => {
-			const list = collectWishlistTargets();
-			void loadGamesForIds(list);
-			triggerLimit = false;
-		};
-
-		const limitFunction = (callback: () => void) => {
-			if (!triggerLimit) {
-				triggerLimit = true;
-				setTimeout(callback, 700);
-			}
-		};
-
-		input.addEventListener('keyup', () => limitFunction(filterWishlistList));
+		input.addEventListener('keyup', reloadWishlistResults);
 		document
 			.getElementById('StoreTemplate')
-			?.addEventListener('scroll', () => limitFunction(filterWishlistList));
+			?.addEventListener('scroll', reloadWishlistResults);
 
-		filterWishlistList();
+		void loadGamesForIds(collectWishlistTargets());
 	});
 }
 
 function collectWishlistTargets() {
-	const list: number[] = [];
-
-	document
-		.querySelectorAll<HTMLAnchorElement>('#StoreTemplate .Panel .Panel a[href*="/app/"]')
-		.forEach((element) => {
-			if (!element.querySelector('img')) return;
-
-			const appId = parseAppIdFromUrl(element.href);
-			if (setupTarget(element, appId, 6)) {
-				list.push(appId);
-			}
-		});
-
-	return list;
+	return collectTargets(
+		document.querySelectorAll<HTMLAnchorElement>(WISHLIST_RESULTS_SELECTOR),
+		(element) =>
+			element.querySelector('img') ? parseAppIdFromUrl(element.href) : 0,
+	);
 }
 
-function initAppPage() {
-	const appId = parseAppIdFromUrl(path);
+async function initAppPage() {
+	const appId = parseAppIdFromUrl(currentPath);
 	if (!appId) return;
 
-	browser.runtime.sendMessage({ type: 'fetch-game', data: { ids: [appId] } }).then((response) => {
-		const game = (response as Game[])?.[0];
-		if (!game) return;
+	const [game] = await fetchGames([appId]);
+	if (!game) return;
 
-		games.set(game.sid, game);
+	games.set(game.sid, game);
 
-		waitForElement('.page_content_ctn > .page_content').then((details) => {
-			const mountTarget = document.createElement('div');
-			details.before(mountTarget);
+	const details = await waitForElement(APP_DETAILS_SELECTOR);
+	const mountTarget = document.createElement('div');
+	details.before(mountTarget);
 
-			setupTarget(mountTarget, appId, 3);
-			mountGame(game);
-		});
-	});
+	setupTarget(mountTarget, appId, APP_PAGE_MOUNT_TYPE);
+	mountGame(game);
 }
 
 function initGeneralObserver() {
 	const observe = throttle(() => {
-		const list: number[] = [];
+		const ids = [...collectSaleWidgetTargets(), ...collectDataAppTargets()];
+		void loadGamesForIds(ids);
+	}, OBSERVER_THROTTLE_MS);
 
-		document
-			.querySelectorAll<HTMLElement>(
-				'[class^="salepreviewwidgets_"]:not(.alike_sub), .SaleSectionContainer:not(.alike_sub) .Panel'
-			)
-			.forEach((element) => {
-				if (element.closest('.alike_sub')) return;
-
-				const link = element.querySelector<HTMLAnchorElement>('a[href*="/app/"]');
-				const appId = parseAppIdFromUrl(link?.href ?? '');
-				if (appId) {
-					setupTarget(element, appId, getSaleWidgetType(element));
-					list.push(appId);
-				}
-
-				element.classList.add('alike_sub');
-			});
-
-		document
-			.querySelectorAll<HTMLElement>('[data-ds-appid]:not(.alike_sub):not(.gutter_item)')
-			.forEach((element) => {
-				const appId = parseAppId(element.dataset.dsAppid);
-				if (setupTarget(element, appId, getDataAppIdType(element))) {
-					list.push(appId);
-				}
-			});
-
-		void loadGamesForIds(list);
-	}, 1000);
-
-	waitForElement('body').then((body) => {
+	void waitForElement('body').then((body) => {
 		const observer = new MutationObserver(observe);
 		observer.observe(body, { childList: true, subtree: true });
 		observe();
 	});
 }
 
-async function loadGamesForIds(list: number[]) {
-	const uniqueIds = [...new Set(list.filter(Boolean))];
+function collectSaleWidgetTargets() {
+	const ids: number[] = [];
+
+	document
+		.querySelectorAll<HTMLElement>(SALE_WIDGET_SELECTOR)
+		.forEach((element) => {
+			if (element.closest('.alike_sub')) return;
+
+			const link = element.querySelector<HTMLAnchorElement>('a[href*="/app/"]');
+			const appId = parseAppIdFromUrl(link?.href ?? '');
+			if (setupTarget(element, appId, getSaleWidgetType(element))) {
+				ids.push(appId);
+			}
+
+			element.classList.add('alike_sub');
+		});
+
+	return ids;
+}
+
+function collectDataAppTargets() {
+	return collectTargets(
+		document.querySelectorAll<HTMLElement>(DATA_APP_SELECTOR),
+		(element) => parseAppId(element.dataset.dsAppid),
+		getDataAppIdType,
+	);
+}
+
+function collectTargets<TElement extends HTMLElement>(
+	elements: NodeListOf<TElement>,
+	getAppId: (element: TElement) => number,
+	getType: (element: TElement) => number = () => ROW_MOUNT_TYPE,
+) {
+	const ids: number[] = [];
+
+	elements.forEach((element) => {
+		const appId = getAppId(element);
+		if (setupTarget(element, appId, getType(element))) {
+			ids.push(appId);
+		}
+	});
+
+	return ids;
+}
+
+async function loadGamesForIds(ids: number[]) {
+	const uniqueIds = [...new Set(ids.filter(isValidAppId))];
 	if (uniqueIds.length === 0) return;
 
 	const missingIds: number[] = [];
@@ -199,39 +207,55 @@ async function loadGamesForIds(list: number[]) {
 
 	if (missingIds.length === 0) return;
 
-	try {
-		const response = (await browser.runtime.sendMessage({
-			type: 'fetch-game',
-			data: { ids: missingIds }
-		})) as Game[];
-
-		for (const game of response ?? []) {
-			games.set(game.sid, game);
-			mountGame(game);
-		}
-	} catch (error) {
-		console.error('Error fetching games:', error);
+	const fetchedGames = await fetchGames(missingIds);
+	for (const game of fetchedGames) {
+		games.set(game.sid, game);
+		mountGame(game);
 	}
 }
 
+async function fetchGames(ids: number[]) {
+	try {
+		const response = await browser.runtime.sendMessage(
+			createFetchGameMessage(ids),
+		);
+		return isGameArray(response) ? response : [];
+	} catch (error) {
+		console.error('Error fetching games:', error);
+		return [];
+	}
+}
+
+function createFetchGameMessage(ids: number[]): FetchGameMessage {
+	return {
+		type: 'fetch-game',
+		data: { ids },
+	};
+}
+
 function mountGame(game: Game) {
-	if (!game || game.subs.length === 0) return;
+	if (game.subs.length === 0) return;
 
-	document.querySelectorAll<HTMLElement>(`.alike_sub[data-sub-id="${game.sid}"]`).forEach((element) => {
-		if (mountedTargets.has(element)) return;
+	document
+		.querySelectorAll<HTMLElement>(`.alike_sub[data-sub-id="${game.sid}"]`)
+		.forEach((element) => {
+			if (mountedTargets.has(element)) return;
 
-		const type = parseInt(element.dataset.subType || '2', 10);
-		const component = new SubscriptionMount({
-			target: element,
-			props: { game, type, language: currentLanguage }
-		}) as MountedComponent;
+			const component = new SubscriptionMount({
+				target: element,
+				props: {
+					game,
+					type: parseMountType(element.dataset.subType),
+					language: currentLanguage,
+				},
+			}) as MountedComponent;
 
-		mountedTargets.set(element, component);
-	});
+			mountedTargets.set(element, component);
+		});
 }
 
 function setupTarget(element: HTMLElement, appId: number, type: number) {
-	if (!appId) return false;
+	if (!isValidAppId(appId)) return false;
 
 	const currentAppId = parseAppId(element.dataset.subId);
 	if (currentAppId && currentAppId !== appId) {
@@ -251,11 +275,13 @@ function unmountTarget(element: HTMLElement) {
 	element.querySelector('.alike_cont')?.remove();
 }
 
-function handleStorageChange(changes: Record<string, Storage.StorageChange>, areaName: string) {
-	if (areaName !== 'sync' || !changes.aSub_options?.newValue) return;
+function handleStorageChange(
+	changes: Record<string, Storage.StorageChange>,
+	areaName: string,
+) {
+	if (areaName !== 'sync') return;
 
-	const data = changes.aSub_options.newValue as { options?: Partial<ExtensionOptions> };
-	const language = data.options?.language;
+	const language = getLanguageFromStorageChange(changes.aSub_options);
 	if (!language || language === currentLanguage) return;
 
 	currentLanguage = language;
@@ -264,27 +290,80 @@ function handleStorageChange(changes: Record<string, Storage.StorageChange>, are
 	}
 }
 
-function getSaleWidgetType(element: HTMLElement) {
-	const className = element.getAttribute('class') || '';
-	const isRow = ['salepreviewwidgets_StoreSaleItemReview', 'salepreviewwidgets_SaleItemBrowserRow'].some(
-		(classFragment) => className.includes(classFragment)
-	);
+function getLanguageFromStorageChange(
+	change: Storage.StorageChange | undefined,
+) {
+	const data = change?.newValue as
+		| { options?: Partial<ExtensionOptions> }
+		| undefined;
+	return data?.options?.language;
+}
 
-	return isRow ? 6 : 2;
+function getSaleWidgetType(element: HTMLElement) {
+	const className = element.className;
+	const isRow = [
+		'salepreviewwidgets_StoreSaleItemReview',
+		'salepreviewwidgets_SaleItemBrowserRow',
+	].some((classFragment) => className.includes(classFragment));
+
+	return isRow ? ROW_MOUNT_TYPE : DEFAULT_MOUNT_TYPE;
 }
 
 function getDataAppIdType(element: HTMLElement) {
-	const className = element.getAttribute('class') || '';
-	return className.includes('tab_item') ? 6 : 2;
+	return element.className.includes('tab_item')
+		? ROW_MOUNT_TYPE
+		: DEFAULT_MOUNT_TYPE;
+}
+
+function parseMountType(value: string | undefined) {
+	const type = Number.parseInt(value ?? '', 10);
+	return Number.isInteger(type) && type > 0 ? type : DEFAULT_MOUNT_TYPE;
 }
 
 function parseAppId(value: string | undefined) {
-	const appId = parseInt(value || '0', 10);
-	return Number.isFinite(appId) ? appId : 0;
+	const appId = Number.parseInt(value ?? '', 10);
+	return isValidAppId(appId) ? appId : 0;
 }
 
 function parseAppIdFromUrl(value: string) {
 	return parseAppId(value.match(/\/app\/(\d+)/)?.[1]);
+}
+
+function isValidAppId(value: unknown): value is number {
+	return typeof value === 'number' && Number.isInteger(value) && value > 0;
+}
+
+function isGameArray(value: unknown): value is Game[] {
+	return Array.isArray(value) && value.every(isGame);
+}
+
+function isGame(value: unknown): value is Game {
+	if (!isRecord(value)) return false;
+
+	return (
+		typeof value.id === 'string' &&
+		isValidAppId(value.sid) &&
+		typeof value.name === 'string' &&
+		typeof value.poster === 'string' &&
+		Array.isArray(value.subs)
+	);
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+	return typeof value === 'object' && value !== null;
+}
+
+function createDelayedRunner(callback: () => void, delay: number) {
+	let timeout: ReturnType<typeof setTimeout> | undefined;
+
+	return () => {
+		if (timeout) return;
+
+		timeout = setTimeout(() => {
+			timeout = undefined;
+			callback();
+		}, delay);
+	};
 }
 
 void init();
