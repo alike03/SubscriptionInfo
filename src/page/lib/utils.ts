@@ -1,10 +1,10 @@
-export function debounce<T extends (...args: unknown[]) => unknown>(
-	func: T,
+export function debounce<TArgs extends unknown[], TResult>(
+	func: (...args: TArgs) => TResult,
 	wait: number
-): (...args: Parameters<T>) => void {
+): (...args: TArgs) => void {
 	let timeout: ReturnType<typeof setTimeout>;
 
-	return function executedFunction(...args: Parameters<T>) {
+	return function executedFunction(...args: TArgs) {
 		const later = () => {
 			clearTimeout(timeout);
 			func(...args);
@@ -15,12 +15,12 @@ export function debounce<T extends (...args: unknown[]) => unknown>(
 	};
 }
 
-export function throttle<T extends (...args: unknown[]) => unknown>(
-	cb: T,
+export function throttle<TArgs extends unknown[], TResult>(
+	cb: (...args: TArgs) => TResult,
 	delay = 1000
-): (...args: Parameters<T>) => void {
+): (...args: TArgs) => void {
 	let shouldWait = false;
-	let waitingArgs: Parameters<T> | null = null;
+	let waitingArgs: TArgs | null = null;
 
 	const timeoutFunc = () => {
 		if (waitingArgs == null) {
@@ -32,7 +32,7 @@ export function throttle<T extends (...args: unknown[]) => unknown>(
 		}
 	};
 
-	return (...args: Parameters<T>) => {
+	return (...args: TArgs) => {
 		if (shouldWait) {
 			waitingArgs = args;
 			return;

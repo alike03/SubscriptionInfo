@@ -5,6 +5,7 @@ import { getOptions } from '$lib/storage';
 import type { Game } from '$lib/types';
 
 const CACHE_TTL_MS = 15 * 60 * 1000;
+const MAX_CACHE_SIZE = 500;
 
 interface FetchGameMessage {
 	type: 'fetch-game';
@@ -41,6 +42,7 @@ async function handleFetchGame(ids: number[]): Promise<Game[]> {
 
 	const uncachedIds: number[] = [];
 	const now = Date.now();
+	pruneExpiredGames(now);
 
 	for (const id of requestedIds) {
 		const cached = getCachedGame(id, now);
@@ -65,6 +67,14 @@ async function handleFetchGame(ids: number[]): Promise<Game[]> {
 	return requestedIds
 		.map((id) => getCachedGame(id))
 		.filter((game): game is Game => Boolean(game));
+}
+
+function pruneExpiredGames(now = Date.now()) {
+	for (const [id, cached] of gameCache.entries()) {
+		if (cached.expiresAt <= now) {
+			gameCache.delete(id);
+		}
+	}
 }
 
 function isBackgroundMessage(message: unknown): message is BackgroundMessage {
@@ -97,10 +107,21 @@ function getCachedGame(id: number, now = Date.now()): Game | undefined {
 }
 
 function setCachedGame(game: Game) {
+	if (gameCache.has(game.sid)) {
+		gameCache.delete(game.sid);
+	}
+
 	gameCache.set(game.sid, {
 		game,
 		expiresAt: Date.now() + CACHE_TTL_MS
 	});
-}
 
-console.log("[alike03's Subscription Info] Extension loaded");
+	while (gameCache.size > MAX_CACHE_SIZE) {
+		const oldestCacheKey = gameCache.keys().next().value;
+		if (oldestCacheKey === undefined) {
+			break;
+		}
+
+		gameCache.delete(oldestCacheKey);
+	}
+}

@@ -19,6 +19,7 @@ const OBSERVER_THROTTLE_MS = 1000;
 const DEFAULT_MOUNT_TYPE = 2;
 const APP_PAGE_MOUNT_TYPE = 3;
 const ROW_MOUNT_TYPE = 6;
+const MAX_GAME_CACHE_SIZE = 500;
 
 interface MountedComponent {
 	$set(props: { language?: Language }): void;
@@ -87,7 +88,7 @@ function initSearchPage() {
 
 function collectSearchTargets() {
 	return collectTargets(
-		document.querySelectorAll<HTMLAnchorElement>(SEARCH_RESULTS_SELECTOR),
+		Array.from(document.querySelectorAll<HTMLAnchorElement>(SEARCH_RESULTS_SELECTOR)),
 		(element) => parseAppId(element.dataset.dsAppid),
 	);
 }
@@ -109,7 +110,7 @@ function initWishlistPage() {
 
 function collectWishlistTargets() {
 	return collectTargets(
-		document.querySelectorAll<HTMLAnchorElement>(WISHLIST_RESULTS_SELECTOR),
+		Array.from(document.querySelectorAll<HTMLAnchorElement>(WISHLIST_RESULTS_SELECTOR)),
 		(element) =>
 			element.querySelector('img') ? parseAppIdFromUrl(element.href) : 0,
 	);
@@ -133,23 +134,39 @@ async function initAppPage() {
 }
 
 function initGeneralObserver() {
-	const observe = throttle(() => {
-		const ids = [...collectSaleWidgetTargets(), ...collectDataAppTargets()];
+	const observe = throttle((roots: ParentNode[] = [document]) => {
+		cleanupDisconnectedTargets();
+		const ids = roots.flatMap((root) => [
+			...collectSaleWidgetTargets(root),
+			...collectDataAppTargets(root)
+		]);
 		void loadGamesForIds(ids);
 	}, OBSERVER_THROTTLE_MS);
 
 	void waitForElement('body').then((body) => {
-		const observer = new MutationObserver(observe);
+		const observer = new MutationObserver((mutations) => {
+			const addedRoots = mutations.flatMap((mutation) =>
+				Array.from(mutation.addedNodes).filter(
+					(node): node is Element => node instanceof Element
+				)
+			);
+
+			if (addedRoots.length === 0) {
+				cleanupDisconnectedTargets();
+				return;
+			}
+
+			observe(addedRoots);
+		});
 		observer.observe(body, { childList: true, subtree: true });
-		observe();
+		observe([document]);
 	});
 }
 
-function collectSaleWidgetTargets() {
+function collectSaleWidgetTargets(root: ParentNode = document) {
 	const ids: number[] = [];
 
-	document
-		.querySelectorAll<HTMLElement>(SALE_WIDGET_SELECTOR)
+	queryElements<HTMLElement>(root, SALE_WIDGET_SELECTOR)
 		.forEach((element) => {
 			if (element.closest('.alike_sub')) return;
 
@@ -165,27 +182,28 @@ function collectSaleWidgetTargets() {
 	return ids;
 }
 
-function collectDataAppTargets() {
+function collectDataAppTargets(root: ParentNode = document) {
 	return collectTargets(
-		document.querySelectorAll<HTMLElement>(DATA_APP_SELECTOR),
+		queryElements<HTMLElement>(root, DATA_APP_SELECTOR),
 		(element) => parseAppId(element.dataset.dsAppid),
 		getDataAppIdType,
 	);
 }
 
 function collectTargets<TElement extends HTMLElement>(
-	elements: NodeListOf<TElement>,
+	elements: Iterable<TElement>,
 	getAppId: (element: TElement) => number,
-	getType: (element: TElement) => number = () => ROW_MOUNT_TYPE,
+	getType?: (element: TElement) => number,
 ) {
 	const ids: number[] = [];
+	const resolveType = getType ?? (() => ROW_MOUNT_TYPE);
 
-	elements.forEach((element) => {
+	for (const element of elements) {
 		const appId = getAppId(element);
-		if (setupTarget(element, appId, getType(element))) {
+		if (setupTarget(element, appId, resolveType(element))) {
 			ids.push(appId);
 		}
-	});
+	}
 
 	return ids;
 }
@@ -210,7 +228,19 @@ async function loadGamesForIds(ids: number[]) {
 	const fetchedGames = await fetchGames(missingIds);
 	for (const game of fetchedGames) {
 		games.set(game.sid, game);
+		pruneGamesCache();
 		mountGame(game);
+	}
+}
+
+function pruneGamesCache() {
+	while (games.size > MAX_GAME_CACHE_SIZE) {
+		const oldestGameId = games.keys().next().value;
+		if (oldestGameId === undefined) {
+			break;
+		}
+
+		games.delete(oldestGameId);
 	}
 }
 
@@ -275,6 +305,15 @@ function unmountTarget(element: HTMLElement) {
 	element.querySelector('.alike_cont')?.remove();
 }
 
+function cleanupDisconnectedTargets() {
+	for (const [element, component] of mountedTargets.entries()) {
+		if (!element.isConnected) {
+			component.$destroy();
+			mountedTargets.delete(element);
+		}
+	}
+}
+
 function handleStorageChange(
 	changes: Record<string, Storage.StorageChange>,
 	areaName: string,
@@ -333,6 +372,16 @@ function isValidAppId(value: unknown): value is number {
 	return typeof value === 'number' && Number.isInteger(value) && value > 0;
 }
 
+function queryElements<TElement extends Element>(root: ParentNode, selector: string): TElement[] {
+	const matches = Array.from(root.querySelectorAll<TElement>(selector));
+
+	if (root instanceof Element && root.matches(selector)) {
+		matches.unshift(root as TElement);
+	}
+
+	return matches;
+}
+
 function isGameArray(value: unknown): value is Game[] {
 	return Array.isArray(value) && value.every(isGame);
 }
@@ -367,3 +416,5 @@ function createDelayedRunner(callback: () => void, delay: number) {
 }
 
 void init();
+
+

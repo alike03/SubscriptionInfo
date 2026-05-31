@@ -1,6 +1,6 @@
 import browser from 'webextension-polyfill';
 
-import type { ExtensionOptions, Platform } from '$lib/types';
+import type { ExtensionOptions } from '$lib/types';
 
 export const defaultOptions: ExtensionOptions = {
 	enabled: {
@@ -42,22 +42,4 @@ export async function saveOptions(options: ExtensionOptions): Promise<void> {
 	} catch (error) {
 		console.error('Error saving options:', error);
 	}
-}
-
-export async function togglePlatform(platform: Platform, enabled: boolean): Promise<void> {
-	const options = await getOptions();
-	options.enabled[platform] = enabled;
-	await saveOptions(options);
-}
-
-export async function setTimeFrame(timeFrame: number): Promise<void> {
-	const options = await getOptions();
-	options.timeFrame = timeFrame;
-	await saveOptions(options);
-}
-
-export async function setShowNoInfoBar(show: boolean): Promise<void> {
-	const options = await getOptions();
-	options.showNoInfoBar = show;
-	await saveOptions(options);
 }

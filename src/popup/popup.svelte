@@ -44,11 +44,11 @@
         document.documentElement.lang = options.language;
     }
 
-    async function loadGames() {
+    async function loadGames(nextOptions?: ExtensionOptions) {
         loading = true;
 
         try {
-            const storedOptions = await getOptions();
+            const storedOptions = nextOptions ?? await getOptions();
             options = storedOptions;
             games = await fetchAllChanges(
                 storedOptions.timeFrame,
@@ -71,7 +71,7 @@
         };
 
         await saveOptions(options);
-        await loadGames();
+        await loadGames(options);
     }
 
     async function handleTimeFrameChange(timeFrame: number) {
@@ -81,7 +81,7 @@
         };
 
         await saveOptions(options);
-        await loadGames();
+        await loadGames(options);
     }
 
     async function handleShowNoInfoBarChange() {

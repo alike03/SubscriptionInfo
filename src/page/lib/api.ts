@@ -26,6 +26,16 @@ type SupportersAPIResponse =
 		supporter?: Supporter[];
 	};
 
+function getExcludedPlatforms(options?: ExtensionOptions): string {
+	if (!options?.enabled) {
+		return '';
+	}
+
+	return getPlatforms()
+		.filter((platform) => options.enabled[platform] === false)
+		.join(',');
+}
+
 export async function fetchGamesByIds(
 	steamIds: number[],
 	options?: ExtensionOptions
@@ -33,13 +43,7 @@ export async function fetchGamesByIds(
 	if (steamIds.length === 0) return [];
 
 	try {
-		let exclude = '';
-		if (options?.enabled) {
-			const excludedPlatforms = getPlatforms().filter((platform) => options.enabled[platform] === false);
-			if (excludedPlatforms.length > 0) {
-				exclude = excludedPlatforms.join(',');
-			}
-		}
+		const exclude = getExcludedPlatforms(options);
 
 		const url = new URL(`${WEB_API_BASE}/api/game`);
 		url.searchParams.set('steamId', steamIds.join(','));
@@ -65,13 +69,7 @@ export async function fetchAllChanges(
 	options?: ExtensionOptions
 ): Promise<ChangesAPIResponse> {
 	try {
-		let exclude = '';
-		if (options?.enabled) {
-			const excludedPlatforms = getPlatforms().filter((platform) => options.enabled[platform] === false);
-			if (excludedPlatforms.length > 0) {
-				exclude = excludedPlatforms.join(',');
-			}
-		}
+		const exclude = getExcludedPlatforms(options);
 
 		const url = new URL(`${WEB_API_BASE}/api/changes`);
 		url.searchParams.set('timeFrame', timeFrame.toString());
