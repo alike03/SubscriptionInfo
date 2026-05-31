@@ -10,6 +10,8 @@
     import { defaultOptions, getOptions, saveOptions } from "$lib/storage";
 	import type { ExtensionOptions, Game, Language, Platform, TabDefinition, TabType } from "$lib/types";
 
+    const tabOrder: TabType[] = ["added", "left", "coming", "leaving"];
+
     let activeTab: TabType = "added";
     let showSettings = false;
     let loading = true;
@@ -22,6 +24,8 @@
     };
     let translations = getTranslations(defaultOptions.language);
     let tabs: TabDefinition[] = [];
+	let hasPreviousTab = false;
+	let hasNextTab = false;
 
     $: translations = getTranslations(options.language);
     $: tabs = [
@@ -30,6 +34,11 @@
         { id: "coming", label: translations.tabs.coming },
         { id: "leaving", label: translations.tabs.leaving },
     ];
+	$: {
+		const activeIndex = tabOrder.indexOf(activeTab);
+		hasPreviousTab = activeIndex > 0;
+		hasNextTab = activeIndex > -1 && activeIndex < tabOrder.length - 1;
+	}
 
     $: if (typeof document !== 'undefined') {
         document.documentElement.lang = options.language;
@@ -97,6 +106,16 @@
         activeTab = tab as TabType;
     }
 
+    function handleCarouselBoundary(event: CustomEvent<'prev' | 'next'>) {
+        const activeIndex = tabOrder.indexOf(activeTab);
+        const nextIndex = event.detail === 'next' ? activeIndex + 1 : activeIndex - 1;
+        const nextTab = tabOrder[nextIndex];
+
+        if (nextTab) {
+            activeTab = nextTab;
+        }
+    }
+
     onMount(() => {
         void loadGames();
     });
@@ -121,6 +140,15 @@
             <Tabs {activeTab} {tabs} ariaLabel="Game change categories" on:select={(event) => handleTabSelect(event.detail)} />
         </div>
 
-        <Games {activeTab} {loading} {games} translations={translations.games} language={options.language} />
+        <Games
+            {activeTab}
+            {loading}
+            {games}
+            translations={translations.games}
+            language={options.language}
+            {hasPreviousTab}
+            {hasNextTab}
+            on:boundary={handleCarouselBoundary}
+        />
     {/if}
 </div>

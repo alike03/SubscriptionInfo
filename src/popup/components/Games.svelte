@@ -11,6 +11,8 @@
 	export let games: Record<TabType, Game[]>;
 	export let translations: Translations['games'];
 	export let language: Language;
+	export let hasPreviousTab = false;
+	export let hasNextTab = false;
 </script>
 
 <main class="flex-1 overflow-y-auto px-15 py-2">
@@ -26,12 +28,14 @@
 			</div>
 		</div>
 	{:else}
-		<Carousel>
-			{#each games[activeTab] as game (game.id)}
-				<div class="embla__slide">
-					<GameCard {game} {language} />
-				</div>
-			{/each}
-		</Carousel>
+		{#key activeTab}
+			<Carousel canMovePrev={hasPreviousTab} canMoveNext={hasNextTab} on:boundary>
+				{#each games[activeTab] as game (game.id)}
+					<div class="embla__slide">
+						<GameCard {game} {language} />
+					</div>
+				{/each}
+			</Carousel>
+		{/key}
 	{/if}
 </main>

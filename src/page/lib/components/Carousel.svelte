@@ -1,12 +1,22 @@
 <script lang="ts">
+	import { createEventDispatcher } from 'svelte';
 	import type { EmblaCarouselType } from 'embla-carousel';
 	import emblaCarouselSvelte from 'embla-carousel-svelte';
 	import { ChevronLeft, ChevronRight } from 'lucide-svelte';
+
+	type BoundaryDirection = 'prev' | 'next';
+
+	export let canMovePrev = false;
+	export let canMoveNext = false;
 
 	let emblaApi: EmblaCarouselType | undefined;
 	let dots: boolean[] = [true];
 	let canScrollPrev = false;
 	let canScrollNext = false;
+
+	const dispatch = createEventDispatcher<{
+		boundary: BoundaryDirection;
+	}>();
 
 	const embla = {
 		options: {
@@ -47,6 +57,44 @@
 		updateButtonStates();
 	}
 
+	function handlePrevControl() {
+		if (emblaApi && emblaApi.canScrollPrev()) {
+			emblaApi.scrollPrev();
+			return;
+		}
+
+		if (canMovePrev) {
+			dispatch('boundary', 'prev');
+		}
+	}
+
+	function handleNextControl() {
+		if (emblaApi && emblaApi.canScrollNext()) {
+			emblaApi.scrollNext();
+			return;
+		}
+
+		if (canMoveNext) {
+			dispatch('boundary', 'next');
+		}
+	}
+
+	function handleKeydown(event: KeyboardEvent) {
+		if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) {
+			return;
+		}
+
+		if (event.key === 'ArrowLeft') {
+			event.preventDefault();
+			handlePrevControl();
+		}
+
+		if (event.key === 'ArrowRight') {
+			event.preventDefault();
+			handleNextControl();
+		}
+	}
+
 	function init(event: CustomEvent<EmblaCarouselType>) {
 		emblaApi = event.detail;
 		setDots(emblaApi);
@@ -55,6 +103,8 @@
 		emblaApi.on('reInit', setDots);
 	}
 </script>
+
+<svelte:window on:keydown={handleKeydown} />
 
 
 <div class="relative select-none">
@@ -83,8 +133,8 @@
 		<button
 			class="akg-glow absolute -left-12 top-1/2 z-10 -translate-y-1/2 cursor-pointer p-2 disabled:pointer-events-none disabled:opacity-20"
 			aria-label="Previous"
-			disabled={!canScrollPrev}
-			on:click={() => emblaApi && emblaApi.scrollPrev()}
+			disabled={!canScrollPrev && !canMovePrev}
+			on:click={handlePrevControl}
 		>
 			<ChevronLeft class="size-5" />
 		</button>
@@ -92,8 +142,8 @@
 		<button
 			class="akg-glow absolute -right-12 top-1/2 z-10 -translate-y-1/2 cursor-pointer p-2 disabled:pointer-events-none disabled:opacity-20"
 			aria-label="Next"
-			disabled={!canScrollNext}
-			on:click={() => emblaApi && emblaApi.scrollNext()}
+			disabled={!canScrollNext && !canMoveNext}
+			on:click={handleNextControl}
 		>
 			<ChevronRight class="size-5" />
 		</button>
