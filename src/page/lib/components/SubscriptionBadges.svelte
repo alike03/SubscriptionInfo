@@ -11,7 +11,7 @@
 </script>
 
 <div class="space-y-1.5 sm:space-y-2">
-	{#each subs as sub}
+	{#each subs as sub (sub.platform)}
 		{@const platform = getPlatformDetails(sub.platform)}
 		<div class="flex items-center gap-1.5 sm:gap-2">
 			<div
@@ -22,11 +22,11 @@
 			<div class="flex-1">
 				<span class="text-xs font-medium sm:text-sm">{platform.name}</span>
 				{#if sub.leave}
-					<p class="text-[10px] text-red sm:text-xs">
+					<p class="text-[11px] text-red">
 						{formatDate(sub.entry, language)} - {formatDate(sub.leave, language)}
 					</p>
 				{:else}
-					<p class="text-[10px] text-primary sm:text-xs">
+					<p class="text-[11px] text-primary">
 						{translations.since(formatDate(sub.entry, language))}
 					</p>
 				{/if}
