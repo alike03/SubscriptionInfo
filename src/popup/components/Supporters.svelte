@@ -52,7 +52,7 @@
 
 <svelte:window on:resize={handleWindowResize} />
 
-<section class="mt-3 overflow-hidden">
+<section class="mt-5 overflow-hidden">
 	<div class="mb-3 flex items-center justify-between">
 		<h4 class="text-xs font-bold uppercase tracking-label text-dim">{translations.title}</h4>
 		<span

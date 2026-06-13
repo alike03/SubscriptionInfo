@@ -109,7 +109,7 @@
 
 <div class="relative select-none">
 	{#if dots.length > 1}
-		<div class="pointer-events-none absolute inset-x-0 -bottom-6 z-10 flex justify-center">
+		<div class="pointer-events-none absolute inset-x-0 -bottom-7 z-10 flex justify-center">
 			<div class="pointer-events-auto flex items-center gap-1.5 rounded-full border border-primary/15 bg-black/15 px-2 py-1 backdrop-blur-sm">
 				{#each dots as active, index (index)}
 					<button

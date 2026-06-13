@@ -4,13 +4,12 @@
 		"target": "ESNext",
 		"useDefineForClassFields": true,
 		"module": "ESNext",
-		"moduleResolution": "Node",
+		"moduleResolution": "bundler",
 		"strict": true,
 		"allowJs": false,
 		"resolveJsonModule": true,
 		"isolatedModules": true,
 		"esModuleInterop": true,
-		"baseUrl": ".",
 		"paths": {
 			"$lib/*": [
 				"./src/page/lib/*"

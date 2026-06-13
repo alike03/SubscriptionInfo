@@ -52,7 +52,7 @@ body {
     @apply text-main m-0 p-0 antialiased;
     background: rgb(14 20 27);
     width: 800px;
-    height: 600px;
+    height: 585px;
     overflow: hidden;
 }
 

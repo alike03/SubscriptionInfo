@@ -126,11 +126,15 @@
 	height: 20px;
 	width: 20px;
 	margin-right: 5px;
-	border-radius: var(--alike-flag-radius);
+	border-radius: var(--alike-flag-radius) var(--alike-flag-radius) 0 0;
 	background-size: 11px;
 	background-position: center;
 	box-shadow: var(--alike-row-shadow);
 	overflow: hidden;
+}
+
+.alike_cont.type-6 .sub_flag .hover_info {
+	border-radius: 0 var(--alike-flag-radius) 0 0;
 }
 
 .alike_cont.type-6 .sub_flag:hover {
