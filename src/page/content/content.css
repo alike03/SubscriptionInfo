@@ -7,9 +7,10 @@
 	--alike-ubiplus: #428ee0;
 	--alike-eaplay: #ff4747;
 	--alike-flag-icon-size: 10px;
-	--alike-flag-icon-x: 4px;
-	--alike-card-shadow: 0 0 6px 0 var(--alike-black);
-	--alike-row-shadow: 0 -2px 6px 0 var(--alike-black);
+	--alike-flag-icon-x: 5px;
+	--alike-flag-radius: 5px;
+	--alike-card-shadow: 0 2px 6px rgb(0 0 0 / 0.55);
+	--alike-row-shadow: 0 2px 6px rgb(0 0 0 / 0.55);
 	--alike-tooltip-shadow: 2px -2px 6px 0 var(--alike-black);
 }
 
@@ -122,10 +123,12 @@
 
 .alike_cont.type-6 .sub_flag {
 	display: inline-block;
-	height: 25px;
-	width: 0;
+	height: 20px;
+	width: 20px;
 	margin-right: 5px;
-	background-size: 16px;
+	border-radius: var(--alike-flag-radius);
+	background-size: 11px;
+	background-position: center;
 	box-shadow: var(--alike-row-shadow);
 	overflow: hidden;
 }
@@ -143,7 +146,7 @@
 	white-space: nowrap;
 	pointer-events: none;
 	box-shadow: var(--alike-tooltip-shadow);
-	border-top-right-radius: 6px;
+	border-radius: var(--alike-flag-radius);
 	opacity: 0;
 	transition: opacity 0.15s ease;
 }
@@ -158,20 +161,28 @@
 
 .alike_cont .sub_flag {
 	color: var(--alike-white);
-	font-size: 10px;
-	padding: 0 6px 0 18px;
+	font-size: 9.5px;
+	font-weight: 700;
+	letter-spacing: 0.02em;
+	padding: 0 8px 0 18px;
+	border-radius: var(--alike-flag-radius);
+}
+
+.alike_cont .active {
+	filter: none;
 }
 
 .alike_cont .leaving {
-	filter: grayscale(40%);
+	filter: saturate(0.6);
 }
 
 .alike_cont .left {
-	filter: grayscale(100%);
+	filter: grayscale(1) brightness(0.82);
 }
 
 .alike_cont .soon {
-	filter: hue-rotate(30deg);
+	filter: saturate(0.85);
+	color: #8fb0ee;
 }
 
 /* Platform colors */

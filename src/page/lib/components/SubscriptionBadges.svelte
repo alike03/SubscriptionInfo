@@ -10,23 +10,23 @@
 	$: translations = getTranslations(language).subscriptionBadge;
 </script>
 
-<div class="space-y-1.5 sm:space-y-2">
+<div class="flex flex-col gap-1.75">
 	{#each subs as sub (sub.platform)}
 		{@const platform = getPlatformDetails(sub.platform)}
-		<div class="flex items-center gap-1.5 sm:gap-2">
+		<div class="flex items-center gap-1.75">
 			<div
-				class={`${platform.bg} rounded-md p-0.5 transition-shadow duration-1000 group-hover:shadow-icon sm:p-1 ${platform.shadow} group-hover:duration-300`}
+				class={`${platform.bg} flex h-5 w-5 shrink-0 items-center justify-center rounded-xs`}
 			>
-				<img src={platform.icon} alt={platform.name} class="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+				<img src={platform.icon} alt={platform.name} class="h-3 w-3" />
 			</div>
-			<div class="flex-1">
-				<span class="text-xs font-medium sm:text-sm">{platform.name}</span>
+			<div class="min-w-0 flex-1">
+				<div class="truncate text-[10px] font-semibold text-main">{platform.name}</div>
 				{#if sub.leave}
-					<p class="text-[11px] text-red">
+					<p class="text-[9.5px] font-bold text-red">
 						{formatDate(sub.entry, language)} - {formatDate(sub.leave, language)}
 					</p>
 				{:else}
-					<p class="text-[11px] text-primary">
+					<p class="text-[9.5px] font-bold text-primary">
 						{translations.since(formatDate(sub.entry, language))}
 					</p>
 				{/if}

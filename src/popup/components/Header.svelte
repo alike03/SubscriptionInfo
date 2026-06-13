@@ -18,7 +18,7 @@
 	<div class="relative flex items-center justify-between gap-4">
 		<div class="flex min-w-0 items-center gap-2.5">
 			<div
-				class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-white/8 bg-card shadow-(--shadow-icon)"
+				class="flex h-9 w-9 shrink-0 items-center justify-center rounded-[11px] border border-white/8 bg-card shadow-(--shadow-raised)"
 			>
 				<img src={logo} alt="alike03" class="h-5.5 w-5.5 opacity-90" />
 			</div>
@@ -31,16 +31,16 @@
 			href="https://sub.aligueler.com"
 			target="_blank"
 			rel="noreferrer"
-			class="inline-flex items-center gap-1.5 rounded-xl border border-white/8 bg-card/70 px-2.5 py-1.5 text-[12px] font-medium text-dim transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-primary/40 hover:text-main hover:shadow-[0_12px_28px_-18px_rgba(161,205,68,0.9)]"
+			class="inline-flex items-center gap-1.5 rounded-sm border border-white/8 bg-card/70 px-2.5 py-1.5 text-[12px] font-medium text-dim transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-primary/30 hover:text-main"
 			title={translations.visitWebsite}
 		>
 			<ExternalLink class="h-3.5 w-3.5" />
 			<span>{translations.site}</span>
 		</a>
 		<button
-			class={`flex items-center gap-1.5 rounded-xl border px-2.5 py-1.5 text-[12px] font-medium transition-all duration-200 ease-out cursor-pointer ${
+			class={`flex items-center gap-1.5 rounded-sm border px-2.5 py-1.5 text-[12px] font-medium transition-all duration-200 ease-out cursor-pointer ${
 				showSettings
-					? 'border-primary/35 bg-primary/15 text-main shadow-[0_12px_28px_-18px_rgba(161,205,68,0.9)]'
+					? 'border-primary/40 bg-primary/16 text-main shadow-(--shadow-glow)'
 					: 'border-white/8 bg-card/70 text-dim hover:-translate-y-0.5 hover:border-primary/30 hover:text-main'
 			}`}
 			aria-pressed={showSettings}

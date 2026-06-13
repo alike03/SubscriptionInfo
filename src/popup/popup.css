@@ -8,7 +8,7 @@
     --color-red: rgb(205, 84, 68);
     --color-secondary: rgb(75, 97, 155);
     --color-main: rgb(243, 243, 243);
-    --color-dim: rgb(118, 128, 140);
+    --color-dim: rgb(130, 140, 152);
     --color-hover: rgb(49, 56, 67);
     --color-background: rgb(32, 43, 60);
     --color-section: rgb(30, 35, 41);
@@ -23,6 +23,17 @@
 
     --shadow-icon:
         0 5px 25px -3px rgb(0 0 0 / 0.5), 0 4px 16px -4px rgb(0 0 0 / 0.5);
+
+    /* ----- radius scale (by role) ----- */
+    --radius-xs: 6px;    /* badge icon tiles, poster inner corners */
+    --radius-sm: 10px;   /* buttons, segmented controls, tabs track, chips */
+    --radius-md: 12px;   /* setting blocks, list rows, in-context cards */
+    --radius-lg: 14px;   /* game/poster cards, large surfaces */
+
+    /* ----- 3 elevations ----- */
+    --shadow-raised: 0 8px 24px -16px rgb(0 0 0 / 0.8);          /* cards, logo tile */
+    --shadow-overlay: 0 16px 34px -20px rgb(0 0 0 / 0.95);       /* poster cards, floats */
+    --shadow-glow: 0 10px 22px -16px rgb(161 205 68 / 0.9);      /* active / lime items */
 }
 
 html {
@@ -32,8 +43,7 @@ html {
 html,
 body {
     @apply text-main m-0 p-0 antialiased;
-    background:
-        linear-gradient(180deg, rgb(35 45 62) 0%, rgb(17 24 34) 42%, rgb(12 17 24) 100%);
+    background: rgb(14 20 27);
     width: 800px;
     height: 600px;
     overflow: hidden;
@@ -48,8 +58,8 @@ a {
     position: relative;
     isolation: isolate;
     background:
-        linear-gradient(180deg, rgb(255 255 255 / 0.055), transparent 20rem),
-        linear-gradient(135deg, rgb(161 205 68 / 0.075), transparent 70rem),
+        linear-gradient(180deg, rgb(255 255 255 / 0.05), transparent 320px),
+        linear-gradient(135deg, rgb(161 205 68 / 0.06), transparent 70%),
         rgb(14 20 27);
 }
 

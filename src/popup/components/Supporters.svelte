@@ -54,7 +54,7 @@
 
 <section class="mt-3 overflow-hidden">
 	<div class="mb-3">
-		<h4 class="text-sm font-semibold text-main">{translations.title}</h4>
+		<h4 class="text-[11px] font-bold uppercase tracking-[0.16em] text-dim">{translations.title}</h4>
 		<p class="mt-1 text-xs text-dim">{translations.subtitle}</p>
 	</div>
 
@@ -65,7 +65,7 @@
 				class="ticker-track"
 				style={`animation-duration: ${tickerDurationSeconds}s;`}
 			>
-				{#each tickerSupporters as supporter, index}
+				{#each tickerSupporters as supporter, index (index)}
 					<div class="ticker-pill" aria-hidden={index >= supporters.length}>
 						<span class="ticker-name">{supporter.name}</span>
 						<span class="ticker-amount">{formatSupporter(supporter)}</span>
@@ -112,13 +112,13 @@
 
 	.ticker-name {
 		color: rgb(243 243 243);
-		font-size: 0.75rem;
+		font-size: 0.6875rem;
 		font-weight: 600;
 	}
 
 	.ticker-amount {
 		color: rgb(161 205 68);
-		font-size: 0.75rem;
+		font-size: 0.6875rem;
 		font-weight: 700;
 	}
 

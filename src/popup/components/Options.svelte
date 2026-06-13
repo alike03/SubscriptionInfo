@@ -51,19 +51,11 @@
 	}
 </script>
 
-<div class="space-y-3 border-b border-hover bg-card px-4 py-3">
-	<div>
-		<h2 class="text-sm font-semibold text-main">{translations.options.title}</h2>
-	</div>
-
-	<section class="rounded-2xl border border-white/8 bg-section/70 p-2.5">
-		<div class="flex items-start justify-between gap-3">
-			<div class="max-w-[13rem]">
-				<h3 class="text-xs font-semibold uppercase tracking-[0.18em] text-primary">{translations.options.languageTitle}</h3>
-				<p class="mt-1 text-[11px] text-dim">{translations.options.languageSubtitle}</p>
-			</div>
-
-			<div class="w-64">
+<section class="border-b border-hover bg-card px-4 py-4">
+	<div class="flex flex-col gap-5">
+		<div class="grid grid-cols-2 gap-4">
+			<div>
+				<h3 class="mb-2.5 text-[11px] font-bold uppercase tracking-[0.16em] text-dim">{translations.options.languageTitle}</h3>
 				<Tabs
 					activeTab={options.language}
 					tabs={languageTabs}
@@ -71,86 +63,67 @@
 					on:select={(event) => handleLanguageSelect(event.detail)}
 				/>
 			</div>
-		</div>
-
-		<div class="mt-3 border-t border-white/6 pt-3">
-			<div class="flex items-start justify-between gap-3">
-				<div class="max-w-[13rem]">
-					<h3 class="text-xs font-semibold uppercase tracking-[0.18em] text-primary">{translations.options.timeFrameTitle}</h3>
-					<p class="mt-1 text-[11px] text-dim">{translations.options.timeFrameSubtitle}</p>
-				</div>
-
-				<div class="w-64">
-					<Tabs
-						activeTab={String(options.timeFrame)}
-						tabs={timeFrameTabs}
-						ariaLabel={translations.options.timeFrameTitle}
-						on:select={(event) => handleTimeFrameSelect(event.detail)}
-					/>
-				</div>
+			<div>
+				<h3 class="mb-2.5 text-[11px] font-bold uppercase tracking-[0.16em] text-dim">{translations.options.timeFrameTitle}</h3>
+				<Tabs
+					activeTab={String(options.timeFrame)}
+					tabs={timeFrameTabs}
+					ariaLabel={translations.options.timeFrameTitle}
+					on:select={(event) => handleTimeFrameSelect(event.detail)}
+				/>
 			</div>
 		</div>
 
-		<div class="mt-3 border-t border-white/6 pt-3">
-			<div class="flex items-center justify-between gap-3">
-				<div class="max-w-[13rem]">
-					<h3 class="text-xs font-semibold uppercase tracking-[0.18em] text-primary">{translations.options.displayTitle}</h3>
-					<p class="mt-1 text-[11px] text-dim">{translations.options.displaySubtitle}</p>
-				</div>
-				<button
-					type="button"
-					class="inline-flex cursor-pointer items-center gap-2 text-xs font-semibold text-main transition-colors duration-200"
-					aria-pressed={options.showNoInfoBar}
-					on:click={() => dispatch('togglenoinfobar')}
-				>
-					<span
-						class={`flex h-5 w-9 items-center rounded-full px-0.5 transition-colors duration-200 ${
-							options.showNoInfoBar ? 'bg-primary/60' : 'bg-white/10'
-						}`}
-					>
-						<span
-							class={`h-4 w-4 rounded-full bg-white transition-transform duration-200 ${
-								options.showNoInfoBar ? 'translate-x-4' : 'translate-x-0'
-							}`}
-						></span>
-					</span>
-				</button>
-			</div>
-		</div>
-
-		<div class="mt-3 border-t border-white/6 pt-3">
-			<div class="mb-2 max-w-[13rem]">
-				<h3 class="text-xs font-semibold uppercase tracking-[0.18em] text-primary">{translations.options.platformsTitle}</h3>
-				<p class="mt-1 text-[11px] text-dim">{translations.options.platformsSubtitle}</p>
-			</div>
-
-			<div class="flex items-stretch gap-2">
-				{#each platforms as item}
+		<div>
+			<h3 class="mb-2.5 text-[11px] font-bold uppercase tracking-[0.16em] text-dim">{translations.options.platformsTitle}</h3>
+			<div class="flex flex-wrap items-stretch gap-2">
+				{#each platforms as item (item.platform)}
 					<button
-						class={`flex min-w-0 flex-1 cursor-pointer items-center gap-2 rounded-xl border px-2 py-1.5 text-left transition-all duration-200 ease-out ${
+						class={`flex min-w-33 flex-1 cursor-pointer items-center gap-2 rounded-md border px-2.5 py-2 text-left transition-all duration-200 ease-out ${
 							options.enabled[item.platform]
-								? `${item.details.bg} border-white/0 text-white shadow-[0_14px_28px_-18px_rgba(0,0,0,0.7)]`
-								: 'border-white/8 bg-card/70 text-dim hover:-translate-y-0.5 hover:border-primary/25 hover:text-main'
+								? 'border-primary/40 bg-primary/8 text-main'
+								: 'border-white/8 bg-card/60 text-dim hover:-translate-y-0.5 hover:border-primary/30 hover:text-main'
 						}`}
 						on:click={() => dispatch('platformtoggle', item.platform)}
 					>
 						<div
-							class={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
-								options.enabled[item.platform] ? 'bg-white/15' : 'bg-white/5'
+							class={`flex h-5.5 w-5.5 shrink-0 items-center justify-center rounded-[7px] transition-colors duration-200 ${
+								options.enabled[item.platform] ? item.details.bg : 'bg-white/8'
 							}`}
 						>
-							<img
-								src={item.details.icon}
-								alt={item.details.name}
-								class="h-3.5 w-3.5"
-							/>
+							<img src={item.details.icon} alt={item.details.name} class="h-3 w-3" />
 						</div>
-						<p class="min-w-0 text-[11px] font-medium leading-tight">{item.details.name}</p>
+						<p class="min-w-0 text-[11px] font-semibold leading-tight">{item.details.name}</p>
 					</button>
 				{/each}
 			</div>
 		</div>
-	</section>
-</div>
+
+		<div class="flex items-center justify-between gap-4 rounded-md border border-white/8 bg-section/50 p-3.5">
+			<div class="min-w-0">
+				<h3 class="text-[11px] font-bold uppercase tracking-[0.16em] text-dim">{translations.options.displayTitle}</h3>
+				<p class="mt-1.5 text-xs text-dim">{translations.options.displaySubtitle}</p>
+			</div>
+			<button
+				type="button"
+				class="inline-flex shrink-0 cursor-pointer items-center"
+				aria-pressed={options.showNoInfoBar}
+				on:click={() => dispatch('togglenoinfobar')}
+			>
+				<span
+					class={`flex h-5.5 w-9.5 items-center rounded-full px-0.5 transition-colors duration-200 ${
+						options.showNoInfoBar ? 'bg-primary/55' : 'bg-white/10'
+					}`}
+				>
+					<span
+						class={`h-4 w-4 rounded-full bg-white transition-transform duration-200 ${
+							options.showNoInfoBar ? 'translate-x-4' : 'translate-x-0'
+						}`}
+					></span>
+				</span>
+			</button>
+		</div>
+	</div>
+</section>
 
 <Support {translations} />

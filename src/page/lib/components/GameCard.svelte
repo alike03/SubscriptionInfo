@@ -47,7 +47,7 @@
 
 <div class="group h-full rounded-md bg-card p-2.5 transition-colors hover:bg-section sm:p-3">
 	<div
-		class="relative aspect-2/3 overflow-hidden rounded-sm transition-[filter] group-hover:brightness-125"
+		class="relative aspect-2/3 overflow-hidden rounded-sm border border-white/8 shadow-(--shadow-raised) transition-[filter] group-hover:brightness-125"
 	>
 		<img src={game.poster} alt={game.name} class="h-full w-full object-cover" />
 	</div>
@@ -64,7 +64,7 @@
 			<h2
 				bind:this={titleText}
 				class:title-track--scrolling={isTitleOverflowing}
-				class="title-track box-border m-0 w-max min-w-full max-w-none translate-x-0 whitespace-nowrap px-2.5 text-lg font-semibold leading-7 transition-transform delay-300 ease-linear will-change-transform"
+				class="title-track box-border m-0 w-max min-w-full max-w-none translate-x-0 whitespace-nowrap px-2.5 text-[13px] font-bold leading-5 transition-transform delay-300 ease-linear will-change-transform"
 				style={`--title-travel: ${titleTravel}px; --title-duration: ${titleDuration}s;`}
 			>
 				{game.name}
