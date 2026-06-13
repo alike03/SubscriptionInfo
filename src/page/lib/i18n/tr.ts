@@ -33,11 +33,12 @@ export const translationsTr: Translations = {
 		displaySubtitle: 'Abonelik bilgisi yoksa bilgi çubuklarını göster.',
 	},
 	support: {
-		title: 'Destek',
-		subtitle: 'Projeyi destekle veya gelecek güncellemeleri takip et.',
+		title: 'Projeyi destekle',
+		subtitle: 'Ücretsiz ve açık kaynaklı. Bir alışverişten seni kurtardıysa, bir kahve verilerin akışını sürdürür.',
 	},
 	supporters: {
 		title: 'Destekçiler',
+		badge: 'Teşekkürler',
 		subtitle: 'Projeye katkı sağlayan herkese teşekkürler.',
 		loading: 'Destekçiler yükleniyor...',
 		unavailable: 'Destekçi listesi şu anda kullanılamıyor.',

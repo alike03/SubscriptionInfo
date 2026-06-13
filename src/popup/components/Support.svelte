@@ -31,10 +31,8 @@
 
 <section class="border-t border-hover px-4 py-4">
 	<div class="mb-3">
-		<div>
-			<h3 class="text-[11px] font-bold uppercase tracking-[0.16em] text-dim">{translations.support.title}</h3>
-			<p class="mt-1 text-xs text-dim">{translations.support.subtitle}</p>
-		</div>
+		<h3 class="text-xs font-bold uppercase tracking-label text-dim">{translations.support.title}</h3>
+		<p class="mt-1.5 max-w-75 text-xs leading-relaxed text-dim">{translations.support.subtitle}</p>
 	</div>
 
 	<div class="grid grid-cols-4 gap-2">
@@ -43,7 +41,7 @@
 				href={link.href}
 				target="_blank"
 				rel="noreferrer"
-				class="flex items-center justify-center gap-2.25 rounded-[11px] border border-white/8 bg-card/60 px-2.5 py-2.75 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-primary/35 hover:text-main"
+				class="flex items-center justify-center gap-2.25 rounded-sm border border-white/8 bg-card/60 px-2.5 py-2.75 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-primary/35 hover:text-main"
 			>
 				<div
 					class="flex h-6.5 w-6.5 shrink-0 items-center justify-center rounded-full bg-white/6 text-main"
@@ -58,7 +56,7 @@
 						<Twitter class="h-3.5 w-3.5" />
 					{/if}
 				</div>
-				<p class="truncate text-[11px] font-semibold text-main">{link.label}</p>
+				<p class="truncate text-xs font-semibold text-main">{link.label}</p>
 			</a>
 		{/each}
 	</div>

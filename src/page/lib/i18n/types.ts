@@ -39,6 +39,7 @@ export interface Translations {
 	supporters: {
 		title: string;
 		subtitle: string;
+		badge: string;
 		loading: string;
 		unavailable: string;
 		empty: string;

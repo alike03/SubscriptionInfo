@@ -34,6 +34,13 @@
     --shadow-raised: 0 8px 24px -16px rgb(0 0 0 / 0.8);          /* cards, logo tile */
     --shadow-overlay: 0 16px 34px -20px rgb(0 0 0 / 0.95);       /* poster cards, floats */
     --shadow-glow: 0 10px 22px -16px rgb(161 205 68 / 0.9);      /* active / lime items */
+
+    /* ----- type scale (design) ----- */
+    --text-xxs: 0.625rem;   /* 10px */
+
+    /* ----- letter-spacing (labels / tags) ----- */
+    --tracking-label: 0.16em;
+    --tracking-tag: 0.14em;
 }
 
 html {

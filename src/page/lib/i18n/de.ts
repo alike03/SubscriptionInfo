@@ -33,11 +33,12 @@ export const translationsDe: Translations = {
 		displaySubtitle: 'Infoleisten anzeigen, wenn keine Abo-Informationen verfügbar sind.',
 	},
 	support: {
-		title: 'Support',
-		subtitle: 'Unterstütze das Projekt oder verfolge künftige Updates.',
+		title: 'Projekt unterstützen',
+		subtitle: 'Es ist kostenlos und Open Source. Wenn es dir einen Kauf erspart hat, hält ein Kaffee die Daten am Fließen.',
 	},
 	supporters: {
 		title: 'Unterstützer',
+		badge: 'Danke',
 		subtitle: 'Danke an alle, die zum Projekt beigetragen haben.',
 		loading: 'Unterstützer werden geladen...',
 		unavailable: 'Die Unterstützerliste ist gerade nicht verfügbar.',

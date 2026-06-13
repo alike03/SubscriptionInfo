@@ -20,13 +20,13 @@
 				<img src={platform.icon} alt={platform.name} class="h-3 w-3" />
 			</div>
 			<div class="min-w-0 flex-1">
-				<div class="truncate text-[10px] font-semibold text-main">{platform.name}</div>
+				<div class="truncate text-xxs font-semibold text-main">{platform.name}</div>
 				{#if sub.leave}
-					<p class="text-[9.5px] font-bold text-red">
+					<p class="text-xxs font-bold text-red">
 						{formatDate(sub.entry, language)} - {formatDate(sub.leave, language)}
 					</p>
 				{:else}
-					<p class="text-[9.5px] font-bold text-primary">
+					<p class="text-xxs font-bold text-primary">
 						{translations.since(formatDate(sub.entry, language))}
 					</p>
 				{/if}

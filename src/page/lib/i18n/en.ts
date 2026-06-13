@@ -33,11 +33,12 @@ export const translationsEn: Translations = {
 		displaySubtitle: 'Show info bars when no subscription info is available.',
 	},
 	support: {
-		title: 'Support',
-		subtitle: 'Support the project or follow future updates.',
+		title: 'Support the project',
+		subtitle: "It's free and open-source. If it saved you a purchase, a coffee keeps the data flowing.",
 	},
 	supporters: {
 		title: 'Supporters',
+		badge: 'Thank you',
 		subtitle: 'Thanks to everyone who has contributed to the project.',
 		loading: 'Loading supporters...',
 		unavailable: 'Supporter list unavailable right now.',

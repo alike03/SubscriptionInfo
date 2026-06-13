@@ -53,9 +53,11 @@
 <svelte:window on:resize={handleWindowResize} />
 
 <section class="mt-3 overflow-hidden">
-	<div class="mb-3">
-		<h4 class="text-[11px] font-bold uppercase tracking-[0.16em] text-dim">{translations.title}</h4>
-		<p class="mt-1 text-xs text-dim">{translations.subtitle}</p>
+	<div class="mb-3 flex items-center justify-between">
+		<h4 class="text-xs font-bold uppercase tracking-label text-dim">{translations.title}</h4>
+		<span
+			class="rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 text-xxs font-bold uppercase tracking-tag text-primary"
+		>{translations.badge}</span>
 	</div>
 
 	{#if tickerSupporters.length > 0}

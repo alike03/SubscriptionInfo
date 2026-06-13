@@ -29,7 +29,7 @@
 
 	{#each tabs as tab (tab.id)}
 		<button
-			class={`relative z-10 min-w-0 cursor-pointer rounded-[8px] border border-transparent px-2.5 py-2 text-xs font-semibold transition-colors duration-200 ease-out ${
+			class={`relative z-10 min-w-0 cursor-pointer rounded-xs border border-transparent px-2.5 py-2 text-xs font-semibold transition-colors duration-200 ease-out ${
 				activeTab === tab.id
 					? 'text-main'
 					: 'text-dim hover:border-white/10 hover:bg-section/70 hover:text-main'

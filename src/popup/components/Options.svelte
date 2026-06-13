@@ -55,7 +55,7 @@
 	<div class="flex flex-col gap-5">
 		<div class="grid grid-cols-2 gap-4">
 			<div>
-				<h3 class="mb-2.5 text-[11px] font-bold uppercase tracking-[0.16em] text-dim">{translations.options.languageTitle}</h3>
+				<h3 class="mb-2.5 text-xs font-bold uppercase tracking-label text-dim">{translations.options.languageTitle}</h3>
 				<Tabs
 					activeTab={options.language}
 					tabs={languageTabs}
@@ -64,7 +64,7 @@
 				/>
 			</div>
 			<div>
-				<h3 class="mb-2.5 text-[11px] font-bold uppercase tracking-[0.16em] text-dim">{translations.options.timeFrameTitle}</h3>
+				<h3 class="mb-2.5 text-xs font-bold uppercase tracking-label text-dim">{translations.options.timeFrameTitle}</h3>
 				<Tabs
 					activeTab={String(options.timeFrame)}
 					tabs={timeFrameTabs}
@@ -75,7 +75,7 @@
 		</div>
 
 		<div>
-			<h3 class="mb-2.5 text-[11px] font-bold uppercase tracking-[0.16em] text-dim">{translations.options.platformsTitle}</h3>
+			<h3 class="mb-2.5 text-xs font-bold uppercase tracking-label text-dim">{translations.options.platformsTitle}</h3>
 			<div class="flex flex-wrap items-stretch gap-2">
 				{#each platforms as item (item.platform)}
 					<button
@@ -87,13 +87,13 @@
 						on:click={() => dispatch('platformtoggle', item.platform)}
 					>
 						<div
-							class={`flex h-5.5 w-5.5 shrink-0 items-center justify-center rounded-[7px] transition-colors duration-200 ${
+							class={`flex h-5.5 w-5.5 shrink-0 items-center justify-center rounded-xs transition-colors duration-200 ${
 								options.enabled[item.platform] ? item.details.bg : 'bg-white/8'
 							}`}
 						>
 							<img src={item.details.icon} alt={item.details.name} class="h-3 w-3" />
 						</div>
-						<p class="min-w-0 text-[11px] font-semibold leading-tight">{item.details.name}</p>
+						<p class="min-w-0 text-xs font-semibold leading-tight">{item.details.name}</p>
 					</button>
 				{/each}
 			</div>
@@ -101,7 +101,7 @@
 
 		<div class="flex items-center justify-between gap-4 rounded-md border border-white/8 bg-section/50 p-3.5">
 			<div class="min-w-0">
-				<h3 class="text-[11px] font-bold uppercase tracking-[0.16em] text-dim">{translations.options.displayTitle}</h3>
+				<h3 class="text-xs font-bold uppercase tracking-label text-dim">{translations.options.displayTitle}</h3>
 				<p class="mt-1.5 text-xs text-dim">{translations.options.displaySubtitle}</p>
 			</div>
 			<button

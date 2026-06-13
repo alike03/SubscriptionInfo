@@ -64,7 +64,7 @@
 			<h2
 				bind:this={titleText}
 				class:title-track--scrolling={isTitleOverflowing}
-				class="title-track box-border m-0 w-max min-w-full max-w-none translate-x-0 whitespace-nowrap px-2.5 text-[13px] font-bold leading-5 transition-transform delay-300 ease-linear will-change-transform"
+				class="title-track box-border m-0 w-max min-w-full max-w-none translate-x-0 whitespace-nowrap px-2.5 text-sm font-bold leading-5 transition-transform delay-300 ease-linear will-change-transform"
 				style={`--title-travel: ${titleTravel}px; --title-duration: ${titleDuration}s;`}
 			>
 				{game.name}
