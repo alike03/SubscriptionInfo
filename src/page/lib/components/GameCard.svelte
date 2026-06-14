@@ -106,16 +106,4 @@
 	.group:focus-within .title-track--scrolling {
 		transform: translateX(calc(-1 * var(--title-travel)));
 	}
-
-	@media (prefers-reduced-motion: reduce) {
-		.title-track {
-			transition-duration: 0s;
-			transition-delay: 0s;
-		}
-
-		.group:hover .title-track--scrolling,
-		.group:focus-within .title-track--scrolling {
-			transform: translateX(calc(-1 * var(--title-travel)));
-		}
-	}
 </style>
