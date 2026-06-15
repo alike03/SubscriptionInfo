@@ -30,7 +30,7 @@
 .alike_cont.type-1,
 .alike_cont.type-2 {
 	position: absolute;
-	left: 0;
+	left: 5px;
 	top: 33px;
 	line-height: 19px;
 	z-index: 10;

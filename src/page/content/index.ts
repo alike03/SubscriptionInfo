@@ -134,12 +134,12 @@ async function initAppPage() {
 }
 
 function initGeneralObserver() {
-	const observe = throttle((roots: ParentNode[] = [document]) => {
+	const observe = throttle(() => {
 		cleanupDisconnectedTargets();
-		const ids = roots.flatMap((root) => [
-			...collectSaleWidgetTargets(root),
-			...collectDataAppTargets(root)
-		]);
+		const ids = [
+			...collectSaleWidgetTargets(document),
+			...collectDataAppTargets(document)
+		];
 		void loadGamesForIds(ids);
 	}, OBSERVER_THROTTLE_MS);
 
@@ -156,10 +156,10 @@ function initGeneralObserver() {
 				return;
 			}
 
-			observe(addedRoots);
+			observe();
 		});
 		observer.observe(body, { childList: true, subtree: true });
-		observe([document]);
+		observe();
 	});
 }
 
