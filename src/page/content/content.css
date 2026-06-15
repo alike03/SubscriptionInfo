@@ -146,7 +146,7 @@
 	background: var(--alike-white);
 	color: var(--alike-black);
 	margin-left: 6px;
-	padding: 6px 6px 7px;
+	padding: 4px 6px;
 	white-space: nowrap;
 	pointer-events: none;
 	box-shadow: var(--alike-tooltip-shadow);

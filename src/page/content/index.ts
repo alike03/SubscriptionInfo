@@ -12,7 +12,11 @@ const WISHLIST_RESULTS_SELECTOR =
 	'#StoreTemplate .Panel .Panel a[href*="/app/"]';
 const SALE_WIDGET_SELECTOR =
 	'[class^="salepreviewwidgets_"]:not(.alike_sub), .SaleSectionContainer:not(.alike_sub) .Panel';
-const DATA_APP_SELECTOR = '[data-ds-appid]:not(.alike_sub):not(.gutter_item)';
+// Intentionally matches already-tagged (.alike_sub) elements too: Steam recycles
+// capsule DOM nodes on infinite-scroll/dynamic-store pages and swaps their
+// data-ds-appid, so we must re-inspect them to replace a now-stale badge.
+// collectTargets() cheaply skips the ones whose appid is unchanged.
+const DATA_APP_SELECTOR = '[data-ds-appid]:not(.gutter_item)';
 const APP_DETAILS_SELECTOR = '.page_content_ctn > .page_content';
 const SEARCH_DEBOUNCE_MS = 700;
 const OBSERVER_THROTTLE_MS = 1000;
@@ -35,6 +39,11 @@ interface FetchGameMessage {
 
 const currentPath = window.location.pathname;
 const pageSection = currentPath.split('/')[1] ?? '';
+// Per-page-load cache of fetched games, keyed by Steam appid. Intentionally has
+// no TTL (unlike the background worker's 15-min cache) — it lives only as long as
+// the tab, so staleness is bounded by a page reload. Map insertion order doubles
+// as the LRU list: touchGameCache() moves hits to the end, pruneGamesCache()
+// evicts from the front.
 const games = new Map<number, Game>();
 const mountedTargets = new Map<HTMLElement, MountedComponent>();
 let currentLanguage: Language = defaultOptions.language;
@@ -145,13 +154,9 @@ function initGeneralObserver() {
 
 	void waitForElement('body').then((body) => {
 		const observer = new MutationObserver((mutations) => {
-			const addedRoots = mutations.flatMap((mutation) =>
-				Array.from(mutation.addedNodes).filter(
-					(node): node is Element => node instanceof Element
-				)
-			);
-
-			if (addedRoots.length === 0) {
+			// Only the presence of added nodes matters — the throttled observe()
+			// re-scans the whole document, so we never use the node list itself.
+			if (!mutations.some((mutation) => mutation.addedNodes.length > 0)) {
 				cleanupDisconnectedTargets();
 				return;
 			}
@@ -200,6 +205,13 @@ function collectTargets<TElement extends HTMLElement>(
 
 	for (const element of elements) {
 		const appId = getAppId(element);
+		// Already processed for this exact appid — skip. Keeps the observer's
+		// full-document re-scans cheap, while still letting a recycled element
+		// whose appid CHANGED fall through to setupTarget (which unmounts the
+		// stale badge and re-tags it for the new game).
+		if (element.classList.contains('alike_sub') && element.dataset.subId === String(appId)) {
+			continue;
+		}
 		if (setupTarget(element, appId, resolveType(element))) {
 			ids.push(appId);
 		}
@@ -217,6 +229,7 @@ async function loadGamesForIds(ids: number[]) {
 	for (const id of uniqueIds) {
 		const cachedGame = games.get(id);
 		if (cachedGame) {
+			touchGameCache(id, cachedGame);
 			mountGame(cachedGame);
 		} else {
 			missingIds.push(id);
@@ -228,9 +241,15 @@ async function loadGamesForIds(ids: number[]) {
 	const fetchedGames = await fetchGames(missingIds);
 	for (const game of fetchedGames) {
 		games.set(game.sid, game);
-		pruneGamesCache();
 		mountGame(game);
 	}
+	pruneGamesCache();
+}
+
+/** Mark a cache hit as most-recently-used by reinserting it at the Map's end. */
+function touchGameCache(id: number, game: Game) {
+	games.delete(id);
+	games.set(id, game);
 }
 
 function pruneGamesCache() {
