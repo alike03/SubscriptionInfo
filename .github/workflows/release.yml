@@ -1,0 +1,107 @@
+name: Release Build
+
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - "*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Extract version from package.json
+        id: manifest_version
+        run: |
+          VERSION=$(grep -oP '"version":\s*"\K[^"]+' package.json | head -1)
+          echo "VERSION=v$VERSION" >> $GITHUB_OUTPUT
+          echo "RAW_VERSION=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Check if tag exists
+        id: check_tag
+        if: github.ref == 'refs/heads/master'
+        run: |
+          if git rev-parse ${{ steps.manifest_version.outputs.VERSION }} >/dev/null 2>&1; then
+            echo "TAG_EXISTS=true" >> $GITHUB_OUTPUT
+          else
+            echo "TAG_EXISTS=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create and push tag
+        if: github.ref == 'refs/heads/master' && steps.check_tag.outputs.TAG_EXISTS == 'false'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag ${{ steps.manifest_version.outputs.VERSION }}
+          git push origin ${{ steps.manifest_version.outputs.VERSION }}
+
+      - name: Get tag version
+        id: tag
+        if: github.ref_type == 'tag' || steps.check_tag.outputs.TAG_EXISTS == 'false'
+        run: |
+          if [ "${{ github.ref_type }}" == "tag" ]; then
+            echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          else
+            echo "VERSION=${{ steps.manifest_version.outputs.VERSION }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Install dependencies
+        if: github.ref_type == 'tag' || steps.check_tag.outputs.TAG_EXISTS == 'false'
+        run: bun install --frozen-lockfile
+
+      - name: Build extensions (Chrome + Firefox)
+        if: github.ref_type == 'tag' || steps.check_tag.outputs.TAG_EXISTS == 'false'
+        run: bun run build
+
+      - name: Rename build artifacts
+        id: artifacts
+        if: github.ref_type == 'tag' || steps.check_tag.outputs.TAG_EXISTS == 'false'
+        run: |
+          # vite's packageExtension plugin emits _info/v<version>-<target>.zip
+          RAW=${{ steps.manifest_version.outputs.RAW_VERSION }}
+          cp "_info/v${RAW}-chrome.zip" "SubscriptionInfo-Chrome-${{ steps.tag.outputs.VERSION }}.zip"
+          cp "_info/v${RAW}-firefox.zip" "SubscriptionInfo-Firefox-${{ steps.tag.outputs.VERSION }}.zip"
+
+      - name: Upload Chrome artifact
+        if: github.ref_type == 'tag' || steps.check_tag.outputs.TAG_EXISTS == 'false'
+        uses: actions/upload-artifact@v4
+        with:
+          name: SubscriptionInfo-Chrome-${{ steps.tag.outputs.VERSION }}
+          path: SubscriptionInfo-Chrome-${{ steps.tag.outputs.VERSION }}.zip
+          retention-days: 7
+
+      - name: Upload Firefox artifact
+        if: github.ref_type == 'tag' || steps.check_tag.outputs.TAG_EXISTS == 'false'
+        uses: actions/upload-artifact@v4
+        with:
+          name: SubscriptionInfo-Firefox-${{ steps.tag.outputs.VERSION }}
+          path: SubscriptionInfo-Firefox-${{ steps.tag.outputs.VERSION }}.zip
+          retention-days: 7
+
+      - name: Create GitHub Release
+        if: github.ref_type == 'tag' || steps.check_tag.outputs.TAG_EXISTS == 'false'
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            SubscriptionInfo-Chrome-${{ steps.tag.outputs.VERSION }}.zip
+            SubscriptionInfo-Firefox-${{ steps.tag.outputs.VERSION }}.zip
+          # Auto-generate release notes from commits/PRs since the previous tag.
+          generate_release_notes: true
+          # Tags with a semver prerelease suffix (e.g. v3.1.0-alpha.1) publish as a
+          # pre-release and never claim "Latest"; clean vX.Y.Z tags do.
+          prerelease: ${{ contains(steps.tag.outputs.VERSION, '-') }}
+          make_latest: ${{ !contains(steps.tag.outputs.VERSION, '-') }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
