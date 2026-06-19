@@ -52,6 +52,8 @@ export const translationsDe: Translations = {
 		leftOn: (gameName, platformName, date) => `${gameName} hat ${platformName} am ${date} verlassen`,
 		activeSince: (gameName, platformName, date) =>
 			`${gameName} ist seit ${date} auf ${platformName}`,
+		noInfoLabel: 'Keine Info',
+		noInfo: (gameName) => `${gameName} ist in keinem erfassten Abo verfügbar`,
 	},
 	languages: {
 		en: 'English',

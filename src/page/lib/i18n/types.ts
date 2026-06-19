@@ -51,6 +51,8 @@ export interface Translations {
 		leavingOn: (gameName: string, platformName: string, date: string) => string;
 		leftOn: (gameName: string, platformName: string, date: string) => string;
 		activeSince: (gameName: string, platformName: string, date: string) => string;
+		noInfoLabel: string;
+		noInfo: (gameName: string) => string;
 	};
 	languages: Record<Language, string>;
 }

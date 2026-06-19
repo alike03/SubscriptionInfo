@@ -52,6 +52,8 @@ export const translationsEn: Translations = {
 		leftOn: (gameName, platformName, date) => `${gameName} left ${platformName} on ${date}`,
 		activeSince: (gameName, platformName, date) =>
 			`${gameName} has been on ${platformName} since ${date}`,
+		noInfoLabel: 'No Info',
+		noInfo: (gameName) => `${gameName} is not available on any tracked subscription`,
 	},
 	languages: {
 		en: 'English',

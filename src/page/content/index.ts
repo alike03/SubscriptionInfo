@@ -5,6 +5,7 @@ import { defaultOptions, getOptions } from '$lib/storage';
 import { throttle, waitForElement } from '$lib/utils';
 import type { ExtensionOptions, Game, Language } from '$lib/types';
 import SubscriptionMount from './components/SubscriptionMount.svelte';
+import NoInfoBar from './components/NoInfoBar.svelte';
 import './content.css';
 
 const SEARCH_RESULTS_SELECTOR = '#search_resultsRows a[data-ds-appid]';
@@ -47,10 +48,13 @@ const pageSection = currentPath.split('/')[1] ?? '';
 const games = new Map<number, Game>();
 const mountedTargets = new Map<HTMLElement, MountedComponent>();
 let currentLanguage: Language = defaultOptions.language;
+let showNoInfoBar = defaultOptions.showNoInfoBar;
 
 async function init() {
 	try {
-		currentLanguage = (await getOptions()).language;
+		const options = await getOptions();
+		currentLanguage = options.language;
+		showNoInfoBar = options.showNoInfoBar;
 	} catch (error) {
 		console.error('Error loading initial options:', error);
 	}
@@ -130,16 +134,40 @@ async function initAppPage() {
 	if (!appId) return;
 
 	const [game] = await fetchGames([appId]);
-	if (!game) return;
+
+	const details = await waitForElement(APP_DETAILS_SELECTOR);
+
+	// The API only returns games that are on at least one tracked subscription,
+	// so a missing (or empty) result means "no info". Show the bar if enabled.
+	if (!game || game.subs.length === 0) {
+		if (showNoInfoBar) {
+			mountNoInfoBar(details, game?.name);
+		}
+		return;
+	}
 
 	games.set(game.sid, game);
 
-	const details = await waitForElement(APP_DETAILS_SELECTOR);
 	const mountTarget = document.createElement('div');
 	details.before(mountTarget);
 
 	setupTarget(mountTarget, appId, APP_PAGE_MOUNT_TYPE);
 	mountGame(game);
+}
+
+function mountNoInfoBar(details: Element, gameName?: string) {
+	const name =
+		gameName ??
+		document.querySelector('#appHubAppName')?.textContent?.trim() ??
+		'';
+
+	const mountTarget = document.createElement('div');
+	details.before(mountTarget);
+
+	new NoInfoBar({
+		target: mountTarget,
+		props: { gameName: name, language: currentLanguage },
+	});
 }
 
 function initGeneralObserver() {

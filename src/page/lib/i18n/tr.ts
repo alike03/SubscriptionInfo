@@ -54,6 +54,8 @@ export const translationsTr: Translations = {
 			`${gameName}, ${date} tarihinde ${platformName} hizmetinden ayrıldı`,
 		activeSince: (gameName, platformName, date) =>
 			`${gameName}, ${date} tarihinden beri ${platformName} hizmetinde`,
+		noInfoLabel: 'Bilgi Yok',
+		noInfo: (gameName) => `${gameName} herhangi bir takip edilen abonelikte mevcut değil`,
 	},
 	languages: {
 		en: 'English',

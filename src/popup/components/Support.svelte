@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Supporters from './Supporters.svelte';
-	import { Coffee, Github, HeartPlus, Twitter } from 'lucide-svelte';
+	import { Coffee, Github, HeartPlus, ShoppingBag, Twitter } from 'lucide-svelte';
 	import type { Translations } from '$lib/i18n';
 
 	export let translations: Translations;
@@ -15,6 +15,11 @@
 			label: 'Ko-fi',
 			href: 'https://ko-fi.com/alike03',
 			icon: 'kofi',
+		},
+		{
+			label: 'Instant Gaming',
+			href: 'https://www.instant-gaming.com/?igr=alike03',
+			icon: 'instant',
 		},
 		{
 			label: 'GitHub',
@@ -35,7 +40,7 @@
 		<p class="mt-1.5 max-w-75 text-xs leading-relaxed text-dim">{translations.support.subtitle}</p>
 	</div>
 
-	<div class="grid grid-cols-4 gap-2">
+	<div class="grid grid-cols-5 gap-2">
 		{#each supportLinks as link (link.label)}
 			<a
 				href={link.href}
@@ -52,6 +57,8 @@
 						<Coffee class="h-3.5 w-3.5" />
 					{:else if link.icon === 'github'}
 						<Github class="h-3.5 w-3.5" />
+					{:else if link.icon === 'instant'}
+						<ShoppingBag class="h-3.5 w-3.5" />
 					{:else}
 						<Twitter class="h-3.5 w-3.5" />
 					{/if}

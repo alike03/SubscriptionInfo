@@ -189,6 +189,15 @@
 	color: #8fb0ee;
 }
 
+/* "No info" bar shown on app pages when no subscription info is found */
+.alike_cont .alike {
+	background-color: var(--alike-black);
+}
+
+.alike_cont .sub_flag.alike {
+	padding: 0 8px;
+}
+
 /* Platform colors */
 .alike_cont .gamepass,
 .alike_cont .gamepasspc,
