@@ -13,17 +13,25 @@
 	$: platform = getPlatformDetails(sub.platform);
 	$: platformName = platform.name;
 	$: translations = getTranslations(language).subscriptionBadge;
-	$: platformLabel = translations.on(platformName);
 	$: entryDate = formatDate(sub.entry, language);
 	$: leaveDate = sub.leave ? formatDate(sub.leave, language) : '';
-	$: statusClass = sub.leaving ? 'leaving' : sub.leave ? 'left' : 'active';
+	$: leavesInFuture = !!sub.leave && new Date(sub.leave).getTime() > Date.now();
+	$: isComing = !sub.leaving && !sub.leave && new Date(sub.entry).getTime() > Date.now();
+	$: platformLabel = sub.leaving
+		? translations.leaving(platformName)
+		: isComing
+			? translations.coming(platformName)
+			: translations.on(platformName);
+	$: statusClass = sub.leaving ? 'leaving' : sub.leave ? 'left' : isComing ? 'soon' : 'active';
 	$: detailText = sub.leaving
-		? sub.leave
+		? leavesInFuture
 			? translations.leavingOn(game.name, platformName, leaveDate)
 			: translations.leavingSoon(game.name, platformName)
 		: sub.leave
 			? translations.leftOn(game.name, platformName, leaveDate)
-			: translations.activeSince(game.name, platformName, entryDate);
+			: isComing
+				? translations.comingOn(game.name, platformName, entryDate)
+				: translations.activeSince(game.name, platformName, entryDate);
 </script>
 
 {#if type === 3}

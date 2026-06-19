@@ -45,7 +45,13 @@
 	});
 </script>
 
-<div class="group h-full rounded-md bg-card p-2.5 transition-colors hover:bg-section sm:p-3">
+<a
+	href={`https://store.steampowered.com/app/${game.sid}/`}
+	target="_blank"
+	rel="noreferrer"
+	title={game.name}
+	class="group block h-full rounded-md bg-card p-2.5 transition-colors hover:bg-section sm:p-3"
+>
 	<div
 		class="relative aspect-2/3 overflow-hidden rounded-sm border border-white/8 shadow-(--shadow-raised) transition-[filter] group-hover:brightness-125"
 	>
@@ -73,7 +79,7 @@
 
 		<SubscriptionBadges subs={game.subs} {language} />
 	</div>
-</div>
+</a>
 
 <style>
 	.title-track {

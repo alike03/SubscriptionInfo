@@ -46,10 +46,17 @@ export const translationsTr: Translations = {
 	},
 	subscriptionBadge: {
 		on: (platformName) => `${platformName}'da`,
+		leaving: (platformName) => `${platformName}'dan ayrılıyor`,
+		coming: (platformName) => `${platformName}'a geliyor`,
 		since: (date) => `${date} tarihinden beri`,
+		comingShort: (date) => `${date} tarihinde geliyor`,
+		leavingShort: (date) => `${date} tarihinde ayrılıyor`,
+		leavingSoonLabel: 'Yakında ayrılıyor',
 		leavingSoon: (gameName, platformName) => `${gameName}, yakında ${platformName} hizmetinden ayrılıyor`,
 		leavingOn: (gameName, platformName, date) =>
 			`${gameName}, ${date} tarihinde ${platformName} hizmetinden ayrılıyor`,
+		comingOn: (gameName, platformName, date) =>
+			`${gameName}, ${date} tarihinde ${platformName} hizmetine geliyor`,
 		leftOn: (gameName, platformName, date) =>
 			`${gameName}, ${date} tarihinde ${platformName} hizmetinden ayrıldı`,
 		activeSince: (gameName, platformName, date) =>

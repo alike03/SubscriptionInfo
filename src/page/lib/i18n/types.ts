@@ -46,9 +46,15 @@ export interface Translations {
 	};
 	subscriptionBadge: {
 		on: (platformName: string) => string;
+		leaving: (platformName: string) => string;
+		coming: (platformName: string) => string;
 		since: (date: string) => string;
+		comingShort: (date: string) => string;
+		leavingShort: (date: string) => string;
+		leavingSoonLabel: string;
 		leavingSoon: (gameName: string, platformName: string) => string;
 		leavingOn: (gameName: string, platformName: string, date: string) => string;
+		comingOn: (gameName: string, platformName: string, date: string) => string;
 		leftOn: (gameName: string, platformName: string, date: string) => string;
 		activeSince: (gameName: string, platformName: string, date: string) => string;
 		noInfoLabel: string;

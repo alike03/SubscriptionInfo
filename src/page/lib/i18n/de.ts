@@ -46,9 +46,15 @@ export const translationsDe: Translations = {
 	},
 	subscriptionBadge: {
 		on: (platformName) => `auf ${platformName}`,
+		leaving: (platformName) => `verlässt ${platformName}`,
+		coming: (platformName) => `kommt zu ${platformName}`,
 		since: (date) => `Seit ${date}`,
+		comingShort: (date) => `Kommt am ${date}`,
+		leavingShort: (date) => `Verlässt am ${date}`,
+		leavingSoonLabel: 'Verlässt bald',
 		leavingSoon: (gameName, platformName) => `${gameName} verlässt ${platformName} bald`,
 		leavingOn: (gameName, platformName, date) => `${gameName} verlässt ${platformName} am ${date}`,
+		comingOn: (gameName, platformName, date) => `${gameName} kommt am ${date} zu ${platformName}`,
 		leftOn: (gameName, platformName, date) => `${gameName} hat ${platformName} am ${date} verlassen`,
 		activeSince: (gameName, platformName, date) =>
 			`${gameName} ist seit ${date} auf ${platformName}`,

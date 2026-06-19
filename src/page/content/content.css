@@ -186,7 +186,6 @@
 
 .alike_cont .soon {
 	filter: saturate(0.85);
-	color: #8fb0ee;
 }
 
 /* "No info" bar shown on app pages when no subscription info is found */
