@@ -22,12 +22,12 @@ This addon checks your game selections against a database, displaying current av
 
 [![Download for Firefox](/public/images/firefox.png)](https://addons.mozilla.org/en-US/firefox/addon/alike03s-subscription-info/)
 [![Download for Chrome](/public/images/chrome.png)](https://chrome.google.com/webstore/detail/jecikjbpiedagpmibmgpfgnkfpomgeok/)
-[![Download for Edge](/public/images/edge.png)](https://microsoftedge.microsoft.com/addons/detail/bapbeljhlgbcmoofikfboidiooefimdp)
+[![Download for Edge](/public/images/edge.png)](https://microsoftedge.microsoft.com/addons/detail/alike03s-subscription-in/bapbeljhlgbcmoofikfboidiooefimdp)
 
 
 ## Support me
 
-If you like this addon, please consider supporting me. You can do this by donating via PayPal or buy ing me a coffee. Your support is greatly appreciated!
+If you like this addon, please consider supporting me. You can do this by donating via PayPal or buying me a coffee. Your support is greatly appreciated!
 
 [![PayPal](https://img.shields.io/badge/PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/alike03)
 [![Ko-fi](https://img.shields.io/badge/Ko--fi-F16061?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/alike03)
