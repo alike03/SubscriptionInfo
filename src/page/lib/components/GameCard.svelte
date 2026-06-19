@@ -45,10 +45,11 @@
 	});
 </script>
 
-<a
-	href={`https://store.steampowered.com/app/${game.sid}/`}
-	target="_blank"
-	rel="noreferrer"
+<svelte:element
+	this={game.sid ? 'a' : 'div'}
+	href={game.sid ? `https://store.steampowered.com/app/${game.sid}/` : undefined}
+	target={game.sid ? '_blank' : undefined}
+	rel={game.sid ? 'noreferrer' : undefined}
 	title={game.name}
 	class="group block h-full rounded-md bg-card p-2.5 transition-colors hover:bg-section sm:p-3"
 >
@@ -79,7 +80,7 @@
 
 		<SubscriptionBadges subs={game.subs} {language} />
 	</div>
-</a>
+</svelte:element>
 
 <style>
 	.title-track {
