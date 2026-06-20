@@ -37,7 +37,7 @@
 <section class="border-t border-hover px-4 py-4">
 	<div class="mb-3">
 		<h3 class="text-xs font-bold uppercase tracking-label text-dim">{translations.support.title}</h3>
-		<p class="mt-1.5 max-w-75 text-xs leading-relaxed text-dim">{translations.support.subtitle}</p>
+		<p class="mt-1.5 text-xs leading-relaxed text-dim">{translations.support.subtitle}</p>
 	</div>
 
 	<div class="grid grid-cols-5 gap-2">

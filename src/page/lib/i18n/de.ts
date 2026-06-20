@@ -31,6 +31,9 @@ export const translationsDe: Translations = {
 		platformsSubtitle: 'Wähle die Dienste aus, die angezeigt werden sollen.',
 		displayTitle: 'Anzeige',
 		displaySubtitle: 'Infoleisten anzeigen, wenn keine Abo-Informationen verfügbar sind.',
+		requestLanguageTitle: 'Sprache fehlt?',
+		requestLanguageSubtitle: 'Fordere eine neue Sprache auf der Website an oder stimme ab.',
+		requestLanguageAction: 'Anfragen',
 	},
 	support: {
 		title: 'Projekt unterstützen',

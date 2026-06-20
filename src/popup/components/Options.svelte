@@ -1,8 +1,11 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
+	import { ExternalLink } from 'lucide-svelte';
 	import Tabs from '$lib/components/Tabs.svelte';
 	import type { Translations } from '$lib/i18n';
 	import Support from './Support.svelte';
+
+	const LANGUAGE_REQUEST_URL = 'https://sub.aligueler.com/language';
 
 	import { getPlatformDetails, getPlatforms } from '$lib/data';
 	import type { ExtensionOptions, Language, Platform } from '$lib/types';
@@ -53,27 +56,6 @@
 
 <section class="border-b border-hover bg-card px-4 py-4">
 	<div class="flex flex-col gap-5">
-		<div class="grid grid-cols-2 gap-4">
-			<div>
-				<h3 class="mb-2.5 text-xs font-bold uppercase tracking-label text-dim">{translations.options.languageTitle}</h3>
-				<Tabs
-					activeTab={options.language}
-					tabs={languageTabs}
-					ariaLabel={translations.options.languageTitle}
-					on:select={(event) => handleLanguageSelect(event.detail)}
-				/>
-			</div>
-			<div>
-				<h3 class="mb-2.5 text-xs font-bold uppercase tracking-label text-dim">{translations.options.timeFrameTitle}</h3>
-				<Tabs
-					activeTab={String(options.timeFrame)}
-					tabs={timeFrameTabs}
-					ariaLabel={translations.options.timeFrameTitle}
-					on:select={(event) => handleTimeFrameSelect(event.detail)}
-				/>
-			</div>
-		</div>
-
 		<div>
 			<h3 class="mb-2.5 text-xs font-bold uppercase tracking-label text-dim">{translations.options.platformsTitle}</h3>
 			<div class="flex flex-wrap items-stretch gap-2">
@@ -99,29 +81,70 @@
 			</div>
 		</div>
 
-		<div class="flex items-center justify-between gap-4 rounded-md border border-white/8 bg-section/50 p-3.5">
-			<div class="min-w-0">
-				<h3 class="text-xs font-bold uppercase tracking-label text-dim">{translations.options.displayTitle}</h3>
-				<p class="mt-1.5 text-xs text-dim">{translations.options.displaySubtitle}</p>
+		<div class="grid grid-cols-2 gap-4">
+			<div>
+				<h3 class="mb-2.5 text-xs font-bold uppercase tracking-label text-dim">{translations.options.languageTitle}</h3>
+				<Tabs
+					activeTab={options.language}
+					tabs={languageTabs}
+					ariaLabel={translations.options.languageTitle}
+					on:select={(event) => handleLanguageSelect(event.detail)}
+				/>
 			</div>
-			<button
-				type="button"
-				class="inline-flex shrink-0 cursor-pointer items-center"
-				aria-pressed={options.showNoInfoBar}
-				on:click={() => dispatch('togglenoinfobar')}
+			<div>
+				<h3 class="mb-2.5 text-xs font-bold uppercase tracking-label text-dim">{translations.options.timeFrameTitle}</h3>
+				<Tabs
+					activeTab={String(options.timeFrame)}
+					tabs={timeFrameTabs}
+					ariaLabel={translations.options.timeFrameTitle}
+					on:select={(event) => handleTimeFrameSelect(event.detail)}
+				/>
+			</div>
+		</div>
+
+		<div class="grid grid-cols-2 gap-4">
+			<a
+				href={LANGUAGE_REQUEST_URL}
+				target="_blank"
+				rel="noreferrer"
+				class="flex items-center justify-between gap-4 rounded-md border border-white/8 bg-section/50 p-3.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-primary/30"
 			>
+				<div class="min-w-0">
+					<h3 class="text-xs font-bold uppercase tracking-label text-dim">{translations.options.requestLanguageTitle}</h3>
+					<p class="mt-1.5 text-xs text-dim">{translations.options.requestLanguageSubtitle}</p>
+				</div>
 				<span
-					class={`flex h-5.5 w-9.5 items-center rounded-full px-0.5 transition-colors duration-200 ${
-						options.showNoInfoBar ? 'bg-primary/55' : 'bg-white/10'
-					}`}
+					class="inline-flex shrink-0 items-center gap-1.5 rounded-sm border border-primary/40 bg-primary/12 px-3 py-2 text-xs font-extrabold text-primary"
+				>
+					{translations.options.requestLanguageAction}
+					<ExternalLink class="h-3.5 w-3.5" />
+				</span>
+			</a>
+
+			<div class="flex items-center justify-between gap-4 rounded-md border border-white/8 bg-section/50 p-3.5">
+				<div class="min-w-0">
+					<h3 class="text-xs font-bold uppercase tracking-label text-dim">{translations.options.displayTitle}</h3>
+					<p class="mt-1.5 text-xs text-dim">{translations.options.displaySubtitle}</p>
+				</div>
+				<button
+					type="button"
+					class="inline-flex shrink-0 cursor-pointer items-center"
+					aria-pressed={options.showNoInfoBar}
+					on:click={() => dispatch('togglenoinfobar')}
 				>
 					<span
-						class={`h-4 w-4 rounded-full bg-white transition-transform duration-200 ${
-							options.showNoInfoBar ? 'translate-x-4' : 'translate-x-0'
+						class={`flex h-5.5 w-9.5 items-center rounded-full px-0.5 transition-colors duration-200 ${
+							options.showNoInfoBar ? 'bg-primary/55' : 'bg-white/10'
 						}`}
-					></span>
-				</span>
-			</button>
+					>
+						<span
+							class={`h-4 w-4 rounded-full bg-white transition-transform duration-200 ${
+								options.showNoInfoBar ? 'translate-x-4' : 'translate-x-0'
+							}`}
+						></span>
+					</span>
+				</button>
+			</div>
 		</div>
 	</div>
 </section>

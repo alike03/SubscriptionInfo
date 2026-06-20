@@ -31,6 +31,9 @@ export interface Translations {
 		platformsSubtitle: string;
 		displayTitle: string;
 		displaySubtitle: string;
+		requestLanguageTitle: string;
+		requestLanguageSubtitle: string;
+		requestLanguageAction: string;
 	};
 	support: {
 		title: string;
