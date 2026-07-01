@@ -14,6 +14,7 @@
 	{#each subs as sub (sub.platform)}
 		{@const platform = getPlatformDetails(sub.platform)}
 		{@const leavesInFuture = !!sub.leave && new Date(sub.leave).getTime() > Date.now()}
+		{@const hasLeft = !!sub.leave && !leavesInFuture}
 		{@const isComing = !sub.leaving && !sub.leave && new Date(sub.entry).getTime() > Date.now()}
 		<div class="flex items-center gap-1.75">
 			<div
@@ -23,15 +24,15 @@
 			</div>
 			<div class="min-w-0 flex-1">
 				<div class="truncate text-xxs font-semibold text-main">{platform.name}</div>
-				{#if sub.leaving}
+				{#if hasLeft}
+					<p class="text-xxs font-bold text-red">
+						{formatDate(sub.entry, language)} - {formatDate(sub.leave, language)}
+					</p>
+				{:else if sub.leaving || leavesInFuture}
 					<p class="text-xxs font-bold text-yellow">
 						{leavesInFuture
 							? translations.leavingShort(formatDate(sub.leave, language))
 							: translations.leavingSoonLabel}
-					</p>
-				{:else if sub.leave}
-					<p class="text-xxs font-bold text-red">
-						{formatDate(sub.entry, language)} - {formatDate(sub.leave, language)}
 					</p>
 				{:else if isComing}
 					<p class="text-xxs font-bold text-primary">

@@ -49,6 +49,7 @@ export interface Translations {
 	};
 	subscriptionBadge: {
 		on: (platformName: string) => string;
+		left: (platformName: string) => string;
 		leaving: (platformName: string) => string;
 		coming: (platformName: string) => string;
 		since: (date: string) => string;

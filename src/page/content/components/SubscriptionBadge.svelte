@@ -16,22 +16,31 @@
 	$: entryDate = formatDate(sub.entry, language);
 	$: leaveDate = sub.leave ? formatDate(sub.leave, language) : '';
 	$: leavesInFuture = !!sub.leave && new Date(sub.leave).getTime() > Date.now();
+	$: hasLeft = !!sub.leave && !leavesInFuture;
 	$: isComing = !sub.leaving && !sub.leave && new Date(sub.entry).getTime() > Date.now();
-	$: platformLabel = sub.leaving
-		? translations.leaving(platformName)
-		: isComing
-			? translations.coming(platformName)
-			: translations.on(platformName);
-	$: statusClass = sub.leaving ? 'leaving' : sub.leave ? 'left' : isComing ? 'soon' : 'active';
-	$: detailText = sub.leaving
-		? leavesInFuture
-			? translations.leavingOn(game.name, platformName, leaveDate)
-			: translations.leavingSoon(game.name, platformName)
-		: sub.leave
-			? translations.leftOn(game.name, platformName, leaveDate)
+	$: platformLabel = hasLeft
+		? translations.left(platformName)
+		: sub.leaving || leavesInFuture
+			? translations.leaving(platformName)
 			: isComing
-				? translations.comingOn(game.name, platformName, entryDate)
-				: translations.activeSince(game.name, platformName, entryDate);
+				? translations.coming(platformName)
+				: translations.on(platformName);
+	$: statusClass = hasLeft
+		? 'left'
+		: sub.leaving || leavesInFuture
+			? 'leaving'
+			: isComing
+				? 'soon'
+				: 'active';
+	$: detailText = hasLeft
+		? translations.leftOn(game.name, platformName, leaveDate)
+		: leavesInFuture
+			? translations.leavingOn(game.name, platformName, leaveDate)
+			: sub.leaving
+				? translations.leavingSoon(game.name, platformName)
+				: isComing
+					? translations.comingOn(game.name, platformName, entryDate)
+					: translations.activeSince(game.name, platformName, entryDate);
 </script>
 
 {#if type === 3}

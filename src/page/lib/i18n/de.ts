@@ -49,6 +49,7 @@ export const translationsDe: Translations = {
 	},
 	subscriptionBadge: {
 		on: (platformName) => `auf ${platformName}`,
+		left: (platformName) => `${platformName} verlassen`,
 		leaving: (platformName) => `verlässt ${platformName}`,
 		coming: (platformName) => `kommt zu ${platformName}`,
 		since: (date) => `Seit ${date}`,
