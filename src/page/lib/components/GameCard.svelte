@@ -62,7 +62,7 @@
 	<div>
 		<div
 			bind:this={titleFrame}
-			class={`title-frame relative -mx-2.5 my-2 min-w-0 overflow-hidden before:absolute before:inset-0 before:z-10 before:pointer-events-none before:transition-opacity before:duration-200 before:ease-out after:absolute after:inset-0 after:z-10 after:pointer-events-none after:opacity-0 after:transition-opacity after:duration-200 after:ease-out ${
+			class={`title-frame relative isolate -mx-2.5 my-2 min-w-0 overflow-hidden before:absolute before:inset-0 before:z-10 before:pointer-events-none before:transition-opacity before:duration-200 before:ease-out after:absolute after:inset-0 after:z-10 after:pointer-events-none after:opacity-0 after:transition-opacity after:duration-200 after:ease-out ${
 				isTitleOverflowing
 					? 'before:opacity-100 group-hover:after:opacity-100 group-focus-within:after:opacity-100'
 					: 'before:opacity-0'
@@ -71,7 +71,7 @@
 			<h2
 				bind:this={titleText}
 				class:title-track--scrolling={isTitleOverflowing}
-				class="title-track box-border m-0 w-max min-w-full max-w-none translate-x-0 whitespace-nowrap px-2.5 text-sm font-bold leading-5 transition-transform delay-300 ease-linear will-change-transform"
+				class="title-track box-border m-0 w-max min-w-full max-w-none translate-x-0 whitespace-nowrap px-2.5 text-sm font-bold leading-5 transition-transform delay-300 ease-linear"
 				style={`--title-travel: ${titleTravel}px; --title-duration: ${titleDuration}s;`}
 			>
 				{game.name}
