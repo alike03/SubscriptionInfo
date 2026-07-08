@@ -13,7 +13,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
@@ -76,7 +76,7 @@ jobs:
 
       - name: Upload Chrome artifact
         if: github.ref_type == 'tag' || steps.check_tag.outputs.TAG_EXISTS == 'false'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: SubscriptionInfo-Chrome-${{ steps.tag.outputs.VERSION }}
           path: SubscriptionInfo-Chrome-${{ steps.tag.outputs.VERSION }}.zip
@@ -84,7 +84,7 @@ jobs:
 
       - name: Upload Firefox artifact
         if: github.ref_type == 'tag' || steps.check_tag.outputs.TAG_EXISTS == 'false'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: SubscriptionInfo-Firefox-${{ steps.tag.outputs.VERSION }}
           path: SubscriptionInfo-Firefox-${{ steps.tag.outputs.VERSION }}.zip
@@ -92,8 +92,9 @@ jobs:
 
       - name: Create GitHub Release
         if: github.ref_type == 'tag' || steps.check_tag.outputs.TAG_EXISTS == 'false'
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ steps.tag.outputs.VERSION }}
           files: |
             SubscriptionInfo-Chrome-${{ steps.tag.outputs.VERSION }}.zip
             SubscriptionInfo-Firefox-${{ steps.tag.outputs.VERSION }}.zip
