@@ -65,6 +65,15 @@ export const translationsDe: Translations = {
 		noInfoLabel: 'Keine Info',
 		noInfo: (gameName) => `${gameName} ist in keinem erfassten Abo verfügbar`,
 	},
+	gameActions: {
+		buyOn: 'Bei Instant Gaming kaufen',
+		reportError: 'Fehler melden',
+		reportPlaceholder: 'Beschreibe das Problem (falsches Abo, fehlendes Spiel, …)',
+		reportSend: 'Senden',
+		reportSent: 'Danke! Deine Meldung wurde gesendet.',
+		reportFailed: 'Senden fehlgeschlagen — bitte erneut versuchen.',
+		close: 'Schließen',
+	},
 	languages: {
 		en: 'English',
 		de: 'Deutsch',

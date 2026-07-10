@@ -65,6 +65,15 @@ export const translationsEn: Translations = {
 		noInfoLabel: 'No Info',
 		noInfo: (gameName) => `${gameName} is not available on any tracked subscription`,
 	},
+	gameActions: {
+		buyOn: 'Buy on Instant Gaming',
+		reportError: 'Report a problem',
+		reportPlaceholder: 'Describe what is wrong (wrong subscription, missing game, …)',
+		reportSend: 'Send',
+		reportSent: 'Thanks! Your report was sent.',
+		reportFailed: 'Sending failed — please try again.',
+		close: 'Close',
+	},
 	languages: {
 		en: 'English',
 		de: 'Deutsch',

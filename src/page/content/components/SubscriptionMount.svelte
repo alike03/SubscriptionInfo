@@ -10,7 +10,7 @@
 </script>
 
 <div class={`alike_cont type-${type}`}>
-	{#each game.subs as sub (sub.platform)}
-		<SubscriptionBadge {game} {sub} {type} {language} />
+	{#each game.subs as sub, index (sub.platform)}
+		<SubscriptionBadge {game} {sub} {type} {language} showActions={index === 0} />
 	{/each}
 </div>

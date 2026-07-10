@@ -64,5 +64,14 @@ export interface Translations {
 		noInfoLabel: string;
 		noInfo: (gameName: string) => string;
 	};
+	gameActions: {
+		buyOn: string;
+		reportError: string;
+		reportPlaceholder: string;
+		reportSend: string;
+		reportSent: string;
+		reportFailed: string;
+		close: string;
+	};
 	languages: Record<Language, string>;
 }

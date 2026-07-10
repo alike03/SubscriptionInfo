@@ -68,6 +68,15 @@ export const translationsTr: Translations = {
 		noInfoLabel: 'Bilgi Yok',
 		noInfo: (gameName) => `${gameName} herhangi bir takip edilen abonelikte mevcut değil`,
 	},
+	gameActions: {
+		buyOn: "Instant Gaming'den satın al",
+		reportError: 'Hata bildir',
+		reportPlaceholder: 'Sorunu açıkla (yanlış abonelik, eksik oyun, …)',
+		reportSend: 'Gönder',
+		reportSent: 'Teşekkürler! Bildirimin gönderildi.',
+		reportFailed: 'Gönderilemedi — lütfen tekrar dene.',
+		close: 'Kapat',
+	},
 	languages: {
 		en: 'English',
 		de: 'Deutsch',

@@ -98,6 +98,27 @@ export async function fetchAllChanges(
 	}
 }
 
+export interface ErrorReportPayload {
+	sid: number;
+	game: string;
+	url: string;
+	message: string;
+}
+
+export async function submitErrorReport(payload: ErrorReportPayload): Promise<boolean> {
+	try {
+		const response = await fetch(`${WEB_API_BASE}/api/report`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(payload)
+		});
+		return response.ok;
+	} catch (error) {
+		console.error('Error submitting report:', error);
+		return false;
+	}
+}
+
 export async function fetchSupporters(): Promise<Supporter[]> {
 	return getOrSetLocalCache<Supporter[]>({
 		storageKey: SUPPORTERS_CACHE_KEY,

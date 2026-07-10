@@ -141,7 +141,7 @@ async function initAppPage() {
 	// so a missing (or empty) result means "no info". Show the bar if enabled.
 	if (!game || game.subs.length === 0) {
 		if (showNoInfoBar) {
-			mountNoInfoBar(details, game?.name);
+			mountNoInfoBar(details, appId, game?.name);
 		}
 		return;
 	}
@@ -155,7 +155,7 @@ async function initAppPage() {
 	mountGame(game);
 }
 
-function mountNoInfoBar(details: Element, gameName?: string) {
+function mountNoInfoBar(details: Element, appId: number, gameName?: string) {
 	const name =
 		gameName ??
 		document.querySelector('#appHubAppName')?.textContent?.trim() ??
@@ -166,7 +166,7 @@ function mountNoInfoBar(details: Element, gameName?: string) {
 
 	new NoInfoBar({
 		target: mountTarget,
-		props: { gameName: name, language: currentLanguage },
+		props: { gameName: name, sid: appId, language: currentLanguage },
 	});
 }
 

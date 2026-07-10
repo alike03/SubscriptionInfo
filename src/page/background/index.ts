@@ -1,6 +1,7 @@
 import browser from 'webextension-polyfill';
 
-import { fetchGamesByIds } from '$lib/api';
+import { fetchGamesByIds, submitErrorReport } from '$lib/api';
+import type { ErrorReportPayload } from '$lib/api';
 import { getOptions } from '$lib/storage';
 import type { Game } from '$lib/types';
 
@@ -14,7 +15,12 @@ interface FetchGameMessage {
 	};
 }
 
-type BackgroundMessage = FetchGameMessage;
+interface ReportErrorMessage {
+	type: 'report-error';
+	data: ErrorReportPayload;
+}
+
+type BackgroundMessage = FetchGameMessage | ReportErrorMessage;
 
 interface CachedGame {
 	game: Game;
@@ -30,17 +36,23 @@ browser.storage.onChanged.addListener((changes, areaName) => {
 });
 
 browser.runtime.onMessage.addListener(
-	(message: unknown): Promise<Game[]> | undefined => {
+	(message: unknown): Promise<Game[]> | Promise<{ ok: boolean }> | undefined => {
 		if (isBackgroundMessage(message)) {
 			switch (message.type) {
 			case 'fetch-game':
 				return handleFetchGame(message.data.ids);
+			case 'report-error':
+				return handleReportError(message.data);
 			}
 		}
 
 		return undefined;
 	}
 );
+
+async function handleReportError(data: ErrorReportPayload): Promise<{ ok: boolean }> {
+	return { ok: await submitErrorReport(data) };
+}
 
 async function handleFetchGame(ids: number[]): Promise<Game[]> {
 	const requestedIds = [...new Set(ids.filter(isValidSteamId))];
@@ -84,12 +96,26 @@ function pruneExpiredGames(now = Date.now()) {
 }
 
 function isBackgroundMessage(message: unknown): message is BackgroundMessage {
-	if (!isRecord(message) || message.type !== 'fetch-game') {
+	if (!isRecord(message)) {
 		return false;
 	}
 
 	const data = message.data;
-	return isRecord(data) && Array.isArray(data.ids) && data.ids.every(isValidSteamId);
+	if (message.type === 'fetch-game') {
+		return isRecord(data) && Array.isArray(data.ids) && data.ids.every(isValidSteamId);
+	}
+	if (message.type === 'report-error') {
+		return (
+			isRecord(data) &&
+			typeof data.sid === 'number' &&
+			typeof data.game === 'string' &&
+			typeof data.url === 'string' &&
+			typeof data.message === 'string' &&
+			data.message.trim().length > 0
+		);
+	}
+
+	return false;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

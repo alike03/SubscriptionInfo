@@ -5,10 +5,13 @@
 	import type { Game, SubscriptionInfo } from '$lib/types';
 	import type { Language } from '$lib/types';
 
+	import GameActions from './GameActions.svelte';
+
 	export let game: Game;
 	export let sub: SubscriptionInfo;
 	export let type: number;
 	export let language: Language;
+	export let showActions = false;
 
 	$: platform = getPlatformDetails(sub.platform);
 	$: platformName = platform.name;
@@ -47,6 +50,9 @@
 	<div class={`sub_text ${statusClass} ${sub.platform}`}>
 		<div class={`sub_flag ${sub.platform}`}>{platformLabel}</div>
 		<span>{detailText}</span>
+		{#if showActions}
+			<GameActions gameName={game.name} sid={game.sid} {language} />
+		{/if}
 	</div>
 {:else if type === 6}
 	<div class={`sub_flag ${statusClass} ${sub.platform}`}>
