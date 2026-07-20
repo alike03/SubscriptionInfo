@@ -11,6 +11,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    outputs:
+      # Empty when no release was created this run (tag already existed).
+      version: ${{ steps.tag.outputs.VERSION }}
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
@@ -106,3 +110,15 @@ jobs:
           make_latest: ${{ !contains(steps.tag.outputs.VERSION, '-') }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  publish:
+    name: Publish to stores
+    needs: build
+    # Publish only when a release was created this run, and only for stable
+    # versions (prerelease tags like v3.1.0-alpha.1 are skipped; they can
+    # still be published manually via the Publish Extensions workflow).
+    if: needs.build.outputs.version != '' && !contains(needs.build.outputs.version, '-')
+    uses: ./.github/workflows/publish.yml
+    with:
+      version: ${{ needs.build.outputs.version }}
+    secrets: inherit

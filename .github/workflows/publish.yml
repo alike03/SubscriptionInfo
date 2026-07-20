@@ -1,0 +1,138 @@
+# Publishes the built extension zips (attached to a GitHub Release by the
+# "Release Build" workflow) to the three extension stores.
+#
+# Runs automatically after a stable release via workflow_call from release.yml,
+# or manually via "Run workflow" (workflow_dispatch) with an existing release tag.
+#
+# Each store runs as its own job, so a failure (or missing credentials) in one
+# store never blocks the others. Jobs whose secrets are not configured are
+# skipped with a notice instead of failing.
+#
+# Required repository secrets per store:
+#
+# Chrome Web Store (https://developer.chrome.com/docs/webstore/using-api):
+#   CHROME_EXTENSION_ID   - ID of the extension in the Chrome Web Store
+#   CHROME_CLIENT_ID      - OAuth2 client ID from Google Cloud Console
+#   CHROME_CLIENT_SECRET  - OAuth2 client secret
+#   CHROME_REFRESH_TOKEN  - OAuth2 refresh token for the Web Store API
+#
+# Firefox Add-ons / AMO (https://addons.mozilla.org/developers/addon/api/key/):
+#   AMO_JWT_ISSUER        - JWT issuer of the AMO API key
+#   AMO_JWT_SECRET        - JWT secret of the AMO API key
+#
+# Microsoft Edge Add-ons (Partner Center > Publish API):
+#   EDGE_PRODUCT_ID       - Product ID from the Partner Center
+#   EDGE_CLIENT_ID        - Client ID from the Publish API settings
+#   EDGE_API_KEY          - API key from the Publish API settings
+
+name: Publish Extensions
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        description: "Release tag whose assets should be published (e.g. v3.0.0)"
+        required: true
+        type: string
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Release tag whose assets should be published (e.g. v3.0.0)"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  chrome:
+    name: Chrome Web Store
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check credentials
+        id: creds
+        run: echo "configured=${{ secrets.CHROME_EXTENSION_ID != '' && secrets.CHROME_CLIENT_ID != '' && secrets.CHROME_CLIENT_SECRET != '' && secrets.CHROME_REFRESH_TOKEN != '' }}" >> "$GITHUB_OUTPUT"
+
+      - name: Skip (credentials not configured)
+        if: steps.creds.outputs.configured != 'true'
+        run: echo "::notice::Chrome Web Store secrets are not configured - skipping publish."
+
+      - name: Download release asset
+        if: steps.creds.outputs.configured == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release download "${{ inputs.version }}" --repo "${{ github.repository }}" --pattern "SubscriptionInfo-Chrome-${{ inputs.version }}.zip" --output chrome.zip
+
+      # Submits the new version for review (upload-only defaults to false, so it
+      # is NOT held as a draft). Chrome still runs it through review before it
+      # reaches users. To also stop it going live automatically once approved,
+      # uncheck "Publish automatically after it passes review" for this item in
+      # the Chrome Web Store developer dashboard (there is no API input for it).
+      - name: Publish to Chrome Web Store
+        if: steps.creds.outputs.configured == 'true'
+        uses: wdzeng/chrome-extension@v1
+        with:
+          extension-id: ${{ secrets.CHROME_EXTENSION_ID }}
+          zip-path: chrome.zip
+          client-id: ${{ secrets.CHROME_CLIENT_ID }}
+          client-secret: ${{ secrets.CHROME_CLIENT_SECRET }}
+          refresh-token: ${{ secrets.CHROME_REFRESH_TOKEN }}
+
+  firefox:
+    name: Firefox Add-ons (AMO)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check credentials
+        id: creds
+        run: echo "configured=${{ secrets.AMO_JWT_ISSUER != '' && secrets.AMO_JWT_SECRET != '' }}" >> "$GITHUB_OUTPUT"
+
+      - name: Skip (credentials not configured)
+        if: steps.creds.outputs.configured != 'true'
+        run: echo "::notice::Firefox AMO secrets are not configured - skipping publish."
+
+      - name: Download release asset
+        if: steps.creds.outputs.configured == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release download "${{ inputs.version }}" --repo "${{ github.repository }}" --pattern "SubscriptionInfo-Firefox-${{ inputs.version }}.zip" --output firefox.zip
+
+      - name: Publish to Firefox Add-ons
+        if: steps.creds.outputs.configured == 'true'
+        uses: wdzeng/firefox-addon@v1
+        with:
+          # Gecko ID from src/manifest.json (browser_specific_settings.gecko.id)
+          addon-guid: "{7d7241f8-5541-4ab7-9c8a-ad15bd3aa4c7}"
+          xpi-path: firefox.zip
+          jwt-issuer: ${{ secrets.AMO_JWT_ISSUER }}
+          jwt-secret: ${{ secrets.AMO_JWT_SECRET }}
+
+  edge:
+    name: Microsoft Edge Add-ons
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check credentials
+        id: creds
+        run: echo "configured=${{ secrets.EDGE_PRODUCT_ID != '' && secrets.EDGE_CLIENT_ID != '' && secrets.EDGE_API_KEY != '' }}" >> "$GITHUB_OUTPUT"
+
+      - name: Skip (credentials not configured)
+        if: steps.creds.outputs.configured != 'true'
+        run: echo "::notice::Edge Add-ons secrets are not configured - skipping publish."
+
+      # Edge is Chromium-based and consumes the Chrome build.
+      - name: Download release asset
+        if: steps.creds.outputs.configured == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release download "${{ inputs.version }}" --repo "${{ github.repository }}" --pattern "SubscriptionInfo-Chrome-${{ inputs.version }}.zip" --output edge.zip
+
+      # Submits for certification/review (upload-only defaults to false). It goes
+      # live after Microsoft's review; set upload-only: true to instead keep it
+      # as a draft you publish manually in Partner Center.
+      - name: Publish to Edge Add-ons
+        if: steps.creds.outputs.configured == 'true'
+        uses: wdzeng/edge-addon@v2
+        with:
+          product-id: ${{ secrets.EDGE_PRODUCT_ID }}
+          zip-path: edge.zip
+          client-id: ${{ secrets.EDGE_CLIENT_ID }}
+          api-key: ${{ secrets.EDGE_API_KEY }}
