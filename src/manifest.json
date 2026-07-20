@@ -5,9 +5,6 @@
     "version": "{{version}}",
     "homepage_url": "https://aligueler.com/SubscriptionInfo/",
     "permissions": [
-        "activeTab",
-        "cookies",
-        "notifications",
         "storage"
     ],
     "icons": {
@@ -42,5 +39,5 @@
             "run_at": "document_start"
         }
     ],
-    "host_permissions": [ "https://aligueler.com/*", "https://sub.aligueler.com/*" ]
+    "host_permissions": [ "https://sub.aligueler.com/*" ]
 }

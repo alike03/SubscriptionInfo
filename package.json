@@ -1,7 +1,7 @@
 {
 	"name": "subscriptioninfo",
 	"description": "See on Steam if the game is currently available on any Subscription package like Xbox Game Pass PC & Console, Ubisoft+ or EA Play",
-	"version": "3.0.0",
+	"version": "3.0.1",
 	"type": "module",
 	"scripts": {
 		"dev": "vite",
