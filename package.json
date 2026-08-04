@@ -10,6 +10,7 @@
 		"build": "bun run build:chrome && bun run build:firefox",
 		"build:chrome": "TARGET=chrome vite build",
 		"build:firefox": "TARGET=firefox vite build",
+		"build:source": "bun scripts/pack-source.ts",
 		"check": "svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
 		"format": "prettier --write .",

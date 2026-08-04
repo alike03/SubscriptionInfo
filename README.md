@@ -84,6 +84,20 @@ bun run build:firefox
 
 The Chrome build can also be used for Chromium-based browsers such as Microsoft Edge.
 
+### Source archive for the Mozilla review
+
+Mozilla requires the original sources for add-ons that ship bundled or minified code. The
+release workflow attaches the archive to every GitHub release and uploads it to AMO; it can
+also be built manually:
+
+```sh
+bun run build:source          # from HEAD
+bun run build:source v3.0.1   # from a released tag
+```
+
+The archive lands in `_info/v<version>-source.zip`. The build instructions it carries for
+reviewers are in [SOURCE.md](SOURCE.md).
+
 ## Project Structure
 
 - `src/manifest.json` - shared Manifest V3 source used by Vite.
@@ -92,6 +106,7 @@ The Chrome build can also be used for Chromium-based browsers such as Microsoft 
 - `src/page/lib/` - API, storage, cache, platform metadata, i18n, and shared components.
 - `src/popup/` - browser action popup UI.
 - `public/` - extension icons and README download images.
+- `scripts/pack-source.ts` - builds the source archive for the Mozilla review.
 
 ## Data
 

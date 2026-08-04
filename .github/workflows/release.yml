@@ -69,6 +69,12 @@ jobs:
         if: github.ref_type == 'tag' || steps.check_tag.outputs.TAG_EXISTS == 'false'
         run: bun run build
 
+      # Mozilla requires the original sources for add-ons shipping bundled/minified code.
+      # Built from the committed tree, so it always matches the artifacts above.
+      - name: Package source archive
+        if: github.ref_type == 'tag' || steps.check_tag.outputs.TAG_EXISTS == 'false'
+        run: bun run build:source
+
       - name: Rename build artifacts
         id: artifacts
         if: github.ref_type == 'tag' || steps.check_tag.outputs.TAG_EXISTS == 'false'
@@ -77,6 +83,7 @@ jobs:
           RAW=${{ steps.manifest_version.outputs.RAW_VERSION }}
           cp "_info/v${RAW}-chrome.zip" "SubscriptionInfo-Chrome-${{ steps.tag.outputs.VERSION }}.zip"
           cp "_info/v${RAW}-firefox.zip" "SubscriptionInfo-Firefox-${{ steps.tag.outputs.VERSION }}.zip"
+          cp "_info/v${RAW}-source.zip" "SubscriptionInfo-Source-${{ steps.tag.outputs.VERSION }}.zip"
 
       - name: Upload Chrome artifact
         if: github.ref_type == 'tag' || steps.check_tag.outputs.TAG_EXISTS == 'false'
@@ -102,6 +109,7 @@ jobs:
           files: |
             SubscriptionInfo-Chrome-${{ steps.tag.outputs.VERSION }}.zip
             SubscriptionInfo-Firefox-${{ steps.tag.outputs.VERSION }}.zip
+            SubscriptionInfo-Source-${{ steps.tag.outputs.VERSION }}.zip
           # Auto-generate release notes from commits/PRs since the previous tag.
           generate_release_notes: true
           # Tags with a semver prerelease suffix (e.g. v3.1.0-alpha.1) publish as a

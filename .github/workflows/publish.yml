@@ -90,11 +90,14 @@ jobs:
         if: steps.creds.outputs.configured != 'true'
         run: echo "::notice::Firefox AMO secrets are not configured - skipping publish."
 
-      - name: Download release asset
+      - name: Download release assets
         if: steps.creds.outputs.configured == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release download "${{ inputs.version }}" --repo "${{ github.repository }}" --pattern "SubscriptionInfo-Firefox-${{ inputs.version }}.zip" --output firefox.zip
+        run: |
+          gh release download "${{ inputs.version }}" --repo "${{ github.repository }}" --pattern "SubscriptionInfo-Firefox-${{ inputs.version }}.zip" --output firefox.zip
+          # AMO policy: versions containing bundled/minified code must ship their sources.
+          gh release download "${{ inputs.version }}" --repo "${{ github.repository }}" --pattern "SubscriptionInfo-Source-${{ inputs.version }}.zip" --output source.zip
 
       - name: Publish to Firefox Add-ons
         if: steps.creds.outputs.configured == 'true'
@@ -103,8 +106,19 @@ jobs:
           # Gecko ID from src/manifest.json (browser_specific_settings.gecko.id)
           addon-guid: "{7d7241f8-5541-4ab7-9c8a-ad15bd3aa4c7}"
           xpi-path: firefox.zip
+          source-file-path: source.zip
           jwt-issuer: ${{ secrets.AMO_JWT_ISSUER }}
           jwt-secret: ${{ secrets.AMO_JWT_SECRET }}
+          approval-notes: |
+            Build instructions are in SOURCE.md at the root of the uploaded source archive.
+
+            Requires Bun 1.3.3 (the only tool needed; install with `npm install -g bun@1.3.3`):
+
+              bun install --frozen-lockfile
+              bun run build:firefox
+
+            The result is in dist/ and is identical to the contents of the submitted XPI.
+            Sources are also public at https://github.com/alike03/SubscriptionInfo (tag ${{ inputs.version }}).
 
   edge:
     name: Microsoft Edge Add-ons
