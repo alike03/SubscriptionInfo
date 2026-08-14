@@ -1,3 +1,5 @@
+import browser from 'webextension-polyfill';
+
 import { getOrSetLocalCache } from '$lib/cache';
 import { getPlatforms } from '$lib/data';
 import type { ExtensionOptions, Game } from '$lib/types';
@@ -5,6 +7,14 @@ import type { ExtensionOptions, Game } from '$lib/types';
 const WEB_API_BASE = 'https://sub.aligueler.com';
 const SUPPORTERS_CACHE_KEY = 'aSub_supporters_cache';
 const SUPPORTERS_CACHE_TTL_MS = 15 * 60 * 1000;
+
+const CLIENT_HEADER = 'X-SubInfo-Client';
+
+function apiFetch(url: string, init: RequestInit = {}): Promise<Response> {
+	const headers = new Headers(init.headers);
+	headers.set(CLIENT_HEADER, browser.runtime.getManifest().version);
+	return fetch(url, { ...init, headers });
+}
 
 interface GameAPIResponse {
 	games: Game[];
@@ -54,7 +64,7 @@ export async function fetchGamesByIds(
 			url.searchParams.set('exclude', exclude);
 		}
 
-		const response = await fetch(url.toString());
+		const response = await apiFetch(url.toString());
 		if (!response.ok) {
 			throw new Error(`API error: ${response.status}`);
 		}
@@ -80,7 +90,7 @@ export async function fetchAllChanges(
 			url.searchParams.set('exclude', exclude);
 		}
 
-		const response = await fetch(url.toString());
+		const response = await apiFetch(url.toString());
 		if (!response.ok) {
 			throw new Error(`API error: ${response.status}`);
 		}
@@ -107,7 +117,7 @@ export interface ErrorReportPayload {
 
 export async function submitErrorReport(payload: ErrorReportPayload): Promise<boolean> {
 	try {
-		const response = await fetch(`${WEB_API_BASE}/api/report`, {
+		const response = await apiFetch(`${WEB_API_BASE}/api/report`, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify(payload)
@@ -125,7 +135,7 @@ export async function fetchSupporters(): Promise<Supporter[]> {
 		ttlMs: SUPPORTERS_CACHE_TTL_MS,
 		loader: async () => {
 			const url = new URL('/api/supporters', WEB_API_BASE);
-			const response = await fetch(url.toString());
+			const response = await apiFetch(url.toString());
 
 			if (!response.ok) {
 				throw new Error(`API error: ${response.status}`);
