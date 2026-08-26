@@ -33,7 +33,7 @@
 		{ value: 30, labelKey: 'timeFrame30' },
 	];
 
-	const languageOptions: Language[] = ['en', 'de', 'tr'];
+	const languageOptions: Language[] = ['en', 'de', 'tr', 'zh-CN'];
 
 	$: languageTabs = languageOptions.map((language) => ({
 		id: language,
