@@ -48,7 +48,8 @@ export function throttle<TArgs extends unknown[], TResult>(
 const localesByLanguage = {
 	en: 'en-US',
 	de: 'de-DE',
-	tr: 'tr-TR'
+	tr: 'tr-TR',
+	'zh-CN': 'zh-CN'
 } as const;
 
 export function formatDate(

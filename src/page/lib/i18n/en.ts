@@ -78,6 +78,6 @@ export const translationsEn: Translations = {
 		en: 'English',
 		de: 'Deutsch',
 		tr: 'Türkçe',
-		'zh-CN': 'Simplified Chinese',
+		'zh-CN': '简体中文',
 	},
 };

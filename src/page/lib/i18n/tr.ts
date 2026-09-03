@@ -81,6 +81,6 @@ export const translationsTr: Translations = {
 		en: 'English',
 		de: 'Deutsch',
 		tr: 'Türkçe',
-		'zh-CN': 'Basitleştirilmiş Çince',
+		'zh-CN': '简体中文',
 	},
 };

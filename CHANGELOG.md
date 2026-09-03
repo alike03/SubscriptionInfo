@@ -4,6 +4,7 @@ All notable changes to **alike03's Subscription Info on Steam**.
 
 ## Version 3.0.2
 
+- Added Simplified Chinese (zh-CN) translation, contributed by @Acetab
 - Added Firefox's required data collection disclosure (`websiteActivity`) for Mozilla's new policy; documents existing behavior
 
 ## Version 3.0.1
