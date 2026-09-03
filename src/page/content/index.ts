@@ -1,7 +1,7 @@
 import browser from 'webextension-polyfill';
 import type { Storage } from 'webextension-polyfill';
 
-import { defaultOptions, getOptions } from '$lib/storage';
+import { defaultOptions, getOptions, normalizeLanguage } from '$lib/storage';
 import { throttle, waitForElement } from '$lib/utils';
 import type { ExtensionOptions, Game, Language } from '$lib/types';
 import SubscriptionMount from './components/SubscriptionMount.svelte';
@@ -382,7 +382,8 @@ function getLanguageFromStorageChange(
 	const data = change?.newValue as
 		| { options?: Partial<ExtensionOptions> }
 		| undefined;
-	return data?.options?.language;
+	const language = data?.options?.language;
+	return language ? normalizeLanguage(language) : undefined;
 }
 
 function getSaleWidgetType(element: HTMLElement) {

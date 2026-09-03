@@ -73,10 +73,4 @@ export const translationsZhCN: Translations = {
 		reportFailed: '发送失败，请重试。',
 		close: '关闭',
 	},
-	languages: {
-		en: 'English',
-		de: 'Deutsch',
-		tr: 'Türkçe',
-		'zh-CN': '简体中文',
-	},
 };

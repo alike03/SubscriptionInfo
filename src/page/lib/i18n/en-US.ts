@@ -1,6 +1,6 @@
 import type { Translations } from './types';
 
-export const translationsEn: Translations = {
+export const translationsEnUS: Translations = {
 	header: {
 		site: 'Site',
 		visitWebsite: 'Visit website',
@@ -73,11 +73,5 @@ export const translationsEn: Translations = {
 		reportSent: 'Thanks! Your report was sent.',
 		reportFailed: 'Sending failed — please try again.',
 		close: 'Close',
-	},
-	languages: {
-		en: 'English',
-		de: 'Deutsch',
-		tr: 'Türkçe',
-		'zh-CN': 'Simplified Chinese',
 	},
 };

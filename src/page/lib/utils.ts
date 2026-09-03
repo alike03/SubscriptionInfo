@@ -1,3 +1,5 @@
+import type { Language } from '$lib/types';
+
 export function debounce<TArgs extends unknown[], TResult>(
 	func: (...args: TArgs) => TResult,
 	wait: number
@@ -45,23 +47,15 @@ export function throttle<TArgs extends unknown[], TResult>(
 	};
 }
 
-const localesByLanguage = {
-	en: 'en-US',
-	de: 'de-DE',
-	tr: 'tr-TR'
-} as const;
-
 export function formatDate(
 	date: string,
-	language: keyof typeof localesByLanguage = 'en',
+	language: Language = 'en-US',
 	options: Intl.DateTimeFormatOptions = { dateStyle: 'medium' }
 ): string {
 	const parsedDate = parseDate(date);
 	if (!parsedDate) return date;
 
-	return new Intl.DateTimeFormat(localesByLanguage[language] ?? localesByLanguage.en, options).format(
-		parsedDate
-	);
+	return new Intl.DateTimeFormat(language, options).format(parsedDate);
 }
 
 function parseDate(date: string): Date | null {

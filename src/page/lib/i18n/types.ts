@@ -1,5 +1,3 @@
-import type { Language } from '$lib/types';
-
 export interface Translations {
 	header: {
 		site: string;
@@ -73,5 +71,4 @@ export interface Translations {
 		reportFailed: string;
 		close: string;
 	};
-	languages: Record<Language, string>;
 }

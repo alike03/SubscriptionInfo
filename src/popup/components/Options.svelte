@@ -2,7 +2,7 @@
 	import { createEventDispatcher } from 'svelte';
 	import { ExternalLink } from 'lucide-svelte';
 	import Tabs from '$lib/components/Tabs.svelte';
-	import type { Translations } from '$lib/i18n';
+	import { languageNames, type Translations } from '$lib/i18n';
 	import Support from './Support.svelte';
 
 	const LANGUAGE_REQUEST_URL = 'https://sub.aligueler.com/language';
@@ -33,12 +33,7 @@
 		{ value: 30, labelKey: 'timeFrame30' },
 	];
 
-	const languageOptions: Language[] = ['en', 'de', 'tr', 'zh-CN'];
-
-	$: languageTabs = languageOptions.map((language) => ({
-		id: language,
-		label: translations.languages[language],
-	}));
+	const languageTabs = Object.entries(languageNames).map(([id, label]) => ({ id, label }));
 
 	$: timeFrameTabs = timeFrameOptions.map((timeFrameOption) => ({
 		id: String(timeFrameOption.value),
