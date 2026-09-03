@@ -137,3 +137,7 @@ If you like this addon, please consider supporting me. You can do this by donati
 		/>
 	</picture>
 </a>
+
+## License
+
+The source code is licensed under the [GNU GPL v3.0 or later](LICENSE). The licence covers the code only. The name "alike03's Subscription Info", the icon and the API at sub.aligueler.com are not covered by it.
