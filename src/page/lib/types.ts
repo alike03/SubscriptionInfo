@@ -9,7 +9,7 @@ export interface Game {
 export type Platform = 'eaplay' | 'eaplaypro' | 'gamepasspc' | 'gamepasscon' | 'ubiplus';
 export type SubscriptionPlatform = Platform | 'gamepass' | (string & {});
 
-export type Language = 'en' | 'de' | 'tr';
+export type Language = 'en' | 'de' | 'tr' | 'zh-CN';
 
 export interface SubscriptionInfo {
 	platform: SubscriptionPlatform;
