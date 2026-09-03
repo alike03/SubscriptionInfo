@@ -14,6 +14,7 @@
 	export let showActions = false;
 
 	$: platform = getPlatformDetails(sub.platform);
+	$: flagStyle = `background-image: url("${platform.icon}")`;
 	$: platformName = platform.name;
 	$: translations = getTranslations(language).subscriptionBadge;
 	$: entryDate = formatDate(sub.entry, language);
@@ -48,16 +49,16 @@
 
 {#if type === 3}
 	<div class={`sub_text ${statusClass} ${sub.platform}`}>
-		<div class={`sub_flag ${sub.platform}`}>{platformLabel}</div>
+		<div class={`sub_flag ${sub.platform}`} style={flagStyle}>{platformLabel}</div>
 		<span>{detailText}</span>
 		{#if showActions}
 			<GameActions gameName={game.name} sid={game.sid} {language} />
 		{/if}
 	</div>
 {:else if type === 6}
-	<div class={`sub_flag ${statusClass} ${sub.platform}`}>
+	<div class={`sub_flag ${statusClass} ${sub.platform}`} style={flagStyle}>
 		<span class="hover_info">{platformLabel}</span>
 	</div>
 {:else}
-	<div class={`sub_flag ${statusClass} ${sub.platform}`}>{platformLabel}</div>
+	<div class={`sub_flag ${statusClass} ${sub.platform}`} style={flagStyle}>{platformLabel}</div>
 {/if}

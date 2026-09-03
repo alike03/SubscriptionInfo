@@ -4,6 +4,7 @@ All notable changes to **alike03's Subscription Info on Steam**.
 
 ## Version 3.0.3
 
+- Fixed Steam-page badges using one shared Xbox icon for PC Game Pass and Xbox Game Pass; badges now render each platform's own icon from the same icon set as the popup and website
 - Language codes are now full locale tags (en-US, de-DE, tr-TR, zh-CN);
 
 ## Version 3.0.2
