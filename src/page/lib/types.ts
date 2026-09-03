@@ -31,8 +31,11 @@ export interface ExtensionOptions {
 	enabled: Record<Platform, boolean>;
 	timeFrame: number;
 	showNoInfoBar: boolean;
+	hideLeft: boolean;
 	language: Language;
 }
+
+export type ToggleOption = 'showNoInfoBar' | 'hideLeft';
 
 export interface StorageData {
 	aSub_options?: {

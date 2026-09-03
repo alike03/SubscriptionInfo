@@ -31,6 +31,7 @@ export const translationsZhCN: Translations = {
 		platformsSubtitle: '选择要显示的订阅服务。',
 		displayTitle: '显示',
 		displaySubtitle: '没有订阅信息时显示信息栏。',
+		hideLeftSubtitle: '隐藏游戏已退出的订阅服务。',
 		requestLanguageTitle: '缺少语言？',
 		requestLanguageSubtitle: '在网站上请求或投票支持新语言。',
 		requestLanguageAction: '请求',

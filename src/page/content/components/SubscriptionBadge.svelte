@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { getPlatformDetails } from '$lib/data';
 	import { getTranslations } from '$lib/i18n';
-	import { formatDate } from '$lib/utils';
+	import { formatDate, subHasLeft } from '$lib/utils';
 	import type { Game, SubscriptionInfo } from '$lib/types';
 	import type { Language } from '$lib/types';
 
@@ -20,7 +20,7 @@
 	$: entryDate = formatDate(sub.entry, language);
 	$: leaveDate = sub.leave ? formatDate(sub.leave, language) : '';
 	$: leavesInFuture = !!sub.leave && new Date(sub.leave).getTime() > Date.now();
-	$: hasLeft = !!sub.leave && !leavesInFuture;
+	$: hasLeft = subHasLeft(sub);
 	$: isComing = !sub.leaving && !sub.leave && new Date(sub.entry).getTime() > Date.now();
 	$: platformLabel = hasLeft
 		? translations.left(platformName)

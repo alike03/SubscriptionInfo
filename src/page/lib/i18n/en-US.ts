@@ -31,6 +31,7 @@ export const translationsEnUS: Translations = {
 		platformsSubtitle: 'Pick the services that should be shown.',
 		displayTitle: 'Display',
 		displaySubtitle: 'Show info bars when no subscription info is available.',
+		hideLeftSubtitle: 'Hide subscriptions a game has already left.',
 		requestLanguageTitle: 'Missing a language?',
 		requestLanguageSubtitle: 'Request or vote for a new language on the website.',
 		requestLanguageAction: 'Request',

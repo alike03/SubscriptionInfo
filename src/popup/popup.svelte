@@ -9,7 +9,7 @@
     import { fetchAllChanges } from "$lib/api";
     import { getOrSetLocalCache } from "$lib/cache";
     import { defaultOptions, getOptions, saveOptions } from "$lib/storage";
-	import type { ExtensionOptions, Game, Language, Platform, TabDefinition, TabType } from "$lib/types";
+	import type { ExtensionOptions, Game, Language, Platform, TabDefinition, TabType, ToggleOption } from "$lib/types";
 
     const tabOrder: TabType[] = ["added", "left", "coming", "leaving"];
 	const POPUP_CHANGES_CACHE_KEY = 'aSub_changes_cache';
@@ -107,10 +107,10 @@
         );
     }
 
-    async function handleShowNoInfoBarChange() {
+    async function handleOptionToggle(key: ToggleOption) {
         await updateOptions((currentOptions) => ({
             ...currentOptions,
-            showNoInfoBar: !currentOptions.showNoInfoBar,
+            [key]: !currentOptions[key],
         }));
     }
 
@@ -160,7 +160,7 @@
                 {translations}
                 on:platformtoggle={(event) => void handlePlatformToggle(event.detail)}
                 on:timeframechange={(event) => void handleTimeFrameChange(event.detail)}
-                on:togglenoinfobar={() => void handleShowNoInfoBarChange()}
+                on:optiontoggle={(event) => void handleOptionToggle(event.detail)}
                 on:languagechange={(event) => void handleLanguageChange(event.detail)}
             />
         </div>

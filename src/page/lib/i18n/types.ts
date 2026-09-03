@@ -29,6 +29,7 @@ export interface Translations {
 		platformsSubtitle: string;
 		displayTitle: string;
 		displaySubtitle: string;
+		hideLeftSubtitle: string;
 		requestLanguageTitle: string;
 		requestLanguageSubtitle: string;
 		requestLanguageAction: string;

@@ -26,8 +26,10 @@ const APP_PAGE_MOUNT_TYPE = 3;
 const ROW_MOUNT_TYPE = 6;
 const MAX_GAME_CACHE_SIZE = 500;
 
+type MountPatch = { language?: Language; hideLeft?: boolean; showNoInfoBar?: boolean };
+
 interface MountedComponent {
-	$set(props: { language?: Language }): void;
+	$set(props: MountPatch): void;
 	$destroy(): void;
 }
 
@@ -49,12 +51,14 @@ const games = new Map<number, Game>();
 const mountedTargets = new Map<HTMLElement, MountedComponent>();
 let currentLanguage: Language = defaultOptions.language;
 let showNoInfoBar = defaultOptions.showNoInfoBar;
+let hideLeft = defaultOptions.hideLeft;
 
 async function init() {
 	try {
 		const options = await getOptions();
 		currentLanguage = options.language;
 		showNoInfoBar = options.showNoInfoBar;
+		hideLeft = options.hideLeft;
 	} catch (error) {
 		console.error('Error loading initial options:', error);
 	}
@@ -324,6 +328,8 @@ function mountGame(game: Game) {
 					game,
 					type: parseMountType(element.dataset.subType),
 					language: currentLanguage,
+					hideLeft,
+					showNoInfoBar,
 				},
 			}) as MountedComponent;
 
@@ -367,23 +373,39 @@ function handleStorageChange(
 ) {
 	if (areaName !== 'sync') return;
 
-	const language = getLanguageFromStorageChange(changes.aSub_options);
-	if (!language || language === currentLanguage) return;
+	const options = getOptionsFromStorageChange(changes.aSub_options);
+	if (!options) return;
 
-	currentLanguage = language;
+	const patch: MountPatch = {};
+	if (options.language) {
+		const language = normalizeLanguage(options.language);
+		if (language !== currentLanguage) {
+			currentLanguage = language;
+			patch.language = language;
+		}
+	}
+	if (options.hideLeft !== undefined && options.hideLeft !== hideLeft) {
+		hideLeft = options.hideLeft;
+		patch.hideLeft = hideLeft;
+	}
+	if (options.showNoInfoBar !== undefined && options.showNoInfoBar !== showNoInfoBar) {
+		showNoInfoBar = options.showNoInfoBar;
+		patch.showNoInfoBar = showNoInfoBar;
+	}
+	if (Object.keys(patch).length === 0) return;
+
 	for (const component of mountedTargets.values()) {
-		component.$set({ language });
+		component.$set(patch);
 	}
 }
 
-function getLanguageFromStorageChange(
+function getOptionsFromStorageChange(
 	change: Storage.StorageChange | undefined,
 ) {
 	const data = change?.newValue as
 		| { options?: Partial<ExtensionOptions> }
 		| undefined;
-	const language = data?.options?.language;
-	return language ? normalizeLanguage(language) : undefined;
+	return data?.options;
 }
 
 function getSaleWidgetType(element: HTMLElement) {

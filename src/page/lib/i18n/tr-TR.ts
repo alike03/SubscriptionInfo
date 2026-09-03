@@ -31,6 +31,7 @@ export const translationsTrTR: Translations = {
 		platformsSubtitle: 'Gösterilecek servisleri seç.',
 		displayTitle: 'Görünüm',
 		displaySubtitle: 'Abonelik bilgisi yoksa bilgi çubuklarını göster.',
+		hideLeftSubtitle: 'Oyunun artık dahil olmadığı abonelikleri gizle.',
 		requestLanguageTitle: 'Dil eksik mi?',
 		requestLanguageSubtitle: 'Web sitesinde yeni bir dil iste veya oy ver.',
 		requestLanguageAction: 'İste',

@@ -12,6 +12,7 @@ export const defaultOptions: ExtensionOptions = {
 	},
 	timeFrame: 30,
 	showNoInfoBar: true,
+	hideLeft: false,
 	language: 'en-US'
 };
 

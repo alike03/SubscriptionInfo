@@ -31,6 +31,7 @@ export const translationsDeDE: Translations = {
 		platformsSubtitle: 'Wähle die Dienste aus, die angezeigt werden sollen.',
 		displayTitle: 'Anzeige',
 		displaySubtitle: 'Infoleisten anzeigen, wenn keine Abo-Informationen verfügbar sind.',
+		hideLeftSubtitle: 'Abos ausblenden, die ein Spiel bereits verlassen hat.',
 		requestLanguageTitle: 'Sprache fehlt?',
 		requestLanguageSubtitle: 'Fordere eine neue Sprache auf der Website an oder stimme ab.',
 		requestLanguageAction: 'Anfragen',

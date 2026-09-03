@@ -1,4 +1,4 @@
-import type { Language } from '$lib/types';
+import type { Language, SubscriptionInfo } from '$lib/types';
 
 export function debounce<TArgs extends unknown[], TResult>(
 	func: (...args: TArgs) => TResult,
@@ -67,6 +67,10 @@ function parseDate(date: string): Date | null {
 
 	const parsedDate = new Date(date);
 	return Number.isNaN(parsedDate.getTime()) ? null : parsedDate;
+}
+
+export function subHasLeft(sub: SubscriptionInfo): boolean {
+	return !!sub.leave && !(new Date(sub.leave).getTime() > Date.now());
 }
 
 export function waitForElement(selector: string): Promise<Element> {

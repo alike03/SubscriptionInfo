@@ -8,7 +8,7 @@
 	const LANGUAGE_REQUEST_URL = 'https://sub.aligueler.com/language';
 
 	import { getPlatformDetails, getPlatforms } from '$lib/data';
-	import type { ExtensionOptions, Language, Platform } from '$lib/types';
+	import type { ExtensionOptions, Language, Platform, ToggleOption } from '$lib/types';
 
 	export let options: ExtensionOptions;
 	export let translations: Translations;
@@ -16,7 +16,7 @@
 	const dispatch = createEventDispatcher<{
 		platformtoggle: Platform;
 		timeframechange: number;
-		togglenoinfobar: void;
+		optiontoggle: ToggleOption;
 		languagechange: Language;
 	}>();
 
@@ -31,6 +31,11 @@
 		{ value: 7, labelKey: 'timeFrame7' },
 		{ value: 14, labelKey: 'timeFrame14' },
 		{ value: 30, labelKey: 'timeFrame30' },
+	];
+
+	const toggles: Array<{ key: ToggleOption; labelKey: 'displaySubtitle' | 'hideLeftSubtitle' }> = [
+		{ key: 'showNoInfoBar', labelKey: 'displaySubtitle' },
+		{ key: 'hideLeft', labelKey: 'hideLeftSubtitle' },
 	];
 
 	const languageTabs = Object.entries(languageNames).map(([id, label]) => ({ id, label }));
@@ -116,29 +121,32 @@
 				</span>
 			</a>
 
-			<div class="flex items-center justify-between gap-4 rounded-md border border-white/8 bg-section/50 p-3.5">
-				<div class="min-w-0">
-					<h3 class="text-xs font-bold uppercase tracking-label text-dim">{translations.options.displayTitle}</h3>
-					<p class="mt-1.5 text-xs text-dim">{translations.options.displaySubtitle}</p>
-				</div>
-				<button
-					type="button"
-					class="inline-flex shrink-0 cursor-pointer items-center"
-					aria-pressed={options.showNoInfoBar}
-					on:click={() => dispatch('togglenoinfobar')}
-				>
-					<span
-						class={`flex h-5.5 w-9.5 items-center rounded-full px-0.5 transition-colors duration-200 ${
-							options.showNoInfoBar ? 'bg-primary/55' : 'bg-white/10'
-						}`}
-					>
-						<span
-							class={`h-4 w-4 rounded-full bg-white transition-transform duration-200 ${
-								options.showNoInfoBar ? 'translate-x-4' : 'translate-x-0'
-							}`}
-						></span>
-					</span>
-				</button>
+			<div class="flex flex-col gap-3 rounded-md border border-white/8 bg-section/50 p-3.5">
+				<h3 class="text-xs font-bold uppercase tracking-label text-dim">{translations.options.displayTitle}</h3>
+				{#each toggles as toggle (toggle.key)}
+					<div class="flex items-center justify-between gap-4">
+						<p class="min-w-0 text-xs text-dim">{translations.options[toggle.labelKey]}</p>
+						<button
+							type="button"
+							class="inline-flex shrink-0 cursor-pointer items-center"
+							aria-pressed={options[toggle.key]}
+							aria-label={translations.options[toggle.labelKey]}
+							on:click={() => dispatch('optiontoggle', toggle.key)}
+						>
+							<span
+								class={`flex h-5.5 w-9.5 items-center rounded-full px-0.5 transition-colors duration-200 ${
+									options[toggle.key] ? 'bg-primary/55' : 'bg-white/10'
+								}`}
+							>
+								<span
+									class={`h-4 w-4 rounded-full bg-white transition-transform duration-200 ${
+										options[toggle.key] ? 'translate-x-4' : 'translate-x-0'
+									}`}
+								></span>
+							</span>
+						</button>
+					</div>
+				{/each}
 			</div>
 		</div>
 	</div>
