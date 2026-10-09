@@ -14,6 +14,7 @@
 		"build:source": "bun scripts/pack-source.ts",
 		"check": "svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
+		"check:pages": "bun run build:chrome && bun scripts/check-pages.ts",
 		"format": "prettier --write .",
 		"lint": "prettier --check . && eslint ."
 	},
@@ -28,6 +29,7 @@
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-svelte": "^3.17.1",
 		"globals": "^16.5.0",
+		"playwright-core": "^1.62.1",
 		"prettier": "^3.8.3",
 		"prettier-plugin-svelte": "^3.5.2",
 		"svelte": "^4.2.20",

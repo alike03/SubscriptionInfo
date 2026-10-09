@@ -23,8 +23,10 @@ const DATA_APP_SELECTOR = '[data-ds-appid]:not(.gutter_item)';
 // two unhashed classes are the only stable hooks (landscape / portrait).
 const CAPSULE_SELECTOR =
 	'a[href*="/app/"] :is(.CapsuleImageCtn, .HeroCapsuleImageContainer)';
-// Home recommendation carousel: only pure-react-carousel's own class is unhashed.
-const CAROUSEL_LINK_SELECTOR = '.carousel__inner-slide a[href*="/app/"]';
+// Only unhashed hooks: pure-react-carousel's class (home) and VideoRow (featured
+// row atop category/tag/genre pages).
+const CAROUSEL_LINK_SELECTOR =
+	'.carousel__inner-slide a[href*="/app/"], .VideoRow a[href*="/app/"]';
 const CHARTS_ROW_LINK_SELECTOR = 'tr a[href*="/app/"]';
 const TARGET_OWNER_SELECTOR = '[data-ds-appid]:not(.gutter_item), .alike_sub';
 const APP_DETAILS_SELECTOR = '.page_content_ctn > .page_content';

@@ -9,7 +9,10 @@ bun install
 bun run dev:chrome   # or dev:firefox
 bun run check        # typecheck, must pass
 bun run build        # builds both browsers into dist/
+bun run check:pages  # live check: are badges shown on Steam's store pages?
 ```
+
+`check:pages` loads the Chrome build into your installed Google Chrome and reports, per Steam page, every game on a subscription that got no badge. Steam changes its markup without notice, so run it before a release. The wishlist and calendar need a Steam login: on the first run a login window opens, and the check starts once you are logged in. The session is saved to `.auth/`, which is gitignored; never commit or share it. When Steam ends the session, run `bun run check:pages --login`.
 
 Do not run `prettier --write`. The repo has no Prettier config and the defaults would reformat every file. Match the surrounding style by hand: tabs, single quotes.
 

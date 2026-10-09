@@ -4,6 +4,7 @@ _dump/
 
 .vscode/
 debug.log
+.auth/
 
 ### Compressed ###
 *.7z
