@@ -10,7 +10,7 @@ export const translationsTrTR: Translations = {
 	tabs: {
 		added: 'Yeni Eklenenler',
 		left: 'Yeni Ayrılanlar',
-		coming: 'Yakında',
+		coming: 'Yakında Gelecek',
 		leaving: 'Yakında Ayrılacak',
 	},
 	games: {

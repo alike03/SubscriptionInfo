@@ -2,6 +2,11 @@
 
 All notable changes to **alike03's Subscription Info on Steam**.
 
+## Version 3.0.4
+
+- Added badges to Steam's newer store pages: your personal calendar, category, tag and genre pages, specials, publisher pages, the home page carousels, recommendations on game pages, and the charts
+- Fixed badges sometimes not appearing on pages that Steam builds after loading, such as the wishlist
+
 ## Version 3.0.3
 
 - Added a display option to hide subscriptions a game has already left

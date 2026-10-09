@@ -9,9 +9,9 @@ export const translationsDeDE: Translations = {
 	},
 	tabs: {
 		added: 'Neu hinzugefügt',
-		left: 'Zuletzt entfernt',
+		left: 'Kürzlich entfernt',
 		coming: 'Bald verfügbar',
-		leaving: 'Bald weg',
+		leaving: 'Bald entfernt',
 	},
 	games: {
 		loading: 'Wird geladen...',
