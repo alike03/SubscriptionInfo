@@ -18,6 +18,10 @@ const SALE_WIDGET_SELECTOR =
 // data-ds-appid, so we must re-inspect them to replace a now-stale badge.
 // collectTargets() cheaply skips the ones whose appid is unchanged.
 const DATA_APP_SELECTOR = '[data-ds-appid]:not(.gutter_item)';
+// The calendar has no data-ds-appid and hashed class names; these two
+// unhashed capsule classes are the only stable hooks (landscape / portrait).
+const CALENDAR_CAPSULE_SELECTOR =
+	'a[href*="/app/"] :is(.CapsuleImageCtn, .HeroCapsuleImageContainer)';
 const APP_DETAILS_SELECTOR = '.page_content_ctn > .page_content';
 const SEARCH_DEBOUNCE_MS = 700;
 const OBSERVER_THROTTLE_MS = 1000;
@@ -179,7 +183,8 @@ function initGeneralObserver() {
 		cleanupDisconnectedTargets();
 		const ids = [
 			...collectSaleWidgetTargets(document),
-			...collectDataAppTargets(document)
+			...collectDataAppTargets(document),
+			...(pageSection === 'personalcalendar' ? collectCalendarTargets(document) : []),
 		];
 		void loadGamesForIds(ids);
 	}, OBSERVER_THROTTLE_MS);
@@ -224,6 +229,14 @@ function collectDataAppTargets(root: ParentNode = document) {
 		queryElements<HTMLElement>(root, DATA_APP_SELECTOR),
 		(element) => parseAppId(element.dataset.dsAppid),
 		getDataAppIdType,
+	);
+}
+
+function collectCalendarTargets(root: ParentNode = document) {
+	return collectTargets(
+		queryElements<HTMLElement>(root, CALENDAR_CAPSULE_SELECTOR),
+		(element) => parseAppIdFromUrl(element.closest('a')?.href ?? ''),
+		() => DEFAULT_MOUNT_TYPE,
 	);
 }
 
