@@ -18,10 +18,15 @@ const SALE_WIDGET_SELECTOR =
 // data-ds-appid, so we must re-inspect them to replace a now-stale badge.
 // collectTargets() cheaply skips the ones whose appid is unchanged.
 const DATA_APP_SELECTOR = '[data-ds-appid]:not(.gutter_item)';
-// The calendar has no data-ds-appid and hashed class names; these two
-// unhashed capsule classes are the only stable hooks (landscape / portrait).
-const CALENDAR_CAPSULE_SELECTOR =
+// Steam's React capsules (calendar, category/tag/genre, specials, publisher,
+// app-page recommendations) have no data-ds-appid and hashed class names; these
+// two unhashed classes are the only stable hooks (landscape / portrait).
+const CAPSULE_SELECTOR =
 	'a[href*="/app/"] :is(.CapsuleImageCtn, .HeroCapsuleImageContainer)';
+// Home recommendation carousel: only pure-react-carousel's own class is unhashed.
+const CAROUSEL_LINK_SELECTOR = '.carousel__inner-slide a[href*="/app/"]';
+const CHARTS_ROW_LINK_SELECTOR = 'tr a[href*="/app/"]';
+const TARGET_OWNER_SELECTOR = '[data-ds-appid]:not(.gutter_item), .alike_sub';
 const APP_DETAILS_SELECTOR = '.page_content_ctn > .page_content';
 const SEARCH_DEBOUNCE_MS = 700;
 const OBSERVER_THROTTLE_MS = 1000;
@@ -184,7 +189,9 @@ function initGeneralObserver() {
 		const ids = [
 			...collectSaleWidgetTargets(document),
 			...collectDataAppTargets(document),
-			...(pageSection === 'personalcalendar' ? collectCalendarTargets(document) : []),
+			...collectCapsuleTargets(document),
+			...collectCarouselTargets(document),
+			...(pageSection === 'charts' ? collectChartsTargets(document) : []),
 		];
 		void loadGamesForIds(ids);
 	}, OBSERVER_THROTTLE_MS);
@@ -232,12 +239,48 @@ function collectDataAppTargets(root: ParentNode = document) {
 	);
 }
 
-function collectCalendarTargets(root: ParentNode = document) {
+// Must run after the sale-widget and data-ds-appid collectors: their targets
+// can wrap the same capsule, and isInsideTarget() relies on them being tagged.
+function collectCapsuleTargets(root: ParentNode = document) {
 	return collectTargets(
-		queryElements<HTMLElement>(root, CALENDAR_CAPSULE_SELECTOR),
+		queryElements<HTMLElement>(root, CAPSULE_SELECTOR).filter(
+			(element) => !isInsideTarget(element),
+		),
 		(element) => parseAppIdFromUrl(element.closest('a')?.href ?? ''),
 		() => DEFAULT_MOUNT_TYPE,
 	);
+}
+
+function collectCarouselTargets(root: ParentNode = document) {
+	const imageFrames: HTMLElement[] = [];
+	for (const link of queryElements<HTMLAnchorElement>(root, CAROUSEL_LINK_SELECTOR)) {
+		const frame = link.querySelector('img')?.parentElement;
+		if (!frame || isInsideTarget(link)) continue;
+		// The frame itself may already be tagged by an earlier pass; any other
+		// target inside the link means another collector owns this capsule.
+		const owners = Array.from(link.querySelectorAll(TARGET_OWNER_SELECTOR));
+		if (owners.some((owner) => owner !== frame)) continue;
+		imageFrames.push(frame);
+	}
+
+	return collectTargets(
+		imageFrames,
+		(element) => parseAppIdFromUrl(element.closest('a')?.href ?? ''),
+		() => DEFAULT_MOUNT_TYPE,
+	);
+}
+
+function collectChartsTargets(root: ParentNode = document) {
+	return collectTargets(
+		queryElements<HTMLAnchorElement>(root, CHARTS_ROW_LINK_SELECTOR).filter((link) =>
+			link.querySelector(':scope > img'),
+		),
+		(element) => parseAppIdFromUrl(element.href),
+	);
+}
+
+function isInsideTarget(element: HTMLElement) {
+	return !!element.parentElement?.closest(TARGET_OWNER_SELECTOR);
 }
 
 function collectTargets<TElement extends HTMLElement>(

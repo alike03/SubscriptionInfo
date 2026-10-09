@@ -82,17 +82,14 @@ export function waitForElement(selector: string): Promise<Element> {
 			return;
 		}
 
-		const observer = new MutationObserver((mutations) => {
-			mutations.forEach((mutation) => {
-				const nodes = Array.from(mutation.addedNodes);
-				for (const node of nodes) {
-					if (node instanceof Element && node.matches && node.matches(selector)) {
-						observer.disconnect();
-						resolve(node);
-						return;
-					}
-				}
-			});
+		// Query the document, not the added nodes: React inserts whole subtrees,
+		// so the match is usually a descendant of the added node.
+		const observer = new MutationObserver(() => {
+			const match = document.querySelector(selector);
+			if (match) {
+				observer.disconnect();
+				resolve(match);
+			}
 		});
 
 		observer.observe(document.documentElement, { childList: true, subtree: true });
